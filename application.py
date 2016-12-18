@@ -1,5 +1,6 @@
 from flask import Flask, flash, redirect, render_template, request, session, url_for
 from flask_sqlalchemy import SQLAlchemy
+from sqlalchemy.exc import IntegrityError
 from helpers import *
 
 # create Flask server
@@ -203,6 +204,17 @@ def index():
 @app.route('/new_grant')
 def new_grant():
     """ Example of how to pass info to web app via Query Strings """
+    
+    grant1 = Grant(request.args.get('grant_id'))
+    grant1.contact_first_name = "Nicholas"
+    grant1.contact_last_name = "Boucher"
+    
+    try:
+        db.session.add(grant1)
+        db.session.commit()
+    except IntegrityError:
+        return "Error: Grant already exists"
+    
     return request.args.get('grant_id')
 
 @app.route('/grant/<grant>')

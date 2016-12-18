@@ -202,4 +202,10 @@ def index():
 
 @app.route('/new_grant')
 def new_grant():
-    return request.form["grant_id"]
+    """ Example of how to pass info to web app via Query Strings """
+    return request.args.get('grant_id')
+
+@app.route('/grant/<grant>')
+def grant(grant):
+    """ Example of how to have each grant use its own URL """
+    return grant

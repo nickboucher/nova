@@ -2,6 +2,7 @@ from flask import Flask, flash, redirect, render_template, request, session, url
 from flask_sqlalchemy import SQLAlchemy
 from sqlalchemy.exc import IntegrityError
 from datetime import datetime
+from urllib.parse import parse_qs
 from helpers import *
 
 # create Flask server
@@ -197,7 +198,29 @@ class Organization(db.Model):
 
     def __repr__(self):
         return '<Organization %r>' % self.name
+        
+class Config(db.Model):
+    key = db.Column(db.String(64), primary_key=True)
+    value = db.Column(db.Text)
 
+    def __init__(self, key, value):
+        self.key = key
+        self.value = value
+
+    def __repr__(self):
+        return '<Config %r>' % self.key
+        
+class Grant_Count(db.Model):
+    grant_week = db.Column(db.String(64), primary_key=True)
+    num_grants = db.Column(db.Integer)
+
+    def __init__(self, grant_week):
+        self.grant_week = grant_week
+        self.num_grants = 0
+
+    def __repr__(self):
+        return '<Grant_Count %r>' % self.grant_week
+        
 @app.route('/')
 def index():
     return render_template("index.html")
@@ -206,94 +229,122 @@ def index():
 def new_grant():
     """ Example of how to pass info to web app via Query Strings """
     
-    grant = Grant("35S-1-3")
+    # Escape all ampersands in query string that don't seem relevant
+    # (Unfortunately, Qualtrisc doesn't do this for us)
+    raw_data = request.query_string.decode('utf8').split('&')
+    parsed_args = []
+    for arg in raw_data:
+        # Skip first param, check if if arg starts with acceptable field
+        if len(parsed_args) == 0 or arg.startswith(tuple(vars(Grant).keys())):
+            parsed_args.append(arg)
+        else:
+            # append argument to previous arg and escapse '&'
+            parsed_args[-1] += "%26" + arg.replace(';','%3B')
+    # Rebuild query string and parse as if normal
+    clean_query = "&".join(parsed_args)
+    args = parse_qs(clean_query)
     
-    if request.args.get('amount_requested'): grant.amount_requested = float(request.args.get('amount_requested'))
-    if request.args.get('is_collaboration'): grant.is_collaboration = (True if request.args.get('is_collaboration') == "Yes" else False)
-    if request.args.get('collaborators'): grant.collaborators = request.args.get('collaborators')
-    if request.args.get('collaboration_explanation'): grant.collaboration_explanation = request.args.get('collaboration_explanation')
-    if request.args.get('contact_first_name'): grant.contact_first_name = request.args.get('contact_first_name')
-    if request.args.get('contact_last_name'): grant.contact_last_name = request.args.get('contact_last_name')
-    if request.args.get('contact_email'): grant.contact_email = request.args.get('contact_email')
-    if request.args.get('contact_phone'): grant.contact_phone = request.args.get('contact_phone')
-    if request.args.get('contact_role'): grant.contact_role = request.args.get('contact_role')
-    if request.args.get('is_upfront'): grant.is_upfront = (True if request.args.get('is_upfront') == "1" else False)
-    if request.args.get('organization'): grant.organization = request.args.get('organization')
-    if request.args.get('tax_id'): grant.tax_id = request.args.get('tax_id')
-    if request.args.get('project'): grant.project = request.args.get('project')
-    if request.args.get('project_description'): grant.project_description = request.args.get('project_description')
-    if request.args.get('is_event'): grant.is_event = (True if request.args.get('is_event') == "Event" else False)
-    if request.args.get('project_location'): grant.project_location = request.args.get('project_location')
-    if request.args.get('project_start'): grant.project_start = datetime.strptime(request.args.get('project_start'), '%m/%d/%Y')
-    if request.args.get('project_end'): grant.project_end = datetime.strptime(request.args.get('project_end'), '%m/%d/%Y')
-    if request.args.get('college_attendees'): grant.college_attendees = int(request.args.get('college_attendees'))
-    if request.args.get('facebook_link'): grant.facebook_link = request.args.get('facebook_link')
-    if request.args.get('revenue1_type'): grant.revenue1_type = request.args.get('revenue1_type')
-    if request.args.get('revenue1_description'): grant.revenue1_description = request.args.get('revenue1_description')
-    if request.args.get('revenue1_amount'): grant.revenue1_amount = float(request.args.get('revenue1_amount'))
-    if request.args.get('revenue2_type'): grant.revenue2_type = request.args.get('revenue2_type')
-    if request.args.get('revenue2_description'): grant.revenue2_description = request.args.get('revenue2_description')
-    if request.args.get('revenue2_amount'): grant.revenue2_amount = float(request.args.get('revenue2_amount'))
-    if request.args.get('revenue3_type'): grant.revenue3_type = request.args.get('revenue3_type')
-    if request.args.get('revenue3_description'): grant.revenue3_description = request.args.get('revenue3_description')
-    if request.args.get('revenue3_amount'): grant.revenue3_amount = float(request.args.get('revenue3_amount'))
-    if request.args.get('revenue4_type'): grant.revenue4_type = request.args.get('revenue4_type')
-    if request.args.get('revenue4_description'): grant.revenue4_description = request.args.get('revenue4_description')
-    if request.args.get('revenue4_amount'): grant.revenue4_amount = float(request.args.get('revenue4_amount'))
-    if request.args.get('revenue5_type'): grant.revenue5_type = request.args.get('revenue5_type')
-    if request.args.get('revenue5_description'): grant.revenue5_description = request.args.get('revenue5_description')
-    if request.args.get('revenue5_amount'): grant.revenue5_amount = float(request.args.get('revenue5_amount'))
-    if request.args.get('revenue6_type'): grant.revenue6_type = request.args.get('revenue6_type')
-    if request.args.get('revenue6_description'): grant.revenue6_description = request.args.get('revenue6_description')
-    if request.args.get('revenue6_amount'): grant.revenue6_amount = float(request.args.get('revenue6_amount'))
-    if request.args.get('revenue7_type'): grant.revenue7_type = request.args.get('revenue7_type')
-    if request.args.get('revenue7_description'): grant.revenue7_description = request.args.get('revenue7_description')
-    if request.args.get('revenue7_amount'): grant.revenue7_amount = float(request.args.get('revenue7_amount'))
-    if request.args.get('revenue8_type'): grant.revenue8_type = request.args.get('revenue8_type')
-    if request.args.get('revenue8_description'): grant.revenue8_description = request.args.get('revenue8_description')
-    if request.args.get('revenue8_amount'): grant.revenue8_amount = float(request.args.get('revenue8_amount'))
-    if request.args.get('revenue9_type'): grant.revenue9_type = request.args.get('revenue9_type')
-    if request.args.get('revenue9_amount'): grant.revenue9_amount = float(request.args.get('revenue9_amount'))
-    if request.args.get('revenue10_type'): grant.revenue10_type = request.args.get('revenue10_type')
-    if request.args.get('revenue10_description'): grant.revenue10_description = request.args.get('revenue10_description')
-    if request.args.get('revenue10_amount'): grant.revenue10_amount = float(request.args.get('revenue10_amount'))
-    if request.args.get('app_expense1_type'): grant.app_expense1_type = request.args.get('app_expense1_type')
-    if request.args.get('app_expense1_description'): grant.app_expense1_description = request.args.get('app_expense1_description')
-    if request.args.get('app_expense1_amount'): grant.app_expense1_amount = float(request.args.get('app_expense1_amount'))
-    if request.args.get('app_expense2_type'): grant.app_expense2_type = request.args.get('app_expense2_type')
-    if request.args.get('app_expense2_description'): grant.app_expense2_description = request.args.get('app_expense2_description')
-    if request.args.get('app_expense2_amount'): grant.app_expense2_amount = float(request.args.get('app_expense2_amount'))
-    if request.args.get('app_expense3_type'): grant.app_expense3_type = request.args.get('app_expense3_type')
-    if request.args.get('app_expense3_description'): grant.app_expense3_description = request.args.get('app_expense3_description')
-    if request.args.get('app_expense3_amount'): grant.app_expense3_amount = float(request.args.get('app_expense3_amount'))
-    if request.args.get('app_expense4_type'): grant.app_expense4_type = request.args.get('app_expense4_type')
-    if request.args.get('app_expense4_description'): grant.app_expense4_description = request.args.get('app_expense4_description')
-    if request.args.get('app_expense4_amount'): grant.app_expense4_amount = float(request.args.get('app_expense4_amount'))
-    if request.args.get('app_expense5_type'): grant.app_expense5_type = request.args.get('app_expense5_type')
-    if request.args.get('app_expense5_description'): grant.app_expense5_description = request.args.get('app_expense5_description')
-    if request.args.get('app_expense5_amount'): grant.app_expense5_amount = float(request.args.get('app_expense5_amount'))
-    if request.args.get('app_expense6_type'): grant.app_expense6_type = request.args.get('app_expense6_type')
-    if request.args.get('app_expense6_description'): grant.app_expense6_description = request.args.get('app_expense6_description')
-    if request.args.get('app_expense6_amount'): grant.app_expense6_amount = float(request.args.get('app_expense6_amount'))
-    if request.args.get('app_expense7_type'): grant.app_expense7_type = request.args.get('app_expense7_type')
-    if request.args.get('app_expense7_description'): grant.app_expense7_description = request.args.get('app_expense7_description')
-    if request.args.get('app_expense7_amount'): grant.app_expense7_amount = float(request.args.get('app_expense7_amount'))
-    if request.args.get('app_expense8_type'): grant.app_expense8_type = request.args.get('app_expense8_type')
-    if request.args.get('app_expense8_description'): grant.app_expense8_description = request.args.get('app_expense8_description')
-    if request.args.get('app_expense8_amount'): grant.app_expense8_amount = float(request.args.get('app_expense8_amount'))
-    if request.args.get('app_expense9_type'): grant.app_expense9_type = request.args.get('app_expense9_type')
-    if request.args.get('app_expense9_description'): grant.app_expense9_description = request.args.get('app_expense9_description')
-    if request.args.get('app_expense9_amount'): grant.app_expense9_amount = float(request.args.get('app_expense9_amount'))
-    if request.args.get('app_expense10_type'): grant.app_expense10_type = request.args.get('app_expense10_type')
-    if request.args.get('app_expense10_description'): grant.app_expense10_description = request.args.get('app_expense10_description')
-    if request.args.get('app_expense10_amount'): grant.app_expense10_amount = float(request.args.get('app_expense10_amount'))
-    if request.args.get('app_expense11_type'): grant.app_expense11_type = request.args.get('app_expense11_type')
-    if request.args.get('app_expense11_description'): grant.app_expense11_description = request.args.get('app_expense11_description')
-    if request.args.get('app_expense11_amount'): grant.app_expense11_amount = float(request.args.get('app_expense11_amount'))
-    if request.args.get('app_expense12_type'): grant.app_expense12_type = request.args.get('app_expense12_type')
-    if request.args.get('app_expense12_description'): grant.app_expense12_description = request.args.get('app_expense12_description')
-    if request.args.get('app_expense12_amount'): grant.app_expense12_amount = float(request.args.get('app_expense12_amount'))
-    if request.args.get('application_comments'): grant.application_comments = request.args.get('application_comments')
+    # Get Next Grant ID
+    current_week = Config.query.filter_by(key='grant_week').first()
+    grant_number = Grant_Count.query.filter_by(grant_week=current_week.value).first()
+    # This is not atomic, which seems like a potential problem...
+    grant_number.num_grants += 1
+    db.session.commit()
+    grant_id = current_week.value + "-" + str(grant_number.num_grants)
+    
+    # Create New Grant
+    grant = Grant(grant_id)
+    
+    print(args)
+    
+    # Add Grant Values from Parsed Query String
+    print(args.get('amount_requested')[0])
+    if args.get('amount_requested'): grant.amount_requested = float(args.get('amount_requested')[0])
+    if args.get('is_collaboration'): grant.is_collaboration = (True if args.get('is_collaboration')[0] == "Yes" else False)
+    if args.get('collaborators'): grant.collaborators = args.get('collaborators')[0]
+    if args.get('collaboration_explanation'): grant.collaboration_explanation = args.get('collaboration_explanation')[0]
+    if args.get('contact_first_name'): grant.contact_first_name = args.get('contact_first_name')[0]
+    if args.get('contact_last_name'): grant.contact_last_name = args.get('contact_last_name')[0]
+    if args.get('contact_email'): grant.contact_email = args.get('contact_email')[0]
+    if args.get('contact_phone'): grant.contact_phone = args.get('contact_phone')[0]
+    if args.get('contact_role'): grant.contact_role = args.get('contact_role')[0]
+    if args.get('is_upfront'): grant.is_upfront = (True if args.get('is_upfront')[0] == "1" else False)
+    if args.get('organization'): grant.organization = args.get('organization')[0]
+    if args.get('tax_id'): grant.tax_id = args.get('tax_id')[0]
+    if args.get('project'): grant.project = args.get('project')[0]
+    if args.get('project_description'): grant.project_description = args.get('project_description')[0]
+    if args.get('is_event'): grant.is_event = (True if args.get('is_event')[0] == "Event" else False)
+    if args.get('project_location'): grant.project_location = args.get('project_location')[0]
+    if args.get('project_start'): grant.project_start = datetime.strptime(args.get('project_start')[0], '%m/%d/%Y')
+    if args.get('project_end'): grant.project_end = datetime.strptime(args.get('project_end')[0], '%m/%d/%Y')
+    if args.get('college_attendees'): grant.college_attendees = int(args.get('college_attendees')[0])
+    if args.get('facebook_link'): grant.facebook_link = args.get('facebook_link')[0]
+    if args.get('revenue1_type'): grant.revenue1_type = args.get('revenue1_type')[0]
+    if args.get('revenue1_description'): grant.revenue1_description = args.get('revenue1_description')[0]
+    if args.get('revenue1_amount'): grant.revenue1_amount = float(args.get('revenue1_amount')[0])
+    if args.get('revenue2_type'): grant.revenue2_type = args.get('revenue2_type')[0]
+    if args.get('revenue2_description'): grant.revenue2_description = args.get('revenue2_description')[0]
+    if args.get('revenue2_amount'): grant.revenue2_amount = float(args.get('revenue2_amount')[0])
+    if args.get('revenue3_type'): grant.revenue3_type = args.get('revenue3_type')[0]
+    if args.get('revenue3_description'): grant.revenue3_description = args.get('revenue3_description')[0]
+    if args.get('revenue3_amount'): grant.revenue3_amount = float(args.get('revenue3_amount')[0])
+    if args.get('revenue4_type'): grant.revenue4_type = args.get('revenue4_type')[0]
+    if args.get('revenue4_description'): grant.revenue4_description = args.get('revenue4_description')[0]
+    if args.get('revenue4_amount'): grant.revenue4_amount = float(args.get('revenue4_amount')[0])
+    if args.get('revenue5_type'): grant.revenue5_type = args.get('revenue5_type')[0]
+    if args.get('revenue5_description'): grant.revenue5_description = args.get('revenue5_description')[0]
+    if args.get('revenue5_amount'): grant.revenue5_amount = float(args.get('revenue5_amount')[0])
+    if args.get('revenue6_type'): grant.revenue6_type = args.get('revenue6_type')[0]
+    if args.get('revenue6_description'): grant.revenue6_description = args.get('revenue6_description')[0]
+    if args.get('revenue6_amount'): grant.revenue6_amount = float(args.get('revenue6_amount')[0])
+    if args.get('revenue7_type'): grant.revenue7_type = args.get('revenue7_type')[0]
+    if args.get('revenue7_description'): grant.revenue7_description = args.get('revenue7_description')[0]
+    if args.get('revenue7_amount'): grant.revenue7_amount = float(args.get('revenue7_amount')[0])
+    if args.get('revenue8_type'): grant.revenue8_type = args.get('revenue8_type')[0]
+    if args.get('revenue8_description'): grant.revenue8_description = args.get('revenue8_description')[0]
+    if args.get('revenue8_amount'): grant.revenue8_amount = float(args.get('revenue8_amount')[0])
+    if args.get('revenue9_type'): grant.revenue9_type = args.get('revenue9_type')[0]
+    if args.get('revenue9_amount'): grant.revenue9_amount = float(args.get('revenue9_amount')[0])
+    if args.get('revenue10_type'): grant.revenue10_type = args.get('revenue10_type')[0]
+    if args.get('revenue10_description'): grant.revenue10_description = args.get('revenue10_description')[0]
+    if args.get('revenue10_amount'): grant.revenue10_amount = float(args.get('revenue10_amount')[0])
+    if args.get('app_expense1_type'): grant.app_expense1_type = args.get('app_expense1_type')[0]
+    if args.get('app_expense1_description'): grant.app_expense1_description = args.get('app_expense1_description')[0]
+    if args.get('app_expense1_amount'): grant.app_expense1_amount = float(args.get('app_expense1_amount')[0])
+    if args.get('app_expense2_type'): grant.app_expense2_type = args.get('app_expense2_type')[0]
+    if args.get('app_expense2_description'): grant.app_expense2_description = args.get('app_expense2_description')[0]
+    if args.get('app_expense2_amount'): grant.app_expense2_amount = float(args.get('app_expense2_amount')[0])
+    if args.get('app_expense3_type'): grant.app_expense3_type = args.get('app_expense3_type')[0]
+    if args.get('app_expense3_description'): grant.app_expense3_description = args.get('app_expense3_description')[0]
+    if args.get('app_expense3_amount'): grant.app_expense3_amount = float(args.get('app_expense3_amount')[0])
+    if args.get('app_expense4_type'): grant.app_expense4_type = args.get('app_expense4_type')[0]
+    if args.get('app_expense4_description'): grant.app_expense4_description = args.get('app_expense4_description')[0]
+    if args.get('app_expense4_amount'): grant.app_expense4_amount = float(args.get('app_expense4_amount')[0])
+    if args.get('app_expense5_type'): grant.app_expense5_type = args.get('app_expense5_type')[0]
+    if args.get('app_expense5_description'): grant.app_expense5_description = args.get('app_expense5_description')[0]
+    if args.get('app_expense5_amount'): grant.app_expense5_amount = float(args.get('app_expense5_amount')[0])
+    if args.get('app_expense6_type'): grant.app_expense6_type = args.get('app_expense6_type')[0]
+    if args.get('app_expense6_description'): grant.app_expense6_description = args.get('app_expense6_description')[0]
+    if args.get('app_expense6_amount'): grant.app_expense6_amount = float(args.get('app_expense6_amount')[0])
+    if args.get('app_expense7_type'): grant.app_expense7_type = args.get('app_expense7_type')[0]
+    if args.get('app_expense7_description'): grant.app_expense7_description = args.get('app_expense7_description')[0]
+    if args.get('app_expense7_amount'): grant.app_expense7_amount = float(args.get('app_expense7_amount')[0])
+    if args.get('app_expense8_type'): grant.app_expense8_type = args.get('app_expense8_type')[0]
+    if args.get('app_expense8_description'): grant.app_expense8_description = args.get('app_expense8_description')[0]
+    if args.get('app_expense8_amount'): grant.app_expense8_amount = float(args.get('app_expense8_amount')[0])
+    if args.get('app_expense9_type'): grant.app_expense9_type = args.get('app_expense9_type')[0]
+    if args.get('app_expense9_description'): grant.app_expense9_description = args.get('app_expense9_description')[0]
+    if args.get('app_expense9_amount'): grant.app_expense9_amount = float(args.get('app_expense9_amount')[0])
+    if args.get('app_expense10_type'): grant.app_expense10_type = args.get('app_expense10_type')[0]
+    if args.get('app_expense10_description'): grant.app_expense10_description = args.get('app_expense10_description')[0]
+    if args.get('app_expense10_amount'): grant.app_expense10_amount = float(args.get('app_expense10_amount')[0])
+    if args.get('app_expense11_type'): grant.app_expense11_type = args.get('app_expense11_type')[0]
+    if args.get('app_expense11_description'): grant.app_expense11_description = args.get('app_expense11_description')[0]
+    if args.get('app_expense11_amount'): grant.app_expense11_amount = float(args.get('app_expense11_amount')[0])
+    if args.get('app_expense12_type'): grant.app_expense12_type = args.get('app_expense12_type')[0]
+    if args.get('app_expense12_description'): grant.app_expense12_description = args.get('app_expense12_description')[0]
+    if args.get('app_expense12_amount'): grant.app_expense12_amount = float(args.get('app_expense12_amount')[0])
+    if args.get('application_comments'): grant.application_comments = args.get('application_comments')[0]
     
     try:
         db.session.add(grant)

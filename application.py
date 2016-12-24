@@ -227,7 +227,7 @@ def index():
 
 @app.route('/new_grant')
 def new_grant():
-    """ Example of how to pass info to web app via Query Strings """
+    """Inserts new grant applications into database from query strings passed by qualtrics survey """
     
     # Escape all ampersands in query string that don't seem relevant
     # (Unfortunately, Qualtrisc doesn't do this for us)
@@ -365,5 +365,5 @@ def new_grant():
 
 @app.route('/grant/<grant>')
 def grant(grant):
-    """ Example of how to have each grant use its own URL """
-    return grant
+    """ Retrieves grant info for applicants to track grant progress """
+    return grant.upper()

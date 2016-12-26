@@ -30,7 +30,7 @@ def get_grant_args(query_string):
         if len(parsed_args) == 0 or arg.startswith(valid_queries):
             parsed_args.append(arg)
         else:
-            # append argument to previous arg and escapse '&'
+            # append argument to previous arg and escapse '&' and ';'
             parsed_args[-1] += "%26" + arg.replace(';','%3B')
     # Rebuild query string and parse as if normal
     clean_query = "&".join(parsed_args)

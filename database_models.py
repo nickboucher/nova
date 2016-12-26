@@ -22,6 +22,7 @@ class Grant(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     grant_id = db.Column(db.String(64), unique=True)
     # Application Info
+    application_submit_time = db.Column(db.DateTime, server_default=db.func.current_timestamp())
     amount_requested = db.Column(db.Float)
     is_collaboration = db.Column(db.Boolean)
     collaborators = db.Column(db.Text) #comma-separated

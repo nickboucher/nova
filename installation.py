@@ -1,7 +1,7 @@
 from sys import exit
 from os import path, rename
 from datetime import datetime
-from database_models import db, Config
+from database_models import db, Config, Grant_Count
 from application import app
 
 # Check if SQLlite database file already exists
@@ -59,6 +59,10 @@ db.session.add(council_semester)
 # Add Grant Week to config
 grant_week = Config('grant_week', week)
 db.session.add(grant_week)
+
+# Add empty number of Grants for current week
+grant_count = Grant_Count(council + semester + '-' + week)
+db.session.add(grant_count)
 
 # Commit changes to databse
 db.session.commit()

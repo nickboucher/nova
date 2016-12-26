@@ -55,11 +55,12 @@ def new_grant():
     # Get Next Grant ID
     council_semester = Config.query.filter_by(key='council_semester').first()
     current_week = Config.query.filter_by(key='grant_week').first()
-    grant_number = Grant_Count.query.filter_by(grant_week=current_week.value).first()
+    grant_prefix = council_semester.value + '-' + current_week.value
+    grant_number = Grant_Count.query.filter_by(grant_week=grant_prefix).first()
     # This is not atomic, which seems like a potential problem...
     grant_number.num_grants += 1
     db.session.commit()
-    grant_id = council_semester.value + '-' + current_week.value + "-" + str(grant_number.num_grants)
+    grant_id = grant_prefix + "-" + str(grant_number.num_grants)
     
     # Create New Grant
     grant = Grant(grant_id)

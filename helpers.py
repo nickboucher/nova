@@ -1,3 +1,14 @@
+#
+# helpers.py
+# Nicholas Boucher 2017
+#
+# Contains a set of general functions that assist the main 
+# application in data-processing
+#
+
+from database_models import *
+from urllib.parse import parse_qs
+
 def usd(value):
     """Formats value as USD."""
     return "${:,.2f}".format(value)

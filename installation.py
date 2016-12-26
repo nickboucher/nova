@@ -1,3 +1,12 @@
+#
+# installation.py
+# Nicholas Boucher 2017
+#
+# Contains an installation script that creates and configures the 
+# SQLlite database. Should be invoked via the command line (i.e.
+# `python3 installation.py`).
+#
+
 from sys import exit
 from os import path, rename
 from datetime import datetime

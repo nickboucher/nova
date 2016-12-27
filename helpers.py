@@ -28,10 +28,11 @@ def get_grant_args(query_string):
     for arg in raw_data:
         # Skip first param, check if if arg starts with acceptable field
         if len(parsed_args) == 0 or arg.startswith(valid_queries):
-            parsed_args.append(arg)
+            # add argument to list and escapse ';' and '+'
+            parsed_args.append(arg.replace(';','%3B').replace('+','%2B'))
         else:
-            # append argument to previous arg and escapse '&' and ';'
-            parsed_args[-1] += "%26" + arg.replace(';','%3B')
+            # append argument to previous arg and escapse '&', ';', and '+'
+            parsed_args[-1] += "%26" + arg.replace(';','%3B').replace('+','%2B')
     # Rebuild query string and parse as if normal
     clean_query = "&".join(parsed_args)
     return parse_qs(clean_query)

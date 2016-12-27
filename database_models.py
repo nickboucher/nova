@@ -165,6 +165,9 @@ class Grant(db.Model):
     expense12_amount = db.Column(db.Float)
     receipt_images = db.Column(db.Text) # comma-separated file numbers
     completed_proj_comments = db.Column(db.Text)
+    receipts_submit_date = db.Column(db.DateTime)
+    receipts_submitted = db.Column(db.Boolean)
+    receipts_resubmit_history = db.Column(db.Text) # comma-separated list of resubmission dates
     # Treasurer Info
     pay_date = db.Column(db.DateTime)
     is_direct_deposit = db.Column(db.Boolean)

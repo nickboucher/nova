@@ -162,11 +162,92 @@ def new_grant():
     return "Inserted"
     
 @app.route('/receipts')
-def receipts():
+def receipts(overwrite = False):
     """ Adds completed project info (including receipts) to existing grant record """
     
-    # get arguments from query string
+    # Get arguments from query string
     args = get_grant_args(request.query_string)
+    
+    # Check for grant_id, which is necessary to update database record
+    if not args.get('grant_id'):
+        return "Error: No Grant ID submitted"
+    
+    # Query for the relevant grant
+    grant = Grant.query.filter_by(grant_id=args['grant_id'][0]).first()
+    # Return error without updating data if grant does not exist
+    if grant == None:
+        return "Invalid Grant ID"
+        
+    if grant.receipts_submitted and not overwrite:
+        return 'Receipts have already been submitted for this grant. To overwrite your previous receipt submission with this one, <a href="/resubmit-receipts?' + request.query_string.decode() + '">click here</a>.'
+    
+    if overwrite:
+        # Zero out all previous values if overwriting a receipts record
+        grant.expense1_description=grant.expense1_amount=grant.expense2_description=grant.expense2_amount=grant.expense3_description=\
+        grant.expense3_amount=grant.expense4_description=grant.expense4_amount=grant.expense5_description=grant.expense5_amount=\
+        grant.expense6_description=grant.expense6_amount=grant.expense7_description=grant.expense7_amount=grant.expense8_description=\
+        grant.expense8_amount=grant.expense9_description=grant.expense9_amount=grant.expense10_description=grant.expense10_amount=\
+        grant.expense11_description=grant.expense11_amount=grant.expense12_description=grant.expense12_amount=grant.completed_proj_comments\
+        = None
+        
+        # update receipt resubmission history
+        if grant.receipts_resubmit_history:
+            grant.receipts_resubmit_history += ", " + grant.receipts_submit_date.strftime("%Y-%m-%d %H:%M:%S")
+        else:
+            grant.receipts_resubmit_history = grant.receipts_submit_date.strftime("%Y-%m-%d %H:%M:%S")
+    
+    # Parse Recipts images comma-separated list
+    if args.get('receipt_images'):
+        # Remove all unecessary commas
+        receipts = args['receipt_images'][0].replace(', ,', '')
+        # trim trailing whitespace
+        receipts = receipts.rstrip()
+        # Remove final comma (fencepost error)
+        if receipts[-1] == ',': receipts = receipts[:-1]
+        # trim trailing whitespace
+        receipts = receipts.rstrip()
+        # Update databse record
+        grant.receipt_images = receipts
+        
+    # Add Other Grant Values from Parsed Query String
+    if args.get('expense1_description'): grant.expense1_description = args.get('expense1_description')[0]
+    if args.get('expense1_amount'): grant.expense1_amount = float(args.get('expense1_amount')[0])
+    if args.get('expense2_description'): grant.expense2_description = args.get('expense2_description')[0]
+    if args.get('expense2_amount'): grant.expense2_amount = float(args.get('expense2_amount')[0])
+    if args.get('expense3_description'): grant.expense3_description = args.get('expense3_description')[0]
+    if args.get('expense3_amount'): grant.expense3_amount = float(args.get('expense3_amount')[0])
+    if args.get('expense4_description'): grant.expense4_description = args.get('expense4_description')[0]
+    if args.get('expense4_amount'): grant.expense4_amount = float(args.get('expense4_amount')[0])
+    if args.get('expense5_description'): grant.expense5_description = args.get('expense5_description')[0]
+    if args.get('expense5_amount'): grant.expense5_amount = float(args.get('expense5_amount')[0])
+    if args.get('expense6_description'): grant.expense6_description = args.get('expense6_description')[0]
+    if args.get('expense6_amount'): grant.expense6_amount = float(args.get('expense6_amount')[0])
+    if args.get('expense7_description'): grant.expense7_description = args.get('expense7_description')[0]
+    if args.get('expense7_amount'): grant.expense7_amount = float(args.get('expense7_amount')[0])
+    if args.get('expense8_description'): grant.expense8_description = args.get('expense8_description')[0]
+    if args.get('expense8_amount'): grant.expense8_amount = float(args.get('expense8_amount')[0])
+    if args.get('expense9_description'): grant.expense9_description = args.get('expense9_description')[0]
+    if args.get('expense9_amount'): grant.expense9_amount = float(args.get('expense9_amount')[0])
+    if args.get('expense10_description'): grant.expense10_description = args.get('expense10_description')[0]
+    if args.get('expense10_amount'): grant.expense10_amount = float(args.get('expense10_amount')[0])
+    if args.get('expense11_description'): grant.expense11_description = args.get('expense11_description')[0]
+    if args.get('expense11_amount'): grant.expense11_amount = float(args.get('expense11_amount')[0])
+    if args.get('expense12_description'): grant.expense12_description = args.get('expense12_description')[0]
+    if args.get('expense12_amount'): grant.expense12_amount = float(args.get('expense12_amount')[0])
+    if args.get('completed_proj_comments'): grant.completed_proj_comments = args.get('completed_proj_comments')[0]
+    
+    # Set Submission Metadata
+    grant.receipts_submit_date = datetime.now()
+    grant.receipts_submitted = True
+    
+    # Commit database changes
+    db.session.commit()
+    return "Record Updated"
+    
+@app.route('/resubmit-receipts')
+def resubmit_receipts():
+    """ Handles the case in which a user would like to re-submit receipts and overwrite previous record """
+    return receipts(True)
 
 @app.route('/grant/<grant>')
 def grant(grant):

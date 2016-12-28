@@ -1,0 +1,53 @@
+.center {
+    text-align: center;
+}
+
+.padding-bottom-20 {
+    padding-bottom: 20px;
+}
+
+.centered {
+    text-align: left;
+    margin-right: auto;
+    margin-left: auto;
+}
+
+.flex {
+    display: flex;
+}
+
+.margin15 {
+    margin-top: 15px;
+}
+
+/* Grant Status Page CSS */
+
+#progress_container {
+  width: 100%;
+  height: 25px;
+  text-align: center;
+  color: #5cb85c;
+  font-weight: bold;
+  line-height: 2;
+  font-size: 1.5em;
+  margin-top: 2em;
+  margin-bottom: 100px;
+}
+
+@media only screen and (min-width : 992px) {
+    .right-line {
+        padding-right:20px;
+        border-right: 1px solid #ccc;
+    }
+    
+    .flexbox {
+      display: -webkit-flex;
+      display: -ms-flexbox;
+      display: flex;
+      overflow: hidden;
+    }
+    
+    .flexbox .col {
+      flex: 1;
+    }
+}

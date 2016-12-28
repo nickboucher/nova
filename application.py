@@ -249,7 +249,43 @@ def resubmit_receipts():
     """ Handles the case in which a user would like to re-submit receipts and overwrite previous record """
     return receipts(True)
 
-@app.route('/grant/<grant>')
-def grant(grant):
+@app.route('/grant/<grant_id>')
+def grant(grant_id):
     """ Retrieves grant info for applicants to track grant progress """
-    return grant.upper()
+    
+    # Verify that a grant id was specified
+    if not grant_id:
+        return "Error: No Grant ID specified"
+    
+    # Query for grant information
+    grant = Grant.query.filter_by(grant_id=grant_id.upper()).first()
+    
+    # Check if grant exists in database
+    if not grant:
+        return "Error: Grant does not exist."
+    
+    # Calculate Progress through grant process for template progress bar
+    progress = {'percentage': 0, 'message': ""}
+    if grant.is_paid:
+        progress['percentage'] = 1.0
+        if grant.is_direct_deposit == None:
+            progress['message'] = "Grant Completed."
+        elif grant.is_direct_deposit:
+            if grant.pay_date:
+                progress['message'] = "Funds Direct Deposited on " + grant.pay_date.strftime('%a. %d, %Y')
+            else:
+                progress['message'] = "Funds Direct Deposited into Your Account"
+    elif grant.receipts_submitted:
+        progress['percentage'] = 0.8
+        progress['message'] = "Receipts Processing"
+    elif grant.interview_occurred:
+        progress['percentage'] = 0.6
+        progress['message'] = "Submit Receipts"
+    elif grant.interview_schedule_date:
+        progress['percentage'] = 0.4
+        progress['message'] = "Interview scheduled for " + grant.interview_schedule_date.strftime('%a. %d, %Y at %I:%M %p')
+    else:
+        progress['percentage'] = 0.2
+        progress['message'] = "Interview being scheduled"
+    
+    return render_template("grant_status.html", grant=grant, progress=progress)

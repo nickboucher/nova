@@ -7,6 +7,7 @@
 #
 
 from flask_sqlalchemy import SQLAlchemy
+from datetime import datetime
 
 # Initialize db variable to avoid namespace errors
 # ('db; must be imported by application later)
@@ -20,9 +21,9 @@ class Grant(db.Model):
     """ Contains all information about any grant application (and its current progress) """
     # General Grant Info
     id = db.Column(db.Integer, primary_key=True)
-    grant_id = db.Column(db.String(64), unique=True)
+    grant_id = db.Column(db.Text, unique=True)
     # Application Info
-    application_submit_time = db.Column(db.DateTime, server_default=db.func.current_timestamp())
+    application_submit_time = db.Column(db.DateTime, default=datetime.utcnow)
     amount_requested = db.Column(db.Float)
     is_collaboration = db.Column(db.Boolean)
     collaborators = db.Column(db.Text) #comma-separated
@@ -112,7 +113,10 @@ class Grant(db.Model):
     application_comments = db.Column(db.Text)
     # Interview Info
     interviewer = db.Column(db.Text)
-    interview_date = db.Column(db.DateTime)
+    interview_occurred = db.Column(db.Boolean, default=False)
+    interview_date = db.Column(db.DateTime) # date interview actually ocurred
+    interview_schedule_date = db.Column(db.DateTime) # Next scheduled interview
+    interview_schedule_history = db.Column(db.Text) # comma-separated interview scheduled times
     interviewer_notes = db.Column(db.Text)
     food_allocated = db.Column(db.Float)
     food_allocated_notes = db.Column(db.Text)
@@ -166,13 +170,14 @@ class Grant(db.Model):
     receipt_images = db.Column(db.Text) # comma-separated file numbers
     completed_proj_comments = db.Column(db.Text)
     receipts_submit_date = db.Column(db.DateTime)
-    receipts_submitted = db.Column(db.Boolean)
+    receipts_submitted = db.Column(db.Boolean, default=False)
     receipts_resubmit_history = db.Column(db.Text) # comma-separated list of resubmission dates
     # Treasurer Info
+    is_paid = db.Column(db.Boolean, default = False)
     pay_date = db.Column(db.DateTime)
     is_direct_deposit = db.Column(db.Boolean)
-    check_number = db.Column(db.String(64))
-    amount_spent = db.Column(db.Float)
+    check_number = db.Column(db.Text)
+    amount_dispensed = db.Column(db.Float)
 
 
     def __init__(self, grant_id):

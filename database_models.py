@@ -126,8 +126,6 @@ class Grant(db.Model):
     publicity_allocated_notes = db.Column(db.Text)
     materials_allocated = db.Column(db.Float)
     materials_allocated_notes = db.Column(db.Text)
-    food_allocated = db.Column(db.Float)
-    food_allocated_notes = db.Column(db.Text)
     venue_allocated = db.Column(db.Float)
     venue_allocated_notes = db.Column(db.Text)
     decorations_allocated = db.Column(db.Float)

@@ -1,0 +1,87 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Grant {{ grant.grant_id }}
+{% endblock %}
+
+{% block main %}
+
+    <div class="row">
+        <div class="col-md-12 center">
+            <h1>{{ grant.project }}</h1>
+            <h4>
+                Grant {{ grant.grant_id }}, {{ grant.organization }}
+                {% if grant.is_collaboration %}
+                    with {{ grant.collaborators }}
+                {% endif %}
+            </h4>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12">
+            <div id="progress_container">{{ progress['message'] }}</div>
+        </div>
+    </div>
+    
+    <div class="row flexbox">
+        <div class="col-md-4 right-line col">
+            <div class="center padding-bottom-20">
+                <b>Grant Info</b>
+            </div>
+            <div class="flex">
+                <div class="centered">
+                    Contact Name: {{ grant.contact_first_name }} {{ grant.contact_last_name }}<br>
+                    Submitted: {{ grant.application_submit_time.strftime('%A %d, %Y') }}<br>
+                    Amount Requested: {{ grant.amount_requested | usd }}<br>
+                    Grant Type: {{ "Upfront" if grant.is_upfront else "Retroactive" }}
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 right-line col">
+            <div class="center padding-bottom-20">
+                <b>Progress</b>
+            </div>
+            <div class="flex">
+                <div class="centered">
+                    <i class="fa fa-check-square-o" aria-hidden="true"></i> Submit Application<br>
+                    <i class="fa fa-{{ 'check-' if grant.interview_schedule_date }}square-o" aria-hidden="true"></i> Interview Scheduled<br>
+                    <i class="fa fa-{{ 'check-' if grant.interview_occurred }}square-o" aria-hidden="true"></i> Attend Interview<br>
+                    <i class="fa fa-{{ 'check-' if grant.receipts_submitted }}square-o" aria-hidden="true"></i> Submit Receipts<br>
+                    <i class="fa fa-{{ 'check-' if grant.is_paid }}square-o" aria-hidden="true"></i> Receipts Reviewed<br>
+                    <i class="fa fa-{{ 'check-' if grant.is_paid }}square-o" aria-hidden="true"></i> Funds Dispensed
+                </div>
+            </div>
+        </div>
+        <div class="col-md-4 col">
+            <div class="center padding-bottom-20">
+                <b>Actions</b>
+            </div>
+            <div class="flex">
+                <div class="centered">
+                    <a role="button" class="btn btn-default" aria-label="Left Align">Review Application</a><br>
+                    {% if grant.interview_occurred %}
+                        <a role="button" class="btn btn-default margin15" aria-label="Left Align">What You Were Granted</a><br>
+                        <a href="https://harvard.az1.qualtrics.com/SE/?SID=SV_3mA2HIDqUTZHT0h&grant_id={{ grant.grant_id }}" role="button" class="btn btn-default margin15" aria-label="Left Align">Submit Receipts</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script src="/static/progressbar.min.js"></script>
+    <script type="text/javascript">
+        var bar = new ProgressBar.Line(progress_container, {
+          strokeWidth: 4,
+          easing: 'easeInOut',
+          duration: 1400,
+          color: '#5cb85c',
+          trailColor: '#eee',
+          trailWidth: 16,
+          svgStyle: {width: '100%', height: '100%', 'border-radius': '20px'}
+        });
+        
+        bar.animate( {{ progress["percentage"] }} );  // Number from 0.0 to 1.0
+    </script>
+
+{% endblock %}

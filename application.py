@@ -24,8 +24,10 @@ if app.config["DEBUG"]:
         response.headers["Pragma"] = "no-cache"
         return response
 
-# custom filter
+# custom filters
 app.jinja_env.filters["usd"] = usd
+app.jinja_env.filters["datetime"] = utc_to_east_datetime
+app.jinja_env.filters["date"] = utc_to_east_date
 
 #set cryptographic key for Sessions
 app.secret_key = "some really good encryption string"
@@ -272,7 +274,7 @@ def grant(grant_id):
             progress['message'] = "Grant Completed."
         elif grant.is_direct_deposit:
             if grant.pay_date:
-                progress['message'] = "Funds Direct Deposited on " + grant.pay_date.strftime('%a. %d, %Y')
+                progress['message'] = "Funds Direct Deposited on " + grant.pay_date.strftime('%b. %d, %Y')
             else:
                 progress['message'] = "Funds Direct Deposited into Your Account"
     elif grant.receipts_submitted:
@@ -283,9 +285,50 @@ def grant(grant_id):
         progress['message'] = "Submit Receipts"
     elif grant.interview_schedule_date:
         progress['percentage'] = 0.4
-        progress['message'] = "Interview scheduled for " + grant.interview_schedule_date.strftime('%a. %d, %Y at %I:%M %p')
+        progress['message'] = "Interview scheduled for " + grant.interview_schedule_date.strftime('%b. %d, %Y at %I:%M %p')
     else:
         progress['percentage'] = 0.2
         progress['message'] = "Interview being scheduled"
     
+    # Render grant status page to user
     return render_template("grant_status.html", grant=grant, progress=progress)
+    
+@app.route('/grant/<grant_id>/application')
+def grant_application(grant_id):
+    """ Retrieves the original grant application for applicants to review """
+    
+    # Verify that a grant id was specified
+    if not grant_id:
+        return "Error: No Grant ID specified"
+    
+    # Query for grant information
+    grant = Grant.query.filter_by(grant_id=grant_id.upper()).first()
+    
+    # Check if grant exists in database
+    if not grant:
+        return "Error: Grant does not exist."
+        
+    # Render application page to user
+    return render_template("grant_application.html", grant=grant)
+    
+@app.route('/grant/<grant_id>/allocations')
+def grant_allocations(grant_id):
+    """ Retrieves the categories and amounts allocated for this grant """
+    
+    # Verify that a grant id was specified
+    if not grant_id:
+        return "Error: No Grant ID specified"
+    
+    # Query for grant information
+    grant = Grant.query.filter_by(grant_id=grant_id.upper()).first()
+    
+    # Check if grant exists in database
+    if not grant:
+        return "Error: Grant does not exist."
+        
+    # Ensure that the council has voted on this before displaying
+    if not grant.council_approved:
+        return "This information is not yet available."
+        
+    # Render application page to user
+    return render_template("grant_allocations.html", grant=grant)

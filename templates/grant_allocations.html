@@ -1,0 +1,55 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Grant {{ grant.grant_id }} Allocations
+{% endblock %}
+
+{% block main %}
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="center">
+                <h1>Grant {{ grant.grant_id }} Allocations</h1>
+                <h4>These amounts were voted upon by the council after the interview on {{ grant.interview_date | date }}.</h4>
+            </div>
+            <table class="table table-striped table-responsive table-hover margin40">
+                <thead></thead>
+                <tbody>
+                    <tr>
+                        <td></td>
+                    </tr>
+                    interviewer = db.Column(db.Text)
+                    interview_occurred = db.Column(db.Boolean, default=False)
+                    interview_schedule_date = db.Column(db.DateTime) # Next scheduled interview
+                    interview_schedule_history = db.Column(db.Text) # comma-separated interview scheduled times
+                    interviewer_notes = db.Column(db.Text)
+                    food_allocated = db.Column(db.Float)
+                    food_allocated_notes = db.Column(db.Text)
+                    travel_allocated = db.Column(db.Float)
+                    travel_allocated_notes = db.Column(db.Text)
+                    publicity_allocated = db.Column(db.Float)
+                    publicity_allocated_notes = db.Column(db.Text)
+                    materials_allocated = db.Column(db.Float)
+                    materials_allocated_notes = db.Column(db.Text)
+                    food_allocated = db.Column(db.Float)
+                    food_allocated_notes = db.Column(db.Text)
+                    venue_allocated = db.Column(db.Float)
+                    venue_allocated_notes = db.Column(db.Text)
+                    decorations_allocated = db.Column(db.Float)
+                    decorations_allocated_notes = db.Column(db.Text)
+                    media_allocated = db.Column(db.Float)
+                    media_allocated_notes = db.Column(db.Text)
+                    admissions_allocated = db.Column(db.Float)
+                    admissions_allocated_notes = db.Column(db.Text)
+                    hupd_allocated = db.Column(db.Float)
+                    hupd_allocated_notes = db.Column(db.Text)
+                    personnel_allocated = db.Column(db.Float)
+                    personnel_allocated_notes = db.Column(db.Text)
+                    other_allocated = db.Column(db.Float)
+                    other_allocated_notes = db.Column(db.Text)
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+{% endblock %}

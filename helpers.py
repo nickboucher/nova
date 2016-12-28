@@ -8,10 +8,27 @@
 
 from database_models import *
 from urllib.parse import parse_qs
+from pytz import timezone, utc
 
 def usd(value):
     """Formats value as USD."""
+    if value == None:
+        return ""
     return "${:,.2f}".format(value)
+    
+def utc_to_east_datetime(utc_dt):
+    """ Formats datetime as US Eastern timezone """
+    if utc_dt == None:
+        return ""
+    eastern = timezone('US/Eastern')
+    return utc_dt.replace(tzinfo=utc).astimezone(tz=eastern).strftime("%B %-d, %Y %-I:%-M %p")
+    
+def utc_to_east_date(utc_dt):
+    """ Formats date in US Eastern timezone """
+    if utc_dt == None:
+        return ""
+    eastern = timezone('US/Eastern')
+    return utc_dt.replace(tzinfo=utc).astimezone(tz=eastern).strftime("%B %-d, %Y")
     
 def get_grant_args(query_string):
     """ Gets arguments specific to application from query string,

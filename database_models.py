@@ -172,8 +172,11 @@ class Grant(db.Model):
     receipts_submit_date = db.Column(db.DateTime)
     receipts_submitted = db.Column(db.Boolean, default=False)
     receipts_resubmit_history = db.Column(db.Text) # comma-separated list of resubmission dates
+    # Grants Pack Info
+    grants_pack = db.Column(db.Text)
+    council_approved = db.Column(db.Boolean, default=False)
     # Treasurer Info
-    is_paid = db.Column(db.Boolean, default = False)
+    is_paid = db.Column(db.Boolean, default=False)
     pay_date = db.Column(db.DateTime)
     is_direct_deposit = db.Column(db.Boolean)
     check_number = db.Column(db.Text)

@@ -10,7 +10,14 @@
         <div class="col-md-12">
             <div class="center">
                 <h1>Grant {{ grant.grant_id }} Allocations</h1>
-                <h4>These amounts were voted upon by the council after the interview on {{ grant.interview_date | date }}.</h4>
+                <h4>
+                    These amounts were voted upon by the council after
+                    {% if grant.is_small_grant -%}
+                        your application was reviewed.
+                    {%- else -%}
+                        the interview on {{ grant.interview_date | date }}.
+                    {% endif %}
+                </h4>
             </div>
             <table class="table table-striped table-responsive table-hover margin40">
                 <thead>

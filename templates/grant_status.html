@@ -45,8 +45,12 @@
             <div class="flex">
                 <div class="centered">
                     <i class="fa fa-check-square-o" aria-hidden="true"></i> Submit Application<br>
-                    <i class="fa fa-{{ 'check-' if grant.interview_schedule_date }}square-o" aria-hidden="true"></i> Interview Scheduled<br>
-                    <i class="fa fa-{{ 'check-' if grant.interview_occurred }}square-o" aria-hidden="true"></i> Attend Interview<br>
+                    {% if grant.is_small_grant %}
+                        <i class="fa fa-{{ 'check-' if grant.small_grant_is_reviewed }}square-o" aria-hidden="true"></i> Application Reviewed<br>
+                    {% else %}
+                        <i class="fa fa-{{ 'check-' if grant.interview_schedule_date }}square-o" aria-hidden="true"></i> Interview Scheduled<br>
+                        <i class="fa fa-{{ 'check-' if grant.interview_occurred }}square-o" aria-hidden="true"></i> Attend Interview<br>
+                    {% endif %}
                     <i class="fa fa-{{ 'check-' if grant.council_approved }}square-o" aria-hidden="true"></i> Passed by Council<br>
                     <i class="fa fa-{{ 'check-' if grant.receipts_submitted }}square-o" aria-hidden="true"></i> Submit Receipts<br>
                     <i class="fa fa-{{ 'check-' if grant.is_paid }}square-o" aria-hidden="true"></i> Receipts Reviewed<br>

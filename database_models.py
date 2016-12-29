@@ -13,6 +13,9 @@ from datetime import datetime
 # ('db; must be imported by application later)
 db = SQLAlchemy()
 
+# Set the small grant dollar amount cap
+small_grant_cap = 200.00
+
 #
 # --------- Database Models -----------
 #
@@ -111,6 +114,11 @@ class Grant(db.Model):
     app_expense12_description = db.Column(db.Text)
     app_expense12_amount = db.Column(db.Float)
     application_comments = db.Column(db.Text)
+    # Small Grant Info
+    is_small_grant = db.Column(db.Boolean, default=False)
+    small_grant_is_reviewed = db.Column(db.Boolean, default=False)
+    small_grant_reviewer = db.Column(db.Text)
+    small_grant_review_date = db.Column(db.DateTime)
     # Interview Info
     interviewer = db.Column(db.Text)
     interview_occurred = db.Column(db.Boolean, default=False)

@@ -30,6 +30,13 @@ def utc_to_east_date(utc_dt):
     eastern = timezone('US/Eastern')
     return utc_dt.replace(tzinfo=utc).astimezone(tz=eastern).strftime("%B %-d, %Y")
     
+def nfloat(s):
+    """ Returns the float equivalent of a string, or 'None' if not possible """
+    try:
+        return float(s)
+    except ValueError:
+        return None
+    
 def get_grant_args(query_string):
     """ Gets arguments specific to application from query string,
         escaping some troublsesome characters """

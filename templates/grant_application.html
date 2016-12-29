@@ -75,12 +75,8 @@
                     </tr>
                     {% endif %}
                     <tr>
-                        <td>Project Start Date</td>
-                        <td>{{ grant.project_start | date }}</td>
-                    </tr>
-                    <tr>
-                        <td>Project End Date</td>
-                        <td>{{ grant.project_end | date }}</td>
+                        <td>Project Dates</td>
+                        <td>{{ grant.project_start | date }} - {{ grant.project_end | date }}</td>
                     </tr>
                     <tr>
                         <td>Number of Harvard College Students Attending</td>

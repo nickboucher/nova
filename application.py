@@ -370,3 +370,28 @@ def grant_allocations(grant_id):
         
     # Render application page to user
     return render_template("grant_allocations.html", grant=grant)
+    
+@app.route('/interviews')
+def interviews():
+    """ Displays a searchable list of grants eligible for interviews """
+    
+    # Get list of all grants eligible for interviews
+    grants = Grant.query.filter_by(interview_occurred=False, is_small_grant=False).all()
+    
+    # Render page to user
+    return render_template("interviews.html", grants=grants)
+    
+@app.route('/interview/<grant_id>')
+def grant_interview(grant_id):
+    """ Displays interview page for FiCom Members to conduct grant interviews """
+    return "Not Implemented"
+    
+@app.route('/small-grants')
+def small_grants():
+    """ Displays a list of grants eligible for small-grant processing """
+    
+    # Get list of all small-grant elligible grants
+    grants = Grant.query.filter_by(is_small_grant=True, small_grant_is_reviewed=False).all()
+    
+    # Render page to user
+    return render_template("small_grants.html", grants=grants)

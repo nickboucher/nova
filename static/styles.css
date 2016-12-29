@@ -24,6 +24,10 @@
     margin-top: 40px;
 }
 
+.clickable-row {
+    cursor: pointer;
+}
+
 /* Grant Status Page CSS */
 
 #progress_container {

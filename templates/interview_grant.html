@@ -1,0 +1,323 @@
+{% extends "layout.html" %}
+{% set fullwidth=True %}
+
+{% block title %}
+    {{ grant.grant_id }} Interview
+{% endblock %}
+
+{% block main %}
+
+    <div class="wrapper">
+        <div class="row">
+            <div class="top">
+                <div class="center">
+                    <h1>"{{ grant.project }}" Interview</h1>
+                    <h3>{{ grant.organization }}, Grant: {{ grant.grant_id }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="row container2">
+            <div class="left">
+                <form>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="food_allocated">Food Funding:</label>
+                                <input type="number" min="0" step="any" class="form-control" id="food_allocated">
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="form-group">
+                                <label for="food_allocated_notes">Food Comment:</label>
+                                <textarea class="form-control resize-vertical" rows="1" id="food_allocated_notes"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="travel_allocated">Travel Funding:</label>
+                                <input type="number" min="0" step="any" class="form-control" id="travel_allocated">
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="form-group">
+                                <label for="travel_allocated_notes">Travel Comment:</label>
+                                <textarea class="form-control resize-vertical" rows="1" id="travel_allocated_notes"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="publicity_allocated">Publicity Funding:</label>
+                                <input type="number" min="0" step="any" class="form-control" id="publicity_allocated">
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="form-group">
+                                <label for="publicity_allocated_notes">Publicity Comment:</label>
+                                <textarea class="form-control resize-vertical" rows="1" id="publicity_allocated_notes"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="materials_allocated">Materials Funding:</label>
+                                <input type="number" min="0" step="any" class="form-control" id="materials_allocated">
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="form-group">
+                                <label for="materials_allocated_notes">Materials Comment:</label>
+                                <textarea class="form-control resize-vertical" rows="1" id="materials_allocated_notes"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="venue_allocated">Venue Funding:</label>
+                                <input type="number" min="0" step="any" class="form-control" id="venue_allocated">
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="form-group">
+                                <label for="venue_allocated_notes">Venue Comment:</label>
+                                <textarea class="form-control resize-vertical" rows="1" id="venue_allocated_notes"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="decorations_allocated">Decorations Funding:</label>
+                                <input type="number" min="0" step="any" class="form-control" id="decorations_allocated">
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="form-group">
+                                <label for="decorations_allocated_notes">Decorations Comment:</label>
+                                <textarea class="form-control resize-vertical" rows="1" id="decorations_allocated_notes"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="media_allocated">Media Funding:</label>
+                                <input type="number" min="0" step="any" class="form-control" id="media_allocated">
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="form-group">
+                                <label for="media_allocated_notes">Media Comment:</label>
+                                <textarea class="form-control resize-vertical" rows="1" id="media_allocated_notes"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="admissions_allocated">Admissions Funding:</label>
+                                <input type="number" min="0" step="any" class="form-control" id="admissions_allocated">
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="form-group">
+                                <label for="admissions_allocated_notes">Admissions Comment:</label>
+                                <textarea class="form-control resize-vertical" rows="1" id="admissions_allocated_notes"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="hupd_allocated">HUPD Funding:</label>
+                                <input type="number" min="0" step="any" class="form-control" id="hupd_allocated">
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="form-group">
+                                <label for="hupd_allocated_notes">HUPD Comment:</label>
+                                <textarea class="form-control resize-vertical" rows="1" id="hupd_allocated_notes"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="personnel_allocated">Personnel Funding:</label>
+                                <input type="number" min="0" step="any" class="form-control" id="personnel_allocated">
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="form-group">
+                                <label for="personnel_allocated_notes">Personnel Comment:</label>
+                                <textarea class="form-control resize-vertical" rows="1" id="personnel_allocated_notes"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="other_allocated">Other Funding:</label>
+                                <input type="number" min="0" step="any" class="form-control" id="other_allocated">
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div class="form-group">
+                                <label for="other_allocated_notes">Other Comment:</label>
+                                <textarea class="form-control resize-vertical" rows="1" id="other_allocated_notes"></textarea>
+                            </div>
+                        </div>
+                    </div>
+                  <button type="submit" class="btn btn-default">Submit</button>
+                </form>
+            </div>
+            <div class="right">
+                <table class="table table-striped table-responsive table-hover">
+                <thead></thead>
+                <tbody>
+                    <tr>
+                        <td>Organization</td>
+                        <td>{{ grant.organization }}</td>
+                    </tr>
+                    <tr>
+                        <td>Project</td>
+                        <td>{{ grant.project }}</td>
+                    </tr>
+                    <tr>
+                        <td>Project Decription</td>
+                        <td>{{ grant.project_description }}</td>
+                    </tr>
+                    <tr>
+                        <td>Contact</td>
+                        <td>{{ grant.contact_first_name }} {{ grant.contact_last_name }}</td>
+                    </tr>
+                    <tr>
+                        <td>Contact Role</td>
+                        <td>{{ grant.contact_role }}</td>
+                    </tr>
+                    <tr>
+                        <td>Submission Date</td>
+                        <td>{{ grant.application_submit_time | datetime }}</td>
+                    </tr>
+                    <tr>
+                        <td>Funding Requested</td>
+                        <td>{{ grant.amount_requested | usd }}</td>
+                    </tr>
+                    <tr>
+                        <td>Grant Type</td>
+                        <td>{{ "Upfront" if grant.is_upfont else "Retroactive" }}</td>
+                    </tr>
+                    <tr>
+                        <td>Collaboration</td>
+                        <td>{{ "Yes" if grant.is_collaboration else "No" }}</td>
+                    </tr>
+                    {% if grant.is_collaboration %}
+                    <tr>
+                        <td>Collaborators</td>
+                        <td>{{ grant.collaborators }}</td>
+                    </tr>
+                    <tr>
+                        <td>Collaboration Description</td>
+                        <td>{{ grant.collaboration_explanation }}</td>
+                    </tr>
+                    {% endif %}
+                    <tr>
+                        <td>Project Type</td>
+                        <td>{{ "Event" if grant.is_event else "Non-event" }}</td>
+                    </tr>
+                    {% if grant.is_event %}
+                    <tr>
+                        <td>Location</td>
+                        <td>{{ grant.project_location }}</td>
+                    </tr>
+                    <tr>
+                        <td>Facebook Event Link</td>
+                        <td>{{ grant.facebook_link }}</td>
+                    </tr>
+                    {% endif %}
+                    <tr>
+                        <td>Project Dates</td>
+                        <td>{{ grant.project_start | date }} - {{ grant.project_end | date }}</td>
+                    </tr>
+                    <tr>
+                        <td>Number of Harvard College Students Attending</td>
+                        <td>{{ grant.college_attendees }}</td>
+                    </tr>
+                    <tr>
+                        <td>Club Revenue</td>
+                        <td>
+                            {% if grant.revenue1_amount %}
+                                {{ grant.revenue1_type }}: {{ grant.revenue1_description }}
+                                {{ "<br>" + grant.revenue2_type + ": " + grant.revenue2_description if grant.revenue2_amount }}
+                                {{ "<br>" + grant.revenue3_type + ": " + grant.revenue3_description if grant.revenue3_amount }}
+                                {{ "<br>" + grant.revenue4_type + ": " + grant.revenue4_description if grant.revenue4_amount }}
+                                {{ "<br>" + grant.revenue5_type + ": " + grant.revenue5_description if grant.revenue5_amount }}
+                                {{ "<br>" + grant.revenue6_type + ": " + grant.revenue6_description if grant.revenue6_amount }}
+                                {{ "<br>" + grant.revenue7_type + ": " + grant.revenue7_description if grant.revenue7_amount }}
+                                {{ "<br>" + grant.revenue8_type + ": " + grant.revenue8_description if grant.revenue8_amount }}
+                                {{ "<br>" + grant.revenue9_type + ": " + grant.revenue9_description if grant.revenue9_amount }}
+                                {{ "<br>" + grant.revenue10_type + ": " + grant.revenue10_description if grant.revenue10_amount }}
+                            {% else %}
+                                None
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>Expenses</td>
+                        <td>
+                            {% if grant.app_expense1_amount %}
+                                {{ grant.app_expense1_type }} ({{ grant.app_expense1_amount | usd }}): {{ grant.app_expense1_description }}
+                            {% endif %}
+                            {% if grant.app_expense2_amount %}
+                                <br>{{ grant.app_expense2_type }} ({{ grant.app_expense2_amount | usd }}): {{ grant.app_expense2_description }}
+                            {% endif %}
+                            {% if grant.app_expense3_amount %}
+                                <br>{{ grant.app_expense3_type }} ({{ grant.app_expense3_amount | usd }}): {{ grant.app_expense3_description }}
+                            {% endif %}
+                            {% if grant.app_expense4_amount %}
+                                <br>{{ grant.app_expense4_type }} ({{ grant.app_expense4_amount | usd }}): {{ grant.app_expense4_description }}
+                            {% endif %}
+                            {% if grant.app_expense5_amount %}
+                                <br>{{ grant.app_expense5_type }} ({{ grant.app_expense5_amount | usd }}): {{ grant.app_expense5_description }}
+                            {% endif %}
+                            {% if grant.app_expense6_amount %}
+                                <br>{{ grant.app_expense6_type }} ({{ grant.app_expense6_amount | usd }}): {{ grant.app_expense6_description }}
+                            {% endif %}
+                            {% if grant.app_expense7_amount %}
+                                <br>{{ grant.app_expense7_type }} ({{ grant.app_expense7_amount | usd }}): {{ grant.app_expense7_description }}
+                            {% endif %}
+                            {% if grant.app_expense8_amount %}
+                                <br>{{ grant.app_expense8_type }} ({{ grant.app_expense8_amount | usd }}): {{ grant.app_expense8_description }}
+                            {% endif %}
+                            {% if grant.app_expense9_amount %}
+                                <br>{{ grant.app_expense9_type }} ({{ grant.app_expense9_amount | usd }}): {{ grant.app_expense9_description }}
+                            {% endif %}
+                            {% if grant.app_expense10_amount %}
+                                <br>{{ grant.app_expense10_type }} ({{ grant.app_expense10_amount | usd }}): {{ grant.app_expense10_description }}
+                            {% endif %}
+                            {% if grant.app_expense11_amount %}
+                                <br>{{ grant.app_expense11_type }} ({{ grant.app_expense11_amount | usd }}): {{ grant.app_expense11_description }}
+                            {% endif %}
+                            {% if grant.app_expense12_amount %}
+                                <br>{{ grant.app_expense12_type }} ({{ grant.app_expense12_amount | usd }}): {{ grant.app_expense12_description }}
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% if grant.application_comments %}
+                    <tr>
+                        <td>Comments</td>
+                        <td>{{ grant.application_comments }}</td>
+                    </tr>
+                    {% endif %}
+                </tbody>
+            </table>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

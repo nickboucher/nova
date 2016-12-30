@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Small Grants
+{% endblock %}
+
+{% block main %}
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="center padding-bottom-20">
+                <h1>Small Grant-Eligible Grants</h1>
+                <h4>Click on a grant to begin the review process.</h4>
+            </div>
+            <table class="table table-striped table-hover table-responsive">
+                <thead>
+                    <tr>
+                        <th><b>Grant ID</b></th>
+                        <th><b>Organization</b></th>
+                        <th><b>Project</b></th>
+                        <th><b>Submission Date</b></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for grant in grants %}
+                        <tr class="clickable-row" data-href="/grant/{{ grant.grant_id }}">
+                            <td>{{ grant.grant_id }}</td>
+                            <td><b>{{ grant.organization }}</b></td>
+                            <td><b>{{ grant.project }}</b></td>
+                            <td>{{ grant.application_submit_time | date }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    
+    <script>
+        $(document).ready(function() {
+            $(".clickable-row").click(function() {
+                window.document.location = $(this).data("href");
+            });
+        });
+    </script>
+
+{% endblock %}

@@ -28,6 +28,40 @@
     cursor: pointer;
 }
 
+/* Grant Interview Page CSS */
+.resize-vertical {
+    resize: vertical;
+}
+.top {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 3rem;
+    position: relative;
+    z-index: 10;
+    height: 100px;
+}
+.container2 {
+    display: flex;
+    overflow: hidden;
+    height: 100vh;
+    margin-top: -100px;
+    padding-top: 130px;
+    position: relative;
+    width: 100%;
+    backface-visibility: hidden;
+    will-change: overflow;
+}
+.left,.right {
+    overflow: auto;
+    height: auto;
+    padding: 20px;
+    padding-top: 0px;
+    width: 50%;
+    -webkit-overflow-scrolling: touch;
+    -ms-overflow-style: none;
+}
+
 /* Grant Status Page CSS */
 
 #progress_container {

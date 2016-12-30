@@ -371,7 +371,7 @@ def grant_allocations(grant_id):
     # Render application page to user
     return render_template("grant_allocations.html", grant=grant)
     
-@app.route('/interviews')
+@app.route('/interview')
 def interviews():
     """ Displays a searchable list of grants eligible for interviews """
     
@@ -384,7 +384,20 @@ def interviews():
 @app.route('/interview/<grant_id>')
 def grant_interview(grant_id):
     """ Displays interview page for FiCom Members to conduct grant interviews """
-    return "Not Implemented"
+    
+    # Verify that a grant id was specified
+    if not grant_id:
+        return "Error: No Grant ID specified"
+    
+    # Query for grant information
+    grant = Grant.query.filter_by(grant_id=grant_id.upper()).first()
+    
+    # Check if grant exists in database
+    if not grant:
+        return "Error: Grant does not exist."
+        
+    # Render page to user
+    return render_template('interview_grant.html', grant=grant)
     
 @app.route('/small-grants')
 def small_grants():

@@ -6,8 +6,26 @@
 
 {% block main %}
 
-    <div class="jumbotron" style="text-align:center;margin-top:2%;">
-        <h1>Welcome to NOVA!</h1>
+    <div class="row">
+        <div class="col-md-12">
+            <div class="center">
+                <h1>UC Grants</h1>
+                <h3>Welcome to NOVA.</h3>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row margin40">
+        <div class="col-md-6">
+            <div class="center">
+                <a href="{{ url_for('interviews') }}" role="button" class="btn btn-default">Interviews</a>
+            </div>
+        </div>
+        <div class="col-md-6">
+            <div class="center">
+                <a href="{{ url_for('small_grants') }}" role="button" class="btn btn-default">Small Grants</a>
+            </div>
+        </div>
     </div>
 
 {% endblock %}

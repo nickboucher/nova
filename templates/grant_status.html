@@ -64,9 +64,9 @@
             </div>
             <div class="flex">
                 <div class="centered">
-                    <a  href="/grant/{{ grant.grant_id }}/application" role="button" class="btn btn-default" aria-label="Left Align">Review Application</a><br>
+                    <a href="{{ url_for('grant_application', grant_id=grant.grant_id) }}" role="button" class="btn btn-default" aria-label="Left Align">Review Application</a><br>
                     {% if grant.council_approved %}
-                        <a href="/grant/{{ grant.grant_id }}/allocations" role="button" class="btn btn-default margin15" aria-label="Left Align">What You Were Granted</a><br>
+                        <a href="{{ url_for('grant_allocations', grant_id=grant.grant_id) }}" role="button" class="btn btn-default margin15" aria-label="Left Align">What You Were Granted</a><br>
                         <a href="https://harvard.az1.qualtrics.com/SE/?SID=SV_3mA2HIDqUTZHT0h&grant_id={{ grant.grant_id }}" role="button" class="btn btn-default margin15" aria-label="Left Align">Submit Receipts</a>
                     {% endif %}
                 </div>

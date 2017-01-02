@@ -2,7 +2,7 @@
 {% set fullwidth=True %}
 
 {% block title %}
-    {{ grant.grant_id }} Interview
+    {{ grant.grant_id }} Review
 {% endblock %}
 
 {% block main %}
@@ -11,7 +11,7 @@
         <div class="row">
             <div class="top">
                 <div class="center">
-                    <h1>"{{ grant.project }}" Interview</h1>
+                    <h1>"{{ grant.project }}" Small Grant Review</h1>
                     <h3>{{ grant.organization }}, Grant: {{ grant.grant_id }}</h3>
                 </div>
             </div>
@@ -20,7 +20,7 @@
             <div class="left border-right">
                 <div class="center" style="margin-top: -20px;">
                     <hr />
-                    <h3>Interview Form</h3>
+                    <h3>Review Form</h3>
                     <hr />
                 </div>
                 <form action="{{ url_for('grant_interview', grant_id=grant.grant_id) }}" method="post">
@@ -41,20 +41,6 @@
                     <div class="row">
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label for="travel_allocated">Travel Funding:</label>
-                                <input type="number" min="0" step="any" class="form-control" name="travel_allocated" value="{{ grant.travel_allocated | two_decimals }}">
-                            </div>
-                        </div>
-                        <div class="col-md-8">
-                            <div class="form-group">
-                                <label for="travel_allocated_notes">Travel Comment:</label>
-                                <textarea class="form-control resize-vertical" rows="1" name="travel_allocated_notes">{{ grant.travel_allocated_notes | suppress_none }}</textarea>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="form-group">
                                 <label for="publicity_allocated">Publicity Funding:</label>
                                 <input type="number" min="0" step="any" class="form-control" name="publicity_allocated" value="{{ grant.publicity_allocated | two_decimals }}">
                             </div>
@@ -63,118 +49,6 @@
                             <div class="form-group">
                                 <label for="publicity_allocated_notes">Publicity Comment:</label>
                                 <textarea class="form-control resize-vertical" rows="1" name="publicity_allocated_notes">{{ grant.publicity_allocated_notes | suppress_none }}</textarea>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label for="materials_allocated">Materials Funding:</label>
-                                <input type="number" min="0" step="any" class="form-control" name="materials_allocated" value="{{ grant.materials_allocated | two_decimals }}">
-                            </div>
-                        </div>
-                        <div class="col-md-8">
-                            <div class="form-group">
-                                <label for="materials_allocated_notes">Materials Comment:</label>
-                                <textarea class="form-control resize-vertical" rows="1" name="materials_allocated_notes">{{ grant.materials_allocated_notes | suppress_none }}</textarea>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label for="venue_allocated">Venue Funding:</label>
-                                <input type="number" min="0" step="any" class="form-control" name="venue_allocated" value="{{ grant.venue_allocated | two_decimals }}">
-                            </div>
-                        </div>
-                        <div class="col-md-8">
-                            <div class="form-group">
-                                <label for="venue_allocated_notes">Venue Comment:</label>
-                                <textarea class="form-control resize-vertical" rows="1" name="venue_allocated_notes">{{ grant.venue_allocated_notes | suppress_none }}</textarea>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label for="decorations_allocated">Decorations Funding:</label>
-                                <input type="number" min="0" step="any" class="form-control" name="decorations_allocated" value="{{ grant.decorations_allocated | two_decimals }}">
-                            </div>
-                        </div>
-                        <div class="col-md-8">
-                            <div class="form-group">
-                                <label for="decorations_allocated_notes">Decorations Comment:</label>
-                                <textarea class="form-control resize-vertical" rows="1" name="decorations_allocated_notes">{{ grant.decorations_allocated_notes | suppress_none }}</textarea>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label for="media_allocated">Media Funding:</label>
-                                <input type="number" min="0" step="any" class="form-control" name="media_allocated" value="{{ grant.media_allocated | two_decimals }}">
-                            </div>
-                        </div>
-                        <div class="col-md-8">
-                            <div class="form-group">
-                                <label for="media_allocated_notes">Media Comment:</label>
-                                <textarea class="form-control resize-vertical" rows="1" name="media_allocated_notes">{{ grant.media_allocated_notes | suppress_none }}</textarea>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label for="admissions_allocated">Admissions Funding:</label>
-                                <input type="number" min="0" step="any" class="form-control" name="admissions_allocated" value="{{ grant.admissions_allocated | two_decimals }}">
-                            </div>
-                        </div>
-                        <div class="col-md-8">
-                            <div class="form-group">
-                                <label for="admissions_allocated_notes">Admissions Comment:</label>
-                                <textarea class="form-control resize-vertical" rows="1" name="admissions_allocated_notes">{{ grant.admissions_allocated_notes | suppress_none }}</textarea>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label for="hupd_allocated">HUPD Funding:</label>
-                                <input type="number" min="0" step="any" class="form-control" name="hupd_allocated" value="{{ grant.hupd_allocated | two_decimals }}">
-                            </div>
-                        </div>
-                        <div class="col-md-8">
-                            <div class="form-group">
-                                <label for="hupd_allocated_notes">HUPD Comment:</label>
-                                <textarea class="form-control resize-vertical" rows="1" name="hupd_allocated_notes">{{ grant.hupd_allocated_notes | suppress_none }}</textarea>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label for="personnel_allocated">Personnel Funding:</label>
-                                <input type="number" min="0" step="any" class="form-control" name="personnel_allocated" value="{{ grant.personnel_allocated | two_decimals }}">
-                            </div>
-                        </div>
-                        <div class="col-md-8">
-                            <div class="form-group">
-                                <label for="personnel_allocated_notes">Personnel Comment:</label>
-                                <textarea class="form-control resize-vertical" rows="1" name="personnel_allocated_notes">{{ grant.personnel_allocated_notes | suppress_none }}</textarea>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="row">
-                        <div class="col-md-4">
-                            <div class="form-group">
-                                <label for="other_allocated">Other Funding:</label>
-                                <input type="number" min="0" step="any" class="form-control" name="other_allocated" value="{{ grant.other_allocated | two_decimals }}">
-                            </div>
-                        </div>
-                        <div class="col-md-8">
-                            <div class="form-group">
-                                <label for="other_allocated_notes">Other Comment:</label>
-                                <textarea class="form-control resize-vertical" rows="1" name="other_allocated_notes"><{{ grant.other_allocated_notes | suppress_none }}/textarea>
                             </div>
                         </div>
                     </div>

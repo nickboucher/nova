@@ -8,7 +8,7 @@
 
 from flask import Flask, flash, redirect, render_template, request, session, url_for
 from sqlalchemy.exc import IntegrityError
-from datetime import datetime
+from datetime import datetime, timezone
 from database_models import *
 from helpers import *
 
@@ -26,6 +26,8 @@ if app.config["DEBUG"]:
 
 # custom filters
 app.jinja_env.filters["usd"] = usd
+app.jinja_env.filters["two_decimals"] = two_decimals
+app.jinja_env.filters["suppress_none"] = suppress_none
 app.jinja_env.filters["datetime"] = utc_to_east_datetime
 app.jinja_env.filters["date"] = utc_to_east_date
 
@@ -250,7 +252,7 @@ def receipts(overwrite = False):
     if args.get('completed_proj_comments'): grant.completed_proj_comments = args.get('completed_proj_comments')[0]
     
     # Set Submission Metadata
-    grant.receipts_submit_date = datetime.now()
+    grant.receipts_submit_date = datetime.now(utc)
     grant.receipts_submitted = True
     
     # Commit database changes
@@ -381,9 +383,84 @@ def interviews():
     # Render page to user
     return render_template("interviews.html", grants=grants)
     
-@app.route('/interview/<grant_id>')
+@app.route('/interview/<grant_id>', methods=['GET','POST'])
 def grant_interview(grant_id):
-    """ Displays interview page for FiCom Members to conduct grant interviews """
+    """ Displays interview page for FiCom Members to conduct grant interviews and processes responses """
+    
+    # Verify that a grant id was specified
+    if not grant_id:
+        return "Error: No Grant ID specified"
+    
+    # Query for grant information
+    grant = Grant.query.filter_by(grant_id=grant_id.upper()).first()
+    
+    # Check if grant exists in database
+    if not grant:
+        return "Error: Grant does not exist."
+    
+    # User is requesting the interview form
+    if request.method == 'GET':
+        
+        # If the grant is a small grant, forward to right place
+        if grant.is_small_grant:
+            return redirect(url_for('small_grant_review', grant_id=grant.grant_id))
+            
+        # Render page to user
+        return render_template('interview_grant.html', grant=grant)
+    
+    # User is submitting the form data
+    else:
+        
+        # Get Relevant Form Data
+        if request.form.get('interviewer_notes'): grant.interviewer_notes = request.form.get('interviewer_notes')
+        if request.form.get('food_allocated'): grant.food_allocated = request.form.get('food_allocated', type=float)
+        if request.form.get('food_allocated_notes'): grant.food_allocated_notes = request.form.get('food_allocated_notes')
+        if request.form.get('travel_allocated'): grant.travel_allocated = request.form.get('travel_allocated', type=float)
+        if request.form.get('travel_allocated_notes'): grant.travel_allocated_notes = request.form.get('travel_allocated_notes')
+        if request.form.get('publicity_allocated'): grant.publicity_allocated = request.form.get('publicity_allocated', type=float)
+        if request.form.get('publicity_allocated_notes'): grant.publicity_allocated_notes = request.form.get('publicity_allocated_notes')
+        if request.form.get('materials_allocated'): grant.materials_allocated = request.form.get('materials_allocated', type=float)
+        if request.form.get('materials_allocated_notes'): grant.materials_allocated_notes = request.form.get('materials_allocated_notes')
+        if request.form.get('venue_allocated'): grant.venue_allocated = request.form.get('venue_allocated', type=float)
+        if request.form.get('venue_allocated_notes'): grant.venue_allocated_notes = request.form.get('venue_allocated_notes')
+        if request.form.get('decorations_allocated'): grant.decorations_allocated = request.form.get('decorations_allocated', type=float)
+        if request.form.get('decorations_allocated_notes'): grant.decorations_allocated_notes = request.form.get('decorations_allocated_notes')
+        if request.form.get('media_allocated'): grant.media_allocated = request.form.get('media_allocated', type=float)
+        if request.form.get('media_allocated_notes'): grant.media_allocated_notes = request.form.get('media_allocated_notes')
+        if request.form.get('admissions_allocated'): grant.admissions_allocated = request.form.get('admissions_allocated', type=float)
+        if request.form.get('admissions_allocated_notes'): grant.admissions_allocated_notes = request.form.get('admissions_allocated_notes')
+        if request.form.get('hupd_allocated'): grant.hupd_allocated = request.form.get('hupd_allocated', type=float)
+        if request.form.get('hupd_allocated_notes'): grant.hupd_allocated_notes = request.form.get('hupd_allocated_notes')
+        if request.form.get('personnel_allocated'): grant.personnel_allocated = request.form.get('personnel_allocated', type=float)
+        if request.form.get('personnel_allocated_notes'): grant.personnel_allocated_notes = request.form.get('personnel_allocated_notes')
+        if request.form.get('other_allocated'): grant.other_allocated = request.form.get('other_allocated', type=float)
+        if request.form.get('other_allocated_notes'): grant.other_allocated_notes = request.form.get('other_allocated_notes')
+        
+        # Add Relevant Meta Data
+        grant.interview_occurred = True
+        grant.interview_date = datetime.now(utc)
+        
+        # Commit Changes to Databse
+        db.session.commit()
+        
+        # Generate Flashed Success Message
+        flash('\'' + grant.organization + '\' Interview Submitted Successfully', 'success')
+        
+        return redirect(url_for('interviews'))
+    
+@app.route('/small-grant-review')
+def small_grants():
+    """ Displays a list of grants eligible for small-grant processing """
+    
+    # Get list of all small-grant elligible grants
+    grants = Grant.query.filter_by(is_small_grant=True, small_grant_is_reviewed=False).all()
+    
+    # Render page to user
+    return render_template("small_grants.html", grants=grants)
+    
+@app.route('/small-grant-review/<grant_id>', methods=['GET','POST'])
+def small_grant_review(grant_id):
+    """ Displays review page for FiCom Members to conduct small grant reviews and processes responses """
     
     # Verify that a grant id was specified
     if not grant_id:
@@ -396,15 +473,34 @@ def grant_interview(grant_id):
     if not grant:
         return "Error: Grant does not exist."
         
-    # Render page to user
-    return render_template('interview_grant.html', grant=grant)
+    # User is requesting the interview form
+    if request.method == 'GET':
+        
+        # If the grant is not a small grant, forward to right place
+        if not grant.is_small_grant:
+            return redirect(url_for('grant_interview', grant_id=grant.grant_id))
+            
+        # Render page to user
+        return render_template('review_small_grant.html', grant=grant)
     
-@app.route('/small-grants')
-def small_grants():
-    """ Displays a list of grants eligible for small-grant processing """
-    
-    # Get list of all small-grant elligible grants
-    grants = Grant.query.filter_by(is_small_grant=True, small_grant_is_reviewed=False).all()
-    
-    # Render page to user
-    return render_template("small_grants.html", grants=grants)
+    # User is submitting the form data
+    else:
+        
+        # Get Relevant Form Data
+        if request.form.get('interviewer_notes'): grant.interviewer_notes = request.form.get('interviewer_notes')
+        if request.form.get('food_allocated'): grant.food_allocated = request.form.get('food_allocated', type=float)
+        if request.form.get('food_allocated_notes'): grant.food_allocated_notes = request.form.get('food_allocated_notes')
+        if request.form.get('publicity_allocated'): grant.publicity_allocated = request.form.get('publicity_allocated', type=float)
+        if request.form.get('publicity_allocated_notes'): grant.publicity_allocated_notes = request.form.get('publicity_allocated_notes')
+        
+        # Add Relevant Meta Data
+        grant.interview_occurred = True
+        grant.interview_date = datetime.now(utc)
+        
+        # Commit Changes to Databse
+        db.session.commit()
+        
+        # Generate Flashed Success Message
+        flash('\'' + grant.organization + '\' Small Grant Review Submitted Successfully', 'success')
+        
+        return redirect(url_for('small_grants'))

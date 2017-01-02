@@ -31,77 +31,77 @@
                     {% if grant.food_allocated %}
                     <tr>
                         <td>Food</td>
-                        <td>{{ grant.food_allocated_notes }}</td>
+                        <td>{{ grant.food_allocated_notes | suppress_none }}</td>
                         <td>{{ grant.food_allocated | usd}}</td>
                     </tr>
                     {% endif %}
                     {% if grant.travel_allocated %}
                     <tr>
                         <td>Travel</td>
-                        <td>{{ grant.travel_allocated_notes }}</td>
+                        <td>{{ grant.travel_allocated_notes | suppress_none }}</td>
                         <td>{{ grant.travel_allocated | usd }}</td>
                     </tr>
                     {% endif %}
                     {% if grant.publicity_allocated %}
                     <tr>
                         <td>Publicity</td>
-                        <td>{{ grant.publicity_allocated_notes }}</td>
+                        <td>{{ grant.publicity_allocated_notes | suppress_none }}</td>
                         <td>{{ grant.publicity_allocated | usd }}</td>
                     </tr>
                     {% endif %}
                     {% if grant.materials_allocated %}
                     <tr>
                         <td>Materials</td>
-                        <td>{{ grant.materials_allocated_notes }}</td>
+                        <td>{{ grant.materials_allocated_notes | suppress_none }}</td>
                         <td>{{ grant.materials_allocated | usd }}</td>
                     </tr>
                     {% endif %}
                     {% if grant.venue_allocated %}
                     <tr>
                         <td>Venue</td>
-                        <td>{{ grant.venue_allocated_notes }}</td>
+                        <td>{{ grant.venue_allocated_notes | suppress_none }}</td>
                         <td>{{ grant.venue_allocated | usd }}</td>
                     </tr>
                     {% endif %}
                     {% if grant.decorations_allocated %}
                     <tr>
                         <td>Decorations</td>
-                        <td>{{ grant.decorations_allocated_notes }}</td>
+                        <td>{{ grant.decorations_allocated_notes | suppress_none }}</td>
                         <td>{{ grant.decorations_allocated | usd }}</td>
                     </tr>
                     {% endif %}
                     {% if grant.media_allocated %}
                     <tr>
                         <td>Media</td>
-                        <td>{{ grant.media_allocated_notes }}</td>
+                        <td>{{ grant.media_allocated_notes | suppress_none }}</td>
                         <td>{{ grant.media_allocated | usd }}</td>
                     </tr>
                     {% endif %}
                     {% if grant.admissions_allocated %}
                     <tr>
                         <td>Admission Fees</td>
-                        <td>{{ grant.admissions_allocated_notes }}</td>
+                        <td>{{ grant.admissions_allocated_notes | suppress_none }}</td>
                         <td>{{ grant.admissions_allocated | usd }}</td>
                     </tr>
                     {% endif %}
                     {% if grant.hupd_allocated %}
                     <tr>
                         <td>HUPD</td>
-                        <td>{{ grant.hupd_allocated_notes }}</td>
+                        <td>{{ grant.hupd_allocated_notes | suppress_none }}</td>
                         <td>{{ grant.hupd_allocated | usd }}</td>
                     </tr>
                     {% endif %}
                     {% if grant.personnel_allocated %}
                     <tr>
                         <td>Personnel</td>
-                        <td>{{ grant.personnel_allocated_notes }}</td>
+                        <td>{{ grant.personnel_allocated_notes | suppress_none }}</td>
                         <td>{{ grant.personnel_allocated | usd }}</td>
                     </tr>
                     {% endif %}
                     {% if grant.other_allocated %}
                     <tr>
                         <td>Other</td>
-                        <td>{{ grant.other_allocated_notes }}</td>
+                        <td>{{ grant.other_allocated_notes | suppress_none }}</td>
                         <td>{{ grant.other_allocated | usd }}</td>
                     </tr>
                     {% endif %}

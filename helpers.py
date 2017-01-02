@@ -11,10 +11,23 @@ from urllib.parse import parse_qs
 from pytz import timezone, utc
 
 def usd(value):
-    """Formats value as USD."""
+    """ Formats value as USD. """
     if value == None:
         return ""
     return "${:,.2f}".format(value)
+    
+def two_decimals(value):
+    """ Formats float to 2 decimal string """
+    if value == None:
+        return ""
+    return "{:,.2f}".format(value)
+    
+def suppress_none(value):
+    """ Returns value or empty string if None """
+    
+    if value == None:
+        return ""
+    return value
     
 def utc_to_east_datetime(utc_dt):
     """ Formats datetime as US Eastern timezone """

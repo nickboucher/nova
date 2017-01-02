@@ -39,13 +39,47 @@
         <div class="container{{ '-fluid' if fullwidth }}">
 
             <!-- Used for displaying alerts to user -->
-            {% if get_flashed_messages() %}
-                <header>
-                    <div class="alert alert-info" role="alert">
-                        {{ get_flashed_messages() | join(" ") }}
+            {% with errors = get_flashed_messages(category_filter=["error"]) %}
+                {% if errors %}
+                    {%- for msg in errors %}
+                    <div class="alert alert-danger alert-dismissable margin15 fade in">
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                        {{ msg }}
                     </div>
-                </header>
-            {% endif %}
+                    {% endfor -%}
+                {% endif %}
+            {% endwith %}
+            {% with warnings = get_flashed_messages(category_filter=["warning"]) %}
+                {% if warnings %}
+                    {%- for msg in warnings %}
+                    <div class="alert alert-warning alert-dismissable margin15 fade in">
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                        {{ msg }}
+                    </div>
+                    {% endfor -%}
+                {% endif %}
+            {% endwith %}
+            {% with successes = get_flashed_messages(category_filter=["success"]) %}
+                {% if successes %}
+                    {%- for msg in successes %}
+                    <div class="alert alert-success alert-dismissable margin15 fade in">
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                        {{ msg }}
+                    </div>
+                    {% endfor -%}
+                {% endif %}
+            {% endwith %}
+            {% with messages = get_flashed_messages(category_filter=["message"]) %}
+                {% if messages %}
+                    {%- for msg in messages %}
+                    <div class="alert alert-info alert-dismissable margin15 fade in">
+                        <a href="#" class="close" data-dismiss="alert" aria-label="close">&times;</a>
+                        {{ msg }}
+                    </div>
+                    {% endfor -%}
+                {% endif %}
+            {% endwith %}
+
 
             <!-- Main content block to be rendered by template -->
             <main>

@@ -504,3 +504,19 @@ def small_grant_review(grant_id):
         flash('\'' + grant.organization + '\' Small Grant Review Submitted Successfully', 'success')
         
         return redirect(url_for('small_grants'))
+        
+@app.route('/grants-pack/review')
+def grants_pack_review():
+    
+    # query for all grants currently without a grants pack
+    grants = Grant.query.filter_by(grants_pack=None).all()
+    # TODO - differentiate between grants currently in pack and orphans (for editing packs)
+    
+    # Get Current Grants Pack
+    council_semester = Config.query.filter_by(key='council_semester').first()
+    current_week = Config.query.filter_by(key='grant_week').first()
+    grants_pack = council_semester.value + '-' + current_week.value
+    
+    # Render page to user
+    return render_template('grants_pack_review.html', grants=grants, grants_pack=grants_pack)
+    

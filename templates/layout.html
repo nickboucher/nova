@@ -30,6 +30,10 @@
         <!-- Latest compiled and minified JavaScript -->
         <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/js/bootstrap.min.js" integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa" crossorigin="anonymous"></script>
 
+        <!-- Content Area for pages implementing template to add to head -->
+        {% block head %}{% endblock %}
+
+        <!-- Page Title -->
         <title>UC Grants | {% block title %}{% endblock %}</title>
 
     </head>
@@ -87,6 +91,9 @@
             </main>
 
         </div>
+        
+        <!-- Content Block for scripts needed for individual pages, loaded at bottom of DOM -->
+        {% block scripts %}{% endblock %}
 
     </body>
 

@@ -1,0 +1,103 @@
+{% extends "layout.html" %}
+
+{% block head %}
+    <script src="{{ url_for('static', filename='dual-listbox/jquery.bootstrap-duallistbox.min.js') }}"></script>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='dual-listbox/bootstrap-duallistbox.min.css') }}">
+{% endblock %}
+
+{% block title %}
+    Home
+{% endblock %}
+
+{% block main %}
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="center">
+                <h1>Grants Pack {{ grants_pack }}</h1>
+                <h3>Move grants below to accept them into the current grants pack.</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="row">
+        <div class="col-md-12 margin40 listboxes">
+            <select multiple="multiple" size="10" name="grants_list" class="grants_dual_listbox">
+                {% for grant in grants %}
+                    <option id="{{ grant.grant_id }}" value="{{ grant.grant_id }}" data-project="{{ grant.project }}" data-organization="{{ grant.organization }}" data-notes="{{ grant.interviewer_notes | suppress_none }}" data-funding="[{&quot;category&quot;:&quot;food&quot;,&quot;amount&quot;:32.12,&quot;description&quot;:&quot;test description&quot;}]">{{ grant.organization }}&nbsp;"{{ grant.project }}"</option>
+                {% endfor %}
+              </select>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-12">
+            <div class="center margin40 grant_info">
+                <h3 id="grant_project"></h3>
+                <h4 id="grant_subtitle"></h4>
+                <div id="grant_funding"></div>
+                <div id="grant_notes"></div>
+            </div>
+        </div>
+    </div>
+{% endblock %}
+
+{% block scripts %}
+    <script type="text/javascript">
+    
+        /* Enable Dual Select-Multiple Boxes */
+        $('.grants_dual_listbox').bootstrapDualListbox({
+          nonSelectedListLabel: 'Adjudicated Grants',
+          selectedListLabel: 'Grants Pack {{ grants_pack }}',
+          preserveSelectionOnMove: 'moved',
+          moveOnSelect: false,
+          nonSelectedFilter: ''
+        });
+        
+        /* Define the event handler function for listboxes */
+        function handler() {
+            
+            // ensure that mutliple grants aren't selected
+            if ($(this).is('select')) {
+                if ($(this).children('option').filter(':selected').length != 1) {
+                    return;
+                }
+            }
+            
+            // Cleverly get relevant attributes from selected option
+            var option = $('#' + $(this).val());
+            var id = $(this).val()
+            var project = option.data('project');
+            var organization = option.data('organization');
+            var notes = option.data('notes');
+            
+            // parse funding data
+            var items = option.data('funding');
+            var funding = '<table class="table table-striped table-responsive table-hover"><thead><tr><th>Category</th><th>Amount</th><th>Description</th></tr></thead><tbody class="text-left">';
+            for (var i=0; i< items.length; i++) {
+                funding += '<tr>';
+                funding += '<td>' + items[i].category + '</td>';
+                funding += '<td>' + items[i].amount + '</td>';
+                funding += '<td>' + items[i].description + '</td>';
+                funding += '</tr>';
+            }
+            funding += '</tbody></table>'
+            
+            //  Update description view
+            $('#grant_project').text(project);
+            $('#grant_subtitle').text(organization + ", " + id);
+            $('#grant_notes').text(notes);
+            $('#grant_funding').html(funding);
+            
+        }
+        
+        /* Add handler for displaying grant info on-change
+            on-click handler must also be added for jumping
+            between the dual boxes */
+        $('.listboxes select').change(handler);
+        $('.listboxes option').click(handler);
+        
+        
+        
+    </script>
+{% endblock %}

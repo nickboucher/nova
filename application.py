@@ -508,15 +508,15 @@ def small_grant_review(grant_id):
 @app.route('/grants-pack/review')
 def grants_pack_review():
     
-    # query for all grants currently without a grants pack
-    grants = Grant.query.filter_by(grants_pack=None).all()
-    # TODO - differentiate between grants currently in pack and orphans (for editing packs)
-    
     # Get Current Grants Pack
     council_semester = Config.query.filter_by(key='council_semester').first()
     current_week = Config.query.filter_by(key='grant_week').first()
     grants_pack = council_semester.value + '-' + current_week.value
     
+    # query for all grants currently without a grants pack
+    orphan_grants = Grant.query.filter_by(grants_pack=None).all()
+    child_grants = Grant.query.filter_by(grants_pack=grants_pack).all()
+    
     # Render page to user
-    return render_template('grants_pack_review.html', grants=grants, grants_pack=grants_pack)
+    return render_template('grants_pack_review.html', orphan_grants=orphan_grants, child_grants=child_grants, grants_pack=grants_pack)
     

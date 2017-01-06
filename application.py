@@ -514,7 +514,8 @@ def grants_pack_review():
     grants_pack = council_semester.value + '-' + current_week.value
     
     # query for all grants currently without a grants pack
-    orphan_grants = Grant.query.filter_by(grants_pack=None).all()
+    orphan_grants = Grant.query.filter_by(grants_pack=None,interview_occurred=True).all()
+    orphan_grants += Grant.query.filter_by(grants_pack=None,small_grant_is_reviewed=True).all()
     child_grants = Grant.query.filter_by(grants_pack=grants_pack).all()
     
     # Render page to user

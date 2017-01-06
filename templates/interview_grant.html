@@ -69,13 +69,13 @@
                     <div class="row">
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label for="materials_allocated">Materials Funding:</label>
+                                <label for="materials_allocated">Materials & Supplies Funding:</label>
                                 <input type="number" min="0" step="any" class="form-control" name="materials_allocated" value="{{ grant.materials_allocated | two_decimals }}">
                             </div>
                         </div>
                         <div class="col-md-8">
                             <div class="form-group">
-                                <label for="materials_allocated_notes">Materials Comment:</label>
+                                <label for="materials_allocated_notes">Materials & Supplies Comment:</label>
                                 <textarea class="form-control resize-vertical" rows="1" name="materials_allocated_notes">{{ grant.materials_allocated_notes | suppress_none }}</textarea>
                             </div>
                         </div>
@@ -111,13 +111,13 @@
                     <div class="row">
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label for="media_allocated">Media Funding:</label>
+                                <label for="media_allocated">AV/Media Funding:</label>
                                 <input type="number" min="0" step="any" class="form-control" name="media_allocated" value="{{ grant.media_allocated | two_decimals }}">
                             </div>
                         </div>
                         <div class="col-md-8">
                             <div class="form-group">
-                                <label for="media_allocated_notes">Media Comment:</label>
+                                <label for="media_allocated_notes">AV/Media Comment:</label>
                                 <textarea class="form-control resize-vertical" rows="1" name="media_allocated_notes">{{ grant.media_allocated_notes | suppress_none }}</textarea>
                             </div>
                         </div>
@@ -139,13 +139,13 @@
                     <div class="row">
                         <div class="col-md-4">
                             <div class="form-group">
-                                <label for="hupd_allocated">HUPD Funding:</label>
+                                <label for="hupd_allocated">HUPD/BAT/DJ Funding:</label>
                                 <input type="number" min="0" step="any" class="form-control" name="hupd_allocated" value="{{ grant.hupd_allocated | two_decimals }}">
                             </div>
                         </div>
                         <div class="col-md-8">
                             <div class="form-group">
-                                <label for="hupd_allocated_notes">HUPD Comment:</label>
+                                <label for="hupd_allocated_notes">HUPD/BAT/DJ Comment:</label>
                                 <textarea class="form-control resize-vertical" rows="1" name="hupd_allocated_notes">{{ grant.hupd_allocated_notes | suppress_none }}</textarea>
                             </div>
                         </div>

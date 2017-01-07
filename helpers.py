@@ -6,9 +6,9 @@
 # application in data-processing
 #
 
-from database_models import *
 from urllib.parse import parse_qs
 from pytz import timezone, utc
+from database_models import *
 
 def usd(value):
     """ Formats value as USD. """

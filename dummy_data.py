@@ -1,3 +1,12 @@
+#!/usr/bin/env python3
+#
+# dummy_data.py
+# Nicholas Boucher 2017
+#
+# Contains a script that populates the NOVA database
+# with dummy data that is useful for testing via HTTP
+# requests.
+#
 from random import uniform, choice, randrange
 from requests import get
 from urllib.parse import quote

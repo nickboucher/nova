@@ -15,6 +15,8 @@ db = SQLAlchemy()
 
 # Set the small grant dollar amount cap
 small_grant_cap = 200.00
+# Set small grant elligible funding categories
+small_grant_expense_types = ['Food', 'Publicity']
 
 #
 # --------- Database Models -----------

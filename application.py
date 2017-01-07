@@ -163,9 +163,14 @@ def new_grant():
     if args.get('application_comments'): grant.application_comments = args.get('application_comments')[0]
     
     # Determine if Small Grant
-    # (small_grant_cap defined in databse_models.py for convenience)
+    # (small_grant_cap and small_grant_expense_types defined in databse_models.py for convenience)
     if nfloat(grant.amount_requested) and nfloat(grant.amount_requested) < small_grant_cap:
+        # Parse small grant candidate to rule out grants that are applying for inelligible categories
+        expenses = [grant.app_expense1_type,grant.app_expense2_type,grant.app_expense3_type,grant.app_expense4_type,grant.app_expense5_type,grant.app_expense6_type,grant.app_expense7_type,grant.app_expense8_type,grant.app_expense9_type,grant.app_expense10_type,grant.app_expense11_type,grant.app_expense12_type]
         grant.is_small_grant = True
+        for expense in expenses:
+            if expense and expense not in small_grant_expense_types:
+                grant.is_small_grant = False
     
     # Commit New Grant to Database
     try:

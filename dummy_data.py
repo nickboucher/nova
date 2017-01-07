@@ -287,7 +287,8 @@ def request_new_grant(domain):
     
     url = domain + "/new_grant?" + quote(query_string, "&=")
     req = get(url)
-    print('\"' + project + '\" --> ' + str(req.status_code) + ", " + req.text)
+    #print('\"' + project + '\" --> ' + str(req.status_code) + ", " + req.text)
+    print(url)
     if req.status_code != 200:
         exit("Fatal: Bad Request Response")
         

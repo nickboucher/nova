@@ -24,9 +24,9 @@ s_verbs = ["eats", "kicks", "gives", "treats", "meets with", "creates", "hacks",
 # Random list of names
 names = ["Emma","Olivia","Sophia","Ava","Isabella","Mia","Abigail","Emily","Charlotte","Harper","Noah","Liam","Mason","Jacob","William","Ethan","James","Alexander","Michael","Benjamin"]
 
-def rand_dollar():
+def rand_dollar(max_amt=1200.00):
     """ Generates a random float in [1.0,1200.00) with 2 decimal places """
-    return str(round(uniform(1.0,1200.00), 2))
+    return str(round(uniform(1.0,max_amt), 2))
     
 def rand_bool():
     """ Generates a random true or false """
@@ -64,13 +64,19 @@ def rand_revenue():
     """ Generates a random type of revenue """
     return choice(revenues)
     
-def rand_expense():
+def rand_expense(small_grant=False):
     """ Generates a random type of expense """
-    return choice(expenses)
+    if small_grant:
+        return choice(['Food','Publicity'])
+    else:
+        return choice(expenses)
 
-def request_new_grant(domain):
+def request_new_grant(domain, small_grant):
     """ Makes a GET request to create a new grant on the target domain """
-    amount_requested = rand_dollar()
+    if small_grant:
+        amount_requested = rand_dollar(200.00)
+    else:
+        amount_requested = rand_dollar()
     is_collaboration = choice(['Yes','No'])
     collaborators = ""
     collaboration_explanation = ""
@@ -138,55 +144,64 @@ def request_new_grant(domain):
                                         revenue10_type = rand_revenue()
                                         revenue10_description = rand_sentence()
                                         revenue10_amount = rand_dollar()
-    app_expense1_type = rand_expense()
-    app_expense1_description = rand_sentence()
-    app_expense1_amount = rand_dollar()
     # Set all expense default values to empty string
     app_expense2_type=app_expense2_description=app_expense2_amount=app_expense3_type=app_expense3_description=app_expense3_amount=app_expense4_type=app_expense4_description=app_expense4_amount=app_expense5_type=app_expense5_description=app_expense5_amount=app_expense6_type=app_expense6_description=app_expense6_amount=app_expense7_type=app_expense7_description=app_expense7_amount=app_expense8_type=app_expense8_description=app_expense8_amount=app_expense9_type=app_expense9_description=app_expense9_amount=app_expense10_type=app_expense10_description=app_expense10_amount=app_expense11_type=app_expense11_description=app_expense11_amount=app_expense12_type=app_expense12_description=app_expense12_amount = ""
-    if rand_bool():
-        app_expense2_type = rand_expense()
-        app_expense2_description = rand_sentence()
-        app_expense2_amount = rand_dollar()
+    if small_grant:
+        app_expense1_type = rand_expense(True)
+        app_expense1_description = rand_sentence()
+        app_expense1_amount = rand_dollar(100.00)
         if rand_bool():
-            app_expense3_type = rand_expense()
-            app_expense3_description = rand_sentence()
-            app_expense3_amount = rand_dollar()
+            app_expense2_type = rand_expense(True)
+            app_expense2_description = rand_sentence()
+            app_expense2_amount = rand_dollar(100.00)
+    else:
+        app_expense1_type = rand_expense()
+        app_expense1_description = rand_sentence()
+        app_expense1_amount = rand_dollar()
+        if rand_bool():
+            app_expense2_type = rand_expense()
+            app_expense2_description = rand_sentence()
+            app_expense2_amount = rand_dollar()
             if rand_bool():
-                app_expense4_type = rand_expense()
-                app_expense4_description = rand_sentence()
-                app_expense4_amount = rand_dollar()
+                app_expense3_type = rand_expense()
+                app_expense3_description = rand_sentence()
+                app_expense3_amount = rand_dollar()
                 if rand_bool():
-                    app_expense5_type = rand_expense()
-                    app_expense5_description = rand_sentence()
-                    app_expense5_amount = rand_dollar()
+                    app_expense4_type = rand_expense()
+                    app_expense4_description = rand_sentence()
+                    app_expense4_amount = rand_dollar()
                     if rand_bool():
-                        app_expense6_type = rand_expense()
-                        app_expense6_description = rand_sentence()
-                        app_expense6_amount = rand_dollar()
+                        app_expense5_type = rand_expense()
+                        app_expense5_description = rand_sentence()
+                        app_expense5_amount = rand_dollar()
                         if rand_bool():
-                            app_expense7_type = rand_expense()
-                            app_expense7_description = rand_sentence()
-                            app_expense7_amount = rand_dollar()
+                            app_expense6_type = rand_expense()
+                            app_expense6_description = rand_sentence()
+                            app_expense6_amount = rand_dollar()
                             if rand_bool():
-                                app_expense8_type = rand_expense()
-                                app_expense8_description = rand_sentence()
-                                app_expense8_amount = rand_dollar()
+                                app_expense7_type = rand_expense()
+                                app_expense7_description = rand_sentence()
+                                app_expense7_amount = rand_dollar()
                                 if rand_bool():
-                                    app_expense9_type = rand_expense()
-                                    app_expense9_description = rand_sentence()
-                                    app_expense9_amount = rand_dollar()
+                                    app_expense8_type = rand_expense()
+                                    app_expense8_description = rand_sentence()
+                                    app_expense8_amount = rand_dollar()
                                     if rand_bool():
-                                        app_expense10_type = rand_expense()
-                                        app_expense10_description = rand_sentence()
-                                        app_expense10_amount = rand_dollar()
+                                        app_expense9_type = rand_expense()
+                                        app_expense9_description = rand_sentence()
+                                        app_expense9_amount = rand_dollar()
                                         if rand_bool():
-                                            app_expense11_type = rand_expense()
-                                            app_expense11_description = rand_sentence()
-                                            app_expense11_amount = rand_dollar()
+                                            app_expense10_type = rand_expense()
+                                            app_expense10_description = rand_sentence()
+                                            app_expense10_amount = rand_dollar()
                                             if rand_bool():
-                                                app_expense12_type = rand_expense()
-                                                app_expense12_description = rand_sentence()
-                                                app_expense12_amount = rand_dollar()
+                                                app_expense11_type = rand_expense()
+                                                app_expense11_description = rand_sentence()
+                                                app_expense11_amount = rand_dollar()
+                                                if rand_bool():
+                                                    app_expense12_type = rand_expense()
+                                                    app_expense12_description = rand_sentence()
+                                                    app_expense12_amount = rand_dollar()
     application_comments = rand_sentence()
     
     # Create Query String
@@ -287,8 +302,7 @@ def request_new_grant(domain):
     
     url = domain + "/new_grant?" + quote(query_string, "&=")
     req = get(url)
-    #print('\"' + project + '\" --> ' + str(req.status_code) + ", " + req.text)
-    print(url)
+    print('\"' + project + '\" --> ' + str(req.status_code) + ", " + req.text)
     if req.status_code != 200:
         exit("Fatal: Bad Request Response")
         
@@ -298,7 +312,7 @@ def main():
     num_grants = int(input("Number of Grants: "))
     # Make the http requests
     for i in range(num_grants):
-        request_new_grant(domain)
+        request_new_grant(domain, rand_bool())
     
 if __name__ == "__main__":
     main()

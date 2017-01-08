@@ -10,7 +10,7 @@ from flask_sqlalchemy import SQLAlchemy
 from datetime import datetime
 
 # Initialize db variable to avoid namespace errors
-# ('db; must be imported by application later)
+# ('db' must be imported by application later)
 db = SQLAlchemy()
 
 # Set the small grant dollar amount cap
@@ -220,14 +220,16 @@ class Config(db.Model):
     def __repr__(self):
         return '<Config %r>' % self.key
         
-class Grant_Count(db.Model):
-    """ Contains the number of grants submitted in each grant week, used to generate new Grant IDs """
+class Grants_Week(db.Model):
+    """ Contains the number of grants submitted in each grant week, used to generate new Grant IDs,
+        as well as information about the status of the associated grants pack """
     grant_week = db.Column(db.String(64), primary_key=True)
     num_grants = db.Column(db.Integer)
+    grants_pack_finalized = db.Column(db.Boolean, default=False)
 
     def __init__(self, grant_week):
         self.grant_week = grant_week
         self.num_grants = 0
 
     def __repr__(self):
-        return '<Grant_Count %r>' % self.grant_week
+        return '<Grants_Week %r>' % self.grant_week

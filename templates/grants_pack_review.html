@@ -15,7 +15,7 @@
         <div class="col-md-12">
             <div class="center">
                 <h1>Grants Pack {{ grants_pack }}</h1>
-                <h3>Move grants below to accept them into the current grants pack.</h3>
+                <h3>Move grants below to accept them into the grants pack.</h3>
             </div>
         </div>
     </div>
@@ -24,7 +24,7 @@
         <div class="col-md-12 margin40 listboxes">
             <select multiple="multiple" size="10" name="grants_list" class="grants_dual_listbox">
                 {% for grant in orphan_grants %}
-                    <option id="{{ grant.grant_id }}" value="{{ grant.grant_id }}" data-project="{{ grant.project }}" data-organization="{{ grant.organization }}" data-notes="{{ grant.interviewer_notes | suppress_none }}" data-funding="[{%- if grant.food_allocated -%}
+                    <option id="{{ grant.grant_id }}" value="{{ grant.grant_id }}" data-project="{{ grant.project }}" data-organization="{{ grant.organization }}" data-interviewer="{{ grant.interviewer if grant.is_small_grant else grant.small_grant_reviewer }}" data-notes="{{ grant.interviewer_notes | suppress_none }}" data-funding="[{%- if grant.food_allocated -%}
                             {&quot;category&quot;:&quot;Food&quot;,&quot;amount&quot;:{{ grant.food_allocated }},&quot;description&quot;:&quot;{{ grant.food_allocated_notes | suppress_none }}&quot;},
                         {%- endif -%}
                         {%- if grant.travel_allocated -%}
@@ -59,7 +59,7 @@
                         {%- endif -%}]">{{ grant.organization }}&nbsp;"{{ grant.project }}"</option>
                 {% endfor %}
                 {% for grant in child_grants %}
-                    <option selected="selected" id="{{ grant.grant_id }}" value="{{ grant.grant_id }}" data-project="{{ grant.project }}" data-organization="{{ grant.organization }}" data-notes="{{ grant.interviewer_notes | suppress_none }}" data-funding="[{%- if grant.food_allocated -%}
+                    <option selected="selected" id="{{ grant.grant_id }}" value="{{ grant.grant_id }}" data-project="{{ grant.project }}" data-organization="{{ grant.organization }}" data-interviewer="{{ grant.interviewer if grant.is_small_grant else grant.small_grant_reviewer }}" data-notes="{{ grant.interviewer_notes | suppress_none }}" data-funding="[{%- if grant.food_allocated -%}
                             {&quot;category&quot;:&quot;Food&quot;,&quot;amount&quot;:{{ grant.food_allocated }},&quot;description&quot;:&quot;{{ grant.food_allocated_notes | suppress_none }}&quot;},
                         {%- endif -%}
                         {%- if grant.travel_allocated -%}
@@ -102,6 +102,7 @@
             <div class="center margin40 grant_info">
                 <h3 id="grant_project"></h3>
                 <h4 id="grant_subtitle"></h4>
+                <h5 id="grant_interviewer"></h5>
                 <div id="grant_funding"></div>
                 <div id="grant_notes"></div>
             </div>
@@ -136,6 +137,7 @@
             var id = $(this).val()
             var project = option.data('project');
             var organization = option.data('organization');
+            var interviewer = option.data('interviewer');
             var notes = option.data('notes');
             
             // parse funding data
@@ -160,6 +162,7 @@
             $('#grant_project').text(project);
             $('#grant_subtitle').text(organization + ", " + id);
             $('#grant_notes').text(notes);
+            $('#grant_interviewer').html(interviewer + ' <a href="/interview/' + id + '?review=1">Edit</a>');
             $('#grant_funding').html(funding);
             
         }

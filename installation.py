@@ -11,7 +11,7 @@
 from sys import exit
 from os import path, rename
 from datetime import datetime
-from database_models import db, Config, Grant_Count
+from database_models import db, Config, Grants_Week
 from application import app
 
 def install_wizard():
@@ -74,8 +74,8 @@ def install_wizard():
     db.session.add(grant_week)
     
     # Add empty number of Grants for current week
-    grant_count = Grant_Count(council + semester + '-' + week)
-    db.session.add(grant_count)
+    grants_week = Grants_Week(council + semester + '-' + week)
+    db.session.add(grants_week)
     
     # Commit changes to databse
     db.session.commit()

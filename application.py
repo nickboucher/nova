@@ -9,6 +9,7 @@
 from flask import Flask, flash, redirect, render_template, request, session, url_for
 from sqlalchemy.exc import IntegrityError
 from datetime import datetime, timezone
+from sqlalchemy.sql.expression import or_ as OR, and_ as AND
 from database_models import *
 from helpers import *
 
@@ -65,7 +66,7 @@ def new_grant():
     council_semester = Config.query.filter_by(key='council_semester').first()
     current_week = Config.query.filter_by(key='grant_week').first()
     grant_prefix = council_semester.value + '-' + current_week.value
-    grant_number = Grant_Count.query.filter_by(grant_week=grant_prefix).first()
+    grant_number = Grants_Week.query.filter_by(grant_week=grant_prefix).first()
     # This is not atomic, which seems like a potential problem...
     grant_number.num_grants += 1
     db.session.commit()
@@ -402,16 +403,22 @@ def grant_interview(grant_id):
     # Check if grant exists in database
     if not grant:
         return "Error: Grant does not exist."
+        
+    # Check if we need to return to the grants pack review page
+    if request.args.get('review'):
+        review = True
+    else:
+        review = False
     
     # User is requesting the interview form
     if request.method == 'GET':
         
         # If the grant is a small grant, forward to right place
         if grant.is_small_grant:
-            return redirect(url_for('small_grant_review', grant_id=grant.grant_id))
+            return redirect(url_for('small_grant_review', grant_id=grant.grant_id, review=review))
             
         # Render page to user
-        return render_template('interview_grant.html', grant=grant)
+        return render_template('interview_grant.html', grant=grant, review=review)
     
     # User is submitting the form data
     else:
@@ -445,13 +452,18 @@ def grant_interview(grant_id):
         grant.interview_occurred = True
         grant.interview_date = datetime.now(utc)
         
+        # TODO - add user information automatically as interviewer field
+        
         # Commit Changes to Databse
         db.session.commit()
         
         # Generate Flashed Success Message
         flash('\'' + grant.organization + '\' Interview Submitted Successfully', 'success')
         
-        return redirect(url_for('interviews'))
+        if review:
+            return redirect(url_for('grants_pack_review'))
+        else:
+            return redirect(url_for('interviews'))
     
 @app.route('/small-grant-review')
 def small_grants():
@@ -477,16 +489,22 @@ def small_grant_review(grant_id):
     # Check if grant exists in database
     if not grant:
         return "Error: Grant does not exist."
+    
+    # Check if we need to return to the grants pack review page
+    if request.args.get('review'):
+        review = True
+    else:
+        review = False
         
     # User is requesting the interview form
     if request.method == 'GET':
         
         # If the grant is not a small grant, forward to right place
         if not grant.is_small_grant:
-            return redirect(url_for('grant_interview', grant_id=grant.grant_id))
+            return redirect(url_for('grant_interview', grant_id=grant.grant_id, review=review))
             
         # Render page to user
-        return render_template('review_small_grant.html', grant=grant)
+        return render_template('review_small_grant.html', grant=grant, review=review)
     
     # User is submitting the form data
     else:
@@ -499,8 +517,10 @@ def small_grant_review(grant_id):
         if request.form.get('publicity_allocated_notes'): grant.publicity_allocated_notes = request.form.get('publicity_allocated_notes')
         
         # Add Relevant Meta Data
-        grant.interview_occurred = True
-        grant.interview_date = datetime.now(utc)
+        grant.small_grant_is_reviewed = True
+        grant.small_grant_review_date = datetime.now(utc)
+        
+        # TODO - add user information automatically as interviewer field
         
         # Commit Changes to Databse
         db.session.commit()
@@ -508,7 +528,10 @@ def small_grant_review(grant_id):
         # Generate Flashed Success Message
         flash('\'' + grant.organization + '\' Small Grant Review Submitted Successfully', 'success')
         
-        return redirect(url_for('small_grants'))
+        if review:
+            return redirect(url_for('grants_pack_review'))
+        else:
+            return redirect(url_for('small_grants'))
         
 @app.route('/grants-pack/review')
 def grants_pack_review():
@@ -519,8 +542,7 @@ def grants_pack_review():
     grants_pack = council_semester.value + '-' + current_week.value
     
     # query for all grants currently without a grants pack
-    orphan_grants = Grant.query.filter_by(grants_pack=None,interview_occurred=True).all()
-    orphan_grants += Grant.query.filter_by(grants_pack=None,small_grant_is_reviewed=True).all()
+    orphan_grants = Grant.query.filter(OR(AND(Grant.grants_pack==None,Grant.interview_occurred==True), AND(Grant.grants_pack==None,Grant.small_grant_is_reviewed==True))).all()
     child_grants = Grant.query.filter_by(grants_pack=grants_pack).all()
     
     # Render page to user

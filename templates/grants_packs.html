@@ -1,0 +1,41 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Grants Packs
+{% endblock %}
+
+{% block main %}
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="center">
+                <h1>Grants Packs</h1>
+                <h3>Details on each grants pack can be found below.</h3>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-striped table-hover table-responsive">
+                <thead>
+                    <tr>
+                        <th>Grants Pack</th>
+                        <th>Budget</th>
+                        <th>Allocated</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for grants_pack in grants_packs %}
+                        <tr>
+                            <td><a href="{{ url_for('grants_pack_edit_pack', grants_pack=grants_pack.grant_week) }}">{{ grants_pack.grant_week }}</a></td>
+                            <td>{{ grants_pack.budget | usd }}</td>
+                            <td>{{ grants_pack.allocated | usd }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+{% endblock %}

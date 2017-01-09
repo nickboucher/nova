@@ -49,6 +49,10 @@ def nfloat(s):
         return float(s)
     except ValueError:
         return None
+        
+def percentage(value):
+    """ Returns a rounded, expanded percentage from a float in [0,1] """
+    return round(value * 100, 2)
     
 def get_grant_args(query_string):
     """ Gets arguments specific to application from query string,

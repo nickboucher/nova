@@ -31,8 +31,10 @@ app.jinja_env.filters["two_decimals"] = two_decimals
 app.jinja_env.filters["suppress_none"] = suppress_none
 app.jinja_env.filters["datetime"] = utc_to_east_datetime
 app.jinja_env.filters["date"] = utc_to_east_date
+app.jinja_env.filters["percentage"] = percentage
 
 #set cryptographic key for Sessions
+# TODO - Make this a better cyptographic value
 app.secret_key = "some really good encryption string"
 
 # setup database connection
@@ -461,7 +463,7 @@ def grant_interview(grant_id):
         flash('\'' + grant.organization + '\' Interview Submitted Successfully', 'success')
         
         if review:
-            return redirect(url_for('grants_pack_review'))
+            return redirect(url_for('grants_pack_edit_pack', grants_pack=grant.grants_pack))
         else:
             return redirect(url_for('interviews'))
     
@@ -529,22 +531,189 @@ def small_grant_review(grant_id):
         flash('\'' + grant.organization + '\' Small Grant Review Submitted Successfully', 'success')
         
         if review:
-            return redirect(url_for('grants_pack_review'))
+            return redirect(url_for('grants_pack_edit_pack', grants_pack=grant.grants_pack))
         else:
             return redirect(url_for('small_grants'))
         
-@app.route('/grants-pack/review')
-def grants_pack_review():
+@app.route('/grants-pack/edit', methods=['GET','POST'])
+def grants_pack_edit(grants_pack=None):
+    """ Displays page to review and select grants that are elligible for adding to a grants pack,
+        and processes updates POSTed by the page """
     
-    # Get Current Grants Pack
-    council_semester = Config.query.filter_by(key='council_semester').first()
-    current_week = Config.query.filter_by(key='grant_week').first()
-    grants_pack = council_semester.value + '-' + current_week.value
+    # User is requesting the form page
+    if request.method == 'GET':
+        # Create Variable for holding grants_pack row from DB
+        grants_pack_db = None
+        if grants_pack:
+            # If user-specified grants pack does not exist, return an error
+            grants_pack_db = Grants_Week.query.filter_by(grant_week=grants_pack).first()
+            if not grants_pack_db:
+                return "Grants Pack " + grants_pack + " does not exist.",400
+        # Default to current Grants Pack
+        else:
+            # Get Current Grants Pack
+            council_semester = Config.query.filter_by(key='council_semester').first()
+            current_week = Config.query.filter_by(key='grant_week').first()
+            grants_pack = council_semester.value + '-' + current_week.value
+            grants_pack_db = Grants_Week.query.filter_by(grant_week=grants_pack).first()
+            
+        # Ensure that the grants pack has not been locked (by approved council vote)
+        if grants_pack_db.grants_pack_finalized:
+            return "This grants pack has already been finalized and approved by the council."
+        
+        # query for all grants currently without a grants pack
+        orphan_grants = Grant.query.filter(OR(AND(Grant.grants_pack==None,Grant.interview_occurred==True), AND(Grant.grants_pack==None,Grant.small_grant_is_reviewed==True))).all()
+        child_grants = Grant.query.filter_by(grants_pack=grants_pack).all()
+        
+        # Render page to user
+        return render_template('grants_pack_edit.html', orphan_grants=orphan_grants, child_grants=child_grants, grants_pack=grants_pack)
     
-    # query for all grants currently without a grants pack
-    orphan_grants = Grant.query.filter(OR(AND(Grant.grants_pack==None,Grant.interview_occurred==True), AND(Grant.grants_pack==None,Grant.small_grant_is_reviewed==True))).all()
-    child_grants = Grant.query.filter_by(grants_pack=grants_pack).all()
+    # User is POSTing form data updates back to the server
+    else:
+        # Ensure that that grant_pack value was sent
+        grants_pack = request.json.get('grants_pack')
+        if grants_pack:
+            # Ensure that at least one grant was sent
+            grants = request.json.get('grants')
+            if grants and len(grants) > 0:
+                # Ensure that the grants pack has not been locked (by approved council vote)
+                grants_pack_db = Grants_Week.query.filter_by(grant_week=grants_pack).first()
+                if grants_pack_db.grants_pack_finalized:
+                    return "This grants pack has already been finalized and approved by the council.",400
+                # For each grant, update its value in the database
+                for grant in grants:
+                    grant_id = grant.get('grant_id')
+                    selected = grant.get('selected')
+                    # Ensure that grant_id was provided and selected is valid
+                    if grant_id and selected != None:
+                        # This slightly ugly syntax uses far fewer SQL calls than the alternative
+                        if selected:
+                            Grant.query.filter(Grant.grant_id==grant_id).update({ "grants_pack" : grants_pack })
+                        else:
+                            Grant.query.filter(Grant.grant_id==grant_id).update({ "grants_pack" : None })
+                        db.session.commit()
+                return "OK"
+        # On failure, return error with HTTP 400 "Bad Request" Status Code
+        return 'Error',400
+        
+@app.route('/grants-pack/<grants_pack>/edit')
+def grants_pack_edit_pack(grants_pack):
+    """ Allows editing of a specific grants pack """
+    return grants_pack_edit(grants_pack)
     
-    # Render page to user
-    return render_template('grants_pack_review.html', orphan_grants=orphan_grants, child_grants=child_grants, grants_pack=grants_pack)
+@app.route('/grants-pack/cuts', methods=['GET','POST'])
+def grants_pack_cuts(grants_pack=None):
+    """ Displays a page to the user with the calculated cut amounts """
     
+    # User is requesting the form page
+    if request.method == 'GET':
+        # Create Variable for holding grants_pack row from DB
+        grants_pack_db = None
+        if grants_pack:
+            # If user-specified grants pack does not exist, return an error
+            grants_pack_db = Grants_Week.query.filter_by(grant_week=grants_pack).first()
+            if not grants_pack_db:
+                return "Grants Pack " + grants_pack + " does not exist.",400
+        # Default to current Grants Pack
+        else:
+            # Get Current Grants Pack
+            council_semester = Config.query.filter_by(key='council_semester').first()
+            current_week = Config.query.filter_by(key='grant_week').first()
+            grants_pack = council_semester.value + '-' + current_week.value
+            grants_pack_db = Grants_Week.query.filter_by(grant_week=grants_pack).first()
+            
+        # Ensure that the grants pack has not been locked (by approved council vote)
+        if grants_pack_db.grants_pack_finalized:
+            return "This grants pack has already been finalized and approved by the council."
+            
+        # Get all grants in grants pack from the DB
+        grants = Grant.query.filter_by(grants_pack=grants_pack).all()
+        
+        # Get this grants pack's budget
+        budget = grants_pack_db.budget
+        
+        # Calculate expendature for this week
+        allocated = 0
+        cut_immune = 0
+        for grant in grants:
+            # Sum grant
+            grant.amount_allocated = 0
+            if grant.food_allocated: grant.amount_allocated += grant.food_allocated
+            if grant.travel_allocated: grant.amount_allocated += grant.travel_allocated
+            if grant.publicity_allocated: grant.amount_allocated += grant.publicity_allocated
+            if grant.materials_allocated: grant.amount_allocated += grant.materials_allocated
+            if grant.venue_allocated: grant.amount_allocated += grant.venue_allocated
+            if grant.decorations_allocated: grant.amount_allocated += grant.decorations_allocated
+            if grant.media_allocated: grant.amount_allocated += grant.media_allocated
+            if grant.admissions_allocated: grant.amount_allocated += grant.admissions_allocated
+            if grant.hupd_allocated: grant.amount_allocated += grant.hupd_allocated
+            if grant.personnel_allocated: grant.amount_allocated += grant.personnel_allocated
+            if grant.other_allocated: grant.amount_allocated += grant.other_allocated
+            # Add to allocated costs
+            allocated += grant.amount_allocated
+            # If immune from cuts, add to cut_immune
+            if grant.is_collaboration_confirmed:
+                cut_immune += grant.amount_allocated
+                
+        # See if we went overbudget, and calculate cut percentage
+        cuts = 0
+        if allocated > budget:
+            deductable = allocated - cut_immune
+            remaining = budget - cut_immune
+            cuts = 1.0 - (remaining / deductable)
+            
+        # Apply the recommended cuts for each grant
+        for grant in grants:
+            if grant.is_collaboration_confirmed:
+                grant.percentage_cut = 0.0
+            else:
+                grant.percentage_cut = cuts
+                
+        percentage_cut = round(100 * cuts, 2)
+        cut_multiplier = 1.0 - cuts
+                
+        return render_template('grants_pack_cuts.html', grants=grants, grants_pack=grants_pack, budget=budget, allocated=allocated, cut_immune=cut_immune, percentage_cut=percentage_cut, cut_multiplier=cut_multiplier)
+        
+    # User is POSTing form data updates back to the server
+    else:
+        # Format posted data and get grant_pack value
+        values = dict(request.form)
+        grants_pack = values.pop('grants_pack')[0]
+        # Update Weekly running total while calculating grants
+        grant_week = Grants_Week.query.filter_by(grant_week=grants_pack).first()
+        grant_week.allocated = 0.0
+        # Process each grant
+        for grant_id,cut in values.items():
+            # Get the percentage gut in the correct format
+            cut = float(cut[0])
+            # Update grant record with cut and final allocated amount
+            grant = Grant.query.filter_by(grant_id=grant_id).first()
+            # Sum grant
+            allocated = 0
+            if grant.food_allocated: allocated += grant.food_allocated
+            if grant.travel_allocated: allocated += grant.travel_allocated
+            if grant.publicity_allocated: allocated += grant.publicity_allocated
+            if grant.materials_allocated: allocated += grant.materials_allocated
+            if grant.venue_allocated: allocated += grant.venue_allocated
+            if grant.decorations_allocated: allocated += grant.decorations_allocated
+            if grant.media_allocated: allocated += grant.media_allocated
+            if grant.admissions_allocated: allocated += grant.admissions_allocated
+            if grant.hupd_allocated: allocated += grant.hupd_allocated
+            if grant.personnel_allocated: allocated += grant.personnel_allocated
+            if grant.other_allocated: allocated += grant.other_allocated
+            # Save cut and calculate final amount allocated
+            grant.percentage_cut = cut
+            grant.amount_allocated = round((100 - cut) / 100 * allocated, 2)
+            grant_week.allocated += grant.amount_allocated
+            
+        # Commit all changes at once
+        db.session.commit()
+        flash("Grants Pack " + grants_pack + " submitted successfully.", 'success')
+        return redirect(url_for('grants_packs'))
+        
+@app.route('/grants-pack')
+def grants_packs():
+    # Query for all existing grants packs
+    grants_packs = Grants_Week.query.all()
+    # Render the page to the user
+    return render_template('grants_packs.html', grants_packs=grants_packs)

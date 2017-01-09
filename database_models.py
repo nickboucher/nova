@@ -118,38 +118,41 @@ class Grant(db.Model):
     application_comments = db.Column(db.Text)
     # Small Grant Info
     is_small_grant = db.Column(db.Boolean, default=False)
-    small_grant_is_reviewed = db.Column(db.Boolean, default=False)
-    small_grant_reviewer = db.Column(db.Text)
-    small_grant_review_date = db.Column(db.DateTime)
+    small_grant_is_reviewed = db.Column(db.Boolean, default=False) # (non-small grants don't use this)
+    small_grant_reviewer = db.Column(db.Text) # (non-small grants don't use this)
+    small_grant_review_date = db.Column(db.DateTime) # (non-small grants don't use this)
     # Interview Info
-    interviewer = db.Column(db.Text)
-    interview_occurred = db.Column(db.Boolean, default=False)
-    interview_date = db.Column(db.DateTime) # date interview actually ocurred
+    interviewer = db.Column(db.Text) # (small grants don't use this)
+    interview_occurred = db.Column(db.Boolean, default=False) # (small grants don't use this)
+    interview_date = db.Column(db.DateTime) # date interview actually ocurred (small grants don't use this)
     interview_schedule_date = db.Column(db.DateTime) # Next scheduled interview
     interview_schedule_history = db.Column(db.Text) # comma-separated interview scheduled times
     interviewer_notes = db.Column(db.Text)
-    food_allocated = db.Column(db.Float)
+    food_allocated = db.Column(db.Float) # Does not include cuts
     food_allocated_notes = db.Column(db.Text)
-    travel_allocated = db.Column(db.Float)
+    travel_allocated = db.Column(db.Float) # Does not include cuts
     travel_allocated_notes = db.Column(db.Text)
-    publicity_allocated = db.Column(db.Float)
+    publicity_allocated = db.Column(db.Float) # Does not include cuts
     publicity_allocated_notes = db.Column(db.Text)
-    materials_allocated = db.Column(db.Float)
+    materials_allocated = db.Column(db.Float) # Does not include cuts
     materials_allocated_notes = db.Column(db.Text)
-    venue_allocated = db.Column(db.Float)
+    venue_allocated = db.Column(db.Float) # Does not include cuts
     venue_allocated_notes = db.Column(db.Text)
-    decorations_allocated = db.Column(db.Float)
+    decorations_allocated = db.Column(db.Float) # Does not include cuts
     decorations_allocated_notes = db.Column(db.Text)
-    media_allocated = db.Column(db.Float)
+    media_allocated = db.Column(db.Float) # Does not include cuts
     media_allocated_notes = db.Column(db.Text)
-    admissions_allocated = db.Column(db.Float)
+    admissions_allocated = db.Column(db.Float) # Does not include cuts
     admissions_allocated_notes = db.Column(db.Text)
-    hupd_allocated = db.Column(db.Float)
+    hupd_allocated = db.Column(db.Float) # Does not include cuts
     hupd_allocated_notes = db.Column(db.Text)
-    personnel_allocated = db.Column(db.Float)
+    personnel_allocated = db.Column(db.Float) # Does not include cuts
     personnel_allocated_notes = db.Column(db.Text)
-    other_allocated = db.Column(db.Float)
+    other_allocated = db.Column(db.Float) # Does not include cuts
     other_allocated_notes = db.Column(db.Text)
+    percentage_cut = db.Column(db.Float) # Decimal in [0,1] representing percentage deducted due to cuts
+    amount_allocated = db.Column(db.Float) # Total Amount allocated with all cuts factored in
+    is_collaboration_confirmed = db.Column(db.Boolean)
     # Completed Project Info
     expense1_description = db.Column(db.Text)
     expense1_amount = db.Column(db.Float)
@@ -224,8 +227,10 @@ class Grants_Week(db.Model):
     """ Contains the number of grants submitted in each grant week, used to generate new Grant IDs,
         as well as information about the status of the associated grants pack """
     grant_week = db.Column(db.String(64), primary_key=True)
-    num_grants = db.Column(db.Integer)
-    grants_pack_finalized = db.Column(db.Boolean, default=False)
+    num_grants = db.Column(db.Integer) # Note: Not all of these will necessarily be in this week's grants pack
+    grants_pack_finalized = db.Column(db.Boolean, default=False) # Finalized once approved by council, which locks it for editing
+    budget = db.Column(db.Float, default=10000) # Weekly budget
+    allocated = db.Column(db.Float) # Dollar amount allocated in this grants_pack when finalized
 
     def __init__(self, grant_week):
         self.grant_week = grant_week

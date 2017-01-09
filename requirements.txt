@@ -1,0 +1,11 @@
+#
+# ############# pip3 Requirements File #############
+#                       NOVA
+# Example usage: sudo pip3 install -r requirements.txt
+#
+flask
+sqlalchemy
+datetime
+flask_sqlalchemy
+requests
+pytz

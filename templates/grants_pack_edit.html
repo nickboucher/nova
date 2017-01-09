@@ -138,7 +138,7 @@
                     allocated += parseFloat(items[i].amount);
                 }
             });
-            $("#dollars-allocated").text("$" + allocated);
+            $("#dollars-allocated").text("$" + allocated.toFixed(2));
         }
         
         /* Define the event handler function for listboxes that will update the selected
@@ -171,7 +171,7 @@
             for (var i=0; i< items.length; i++) {
                 funding += '<tr>';
                 funding += '<td>' + items[i].category + '</td>';
-                funding += '<td>' + items[i].amount + '</td>';
+                funding += '<td>$' + items[i].amount + '</td>';
                 funding += '<td>' + items[i].description + '</td>';
                 funding += '</tr>';
             }

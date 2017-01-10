@@ -889,3 +889,13 @@ def lookup_grants():
         
     # Return results in JSON form
     return jsonify(results)
+    
+@app.route('/treasurer')
+def review_receipts():
+    """ Displays a page to the user of grants that are ready to have receipts verified """
+    
+    # Query for relevant grants
+    grants = Grant.query.filter_by(council_approved=True,receipts_submitted=True,is_paid=False).all()
+    
+    # Render grants page to the user
+    return render_template('review_receipts.html', grants=grants)

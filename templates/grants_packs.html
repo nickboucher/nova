@@ -38,7 +38,7 @@
                                 {% if grants_pack.grants_pack_finalized %}
                                     <i class="fa fa-check" aria-hidden="true"></i>
                                 {% else %}
-                                    <a href="{{ url_for('grants_pack_council_approve', grants_pack=grants_pack.grant_week) }}" class="btn btn-default">Approve</a>
+                                    <a href="{{ url_for('grants_pack_council_approve', grants_pack=grants_pack.grant_week) }}" class="btn btn-default {{ 'disabled' if grants_pack.allocated == None }}">Approve</a>
                                 {% endif %}
                             </td>
                             <td><a href="{{ url_for('grants_pack_edit_pack', grants_pack=grants_pack.grant_week) }}" class="btn btn-default {{ 'disabled' if grants_pack.grants_pack_finalized }}">Edit</a></td>

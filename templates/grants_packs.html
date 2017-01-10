@@ -23,14 +23,26 @@
                         <th>Grants Pack</th>
                         <th>Budget</th>
                         <th>Allocated</th>
+                        <th>Council Approved</th>
+                        <th>Edit</th>
+                        <th>View</th>
                     </tr>
                 </thead>
-                <tbody>
+                <tbody class="middle">
                     {% for grants_pack in grants_packs %}
                         <tr>
-                            <td><a href="{{ url_for('grants_pack_edit_pack', grants_pack=grants_pack.grant_week) }}">{{ grants_pack.grant_week }}</a></td>
+                            <td class="text-nowrap">{{ grants_pack.grant_week }}</td>
                             <td>{{ grants_pack.budget | usd }}</td>
                             <td>{{ grants_pack.allocated | usd }}</td>
+                            <td>
+                                {% if grants_pack.grants_pack_finalized %}
+                                    <i class="fa fa-check" aria-hidden="true"></i>
+                                {% else %}
+                                    <a href="{{ url_for('grants_pack_council_approve', grants_pack=grants_pack.grant_week) }}" class="btn btn-default">Approve</a>
+                                {% endif %}
+                            </td>
+                            <td><a href="{{ url_for('grants_pack_edit_pack', grants_pack=grants_pack.grant_week) }}" class="btn btn-default {{ 'disabled' if grants_pack.grants_pack_finalized }}">Edit</a></td>
+                            <td><a href="{{ url_for('grants_pack_view_pack', grants_pack=grants_pack.grant_week) }}" class="btn btn-default {{ 'disabled' if grants_pack.allocated == None }}">View</a></td>
                         </tr>
                     {% endfor %}
                 </tbody>

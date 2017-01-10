@@ -230,6 +230,7 @@ class Grants_Week(db.Model):
     num_grants = db.Column(db.Integer) # Note: Not all of these will necessarily be in this week's grants pack
     grants_pack_finalized = db.Column(db.Boolean, default=False) # Finalized once approved by council, which locks it for editing
     budget = db.Column(db.Float, default=10000) # Weekly budget
+    requested = db.Column(db.Float) # Dollar amount requested by all grants in this grants pack
     allocated = db.Column(db.Float) # Dollar amount allocated in this grants_pack when finalized
 
     def __init__(self, grant_week):

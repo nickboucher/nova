@@ -24,7 +24,7 @@
                 <tbody>
                     {% for grant in grants %}
                         <tr class="clickable-row" data-href="{{ url_for('small_grant_review', grant_id=grant.grant_id) }}">
-                            <td>{{ grant.grant_id }}</td>
+                            <td class="text-nowrap">{{ grant.grant_id }}</td>
                             <td><b>{{ grant.organization }}</b></td>
                             <td><b>{{ grant.project }}</b></td>
                             <td>{{ grant.application_submit_time | date }}</td>

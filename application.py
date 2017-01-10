@@ -407,10 +407,7 @@ def grant_interview(grant_id):
         return "Error: Grant does not exist."
         
     # Check if we need to return to the grants pack review page
-    if request.args.get('review'):
-        review = True
-    else:
-        review = False
+    review = request.args.get('review')
     
     # User is requesting the interview form
     if request.method == 'GET':
@@ -449,6 +446,7 @@ def grant_interview(grant_id):
         if request.form.get('personnel_allocated_notes'): grant.personnel_allocated_notes = request.form.get('personnel_allocated_notes')
         if request.form.get('other_allocated'): grant.other_allocated = request.form.get('other_allocated', type=float)
         if request.form.get('other_allocated_notes'): grant.other_allocated_notes = request.form.get('other_allocated_notes')
+        if request.form.get('is_collaboration_confirmed'): grant.is_collaboration_confirmed = request.form.get('is_collaboration_confirmed')
         
         # Add Relevant Meta Data
         grant.interview_occurred = True
@@ -463,7 +461,7 @@ def grant_interview(grant_id):
         flash('\'' + grant.organization + '\' Interview Submitted Successfully', 'success')
         
         if review:
-            return redirect(url_for('grants_pack_edit_pack', grants_pack=grant.grants_pack))
+                return redirect(url_for('grants_pack_edit_pack', grants_pack=review))
         else:
             return redirect(url_for('interviews'))
     
@@ -493,10 +491,7 @@ def small_grant_review(grant_id):
         return "Error: Grant does not exist."
     
     # Check if we need to return to the grants pack review page
-    if request.args.get('review'):
-        review = True
-    else:
-        review = False
+    review = request.args.get('review')
         
     # User is requesting the interview form
     if request.method == 'GET':
@@ -517,6 +512,7 @@ def small_grant_review(grant_id):
         if request.form.get('food_allocated_notes'): grant.food_allocated_notes = request.form.get('food_allocated_notes')
         if request.form.get('publicity_allocated'): grant.publicity_allocated = request.form.get('publicity_allocated', type=float)
         if request.form.get('publicity_allocated_notes'): grant.publicity_allocated_notes = request.form.get('publicity_allocated_notes')
+        if request.form.get('is_collaboration_confirmed'): grant.is_collaboration_confirmed = request.form.get('is_collaboration_confirmed')
         
         # Add Relevant Meta Data
         grant.small_grant_is_reviewed = True
@@ -531,7 +527,7 @@ def small_grant_review(grant_id):
         flash('\'' + grant.organization + '\' Small Grant Review Submitted Successfully', 'success')
         
         if review:
-            return redirect(url_for('grants_pack_edit_pack', grants_pack=grant.grants_pack))
+            return redirect(url_for('grants_pack_edit_pack', grants_pack=review))
         else:
             return redirect(url_for('small_grants'))
         
@@ -711,9 +707,78 @@ def grants_pack_cuts(grants_pack=None):
         flash("Grants Pack " + grants_pack + " submitted successfully.", 'success')
         return redirect(url_for('grants_packs'))
         
+@app.route('/grants-pack/<grants_pack>/cuts')
+def grants_pack_cuts_pack(grants_pack):
+    """ Allows calculating cuts of any given grants pack """
+    return grants_pack_cuts(grants_pack)
+        
 @app.route('/grants-pack')
 def grants_packs():
+    """ Shows page listing all grants packs and their status """
     # Query for all existing grants packs
     grants_packs = Grants_Week.query.all()
     # Render the page to the user
     return render_template('grants_packs.html', grants_packs=grants_packs)
+    
+@app.route('/grants-pack/<grants_pack>/view')
+def grants_pack_view_pack(grants_pack):
+    """ Gives a basic overview page containing the grants pack data """
+    
+    # Ensure that grants_pack was specified
+    if not grants_pack:
+        return "Grants Pack not specified"
+        
+    # Query for grants pack
+    grants_pack_db = Grants_Week.query.filter_by(grant_week=grants_pack).first()
+    # Verify that grants_pack exists
+    if not grants_pack_db:
+        return "Grants Pack Does Not Exist"
+        
+    # Verify that that grants pack has been allocated already
+    if not grants_pack_db.allocated:
+        return redirect(url_for('grants_pack_edit_pack', grants_pack=grants_pack))
+        
+    # Query for all associated grants
+    grants = Grant.query.filter_by(grants_pack=grants_pack)
+    
+    # Render page to user
+    return render_template('grants_pack_view.html', grants_pack=grants_pack_db, grants=grants)
+    
+@app.route('/grants_pack/<grants_pack>/approve', methods=['GET','POST'])
+def grants_pack_council_approve(grants_pack):
+    """ Allows the user to verify that a grants pack has been approved by the council """
+    
+    # Verify that grants pack was specified
+    if not grants_pack:
+        return "Must specify grants pack"
+        
+    # Verify that grants pack exists
+    grants_pack_db = Grants_Week.query.filter_by(grant_week=grants_pack).first()
+    if not grants_pack_db:
+        return "Grants pack " + grants_pack + " does not exist."
+        
+    # Verify that the grants pack has been allocated before approving
+    if grants_pack_db.allocated == None:
+        return "Grant pack must be allocated via editing before it can be approved."
+        
+    # User is requesting the confirmation page
+    if request.method == 'GET':
+        
+        # Render the confirmation page to the user
+        return render_template('grants_pack_council_approve.html', grants_pack=grants_pack_db)
+        
+    # User is POSTing the confirmation to the server
+    else:
+        
+        # Update database to approve grants pack
+        grants_pack_db.grants_pack_finalized = True
+        
+        # Commit changes to database
+        db.session.commit()
+        
+        # Display message to user that the grants pack has been approved
+        flash("Grants Pack " + grants_pack + " has been successfully marked as approved.", 'success')
+        
+        # Redirect to grants packs listing
+        return redirect(url_for('grants_packs'))
+    

@@ -23,7 +23,7 @@
                     <h3>Review Form</h3>
                     <hr />
                 </div>
-                <form action="{{ url_for('small_grant_review', grant_id=grant.grant_id) }}{{ '?review=1' if review }}" method="post">
+                <form action="{{ url_for('small_grant_review', grant_id=grant.grant_id) }}{{ '?review=' + review if review }}" method="post">
                     <div class="row">
                         <div class="col-md-4">
                             <div class="form-group">
@@ -61,6 +61,12 @@
                             </div>
                         </div>
                     </div>
+                    {% if grant.is_collaboration %}
+                        <div class="alert alert-danger" role="alert">
+                            <input type="checkbox" name="is_collaboration_confirmed" value="confirmed" {{ 'checked="checked"' if grant.is_collaboration_confirmed }}>&nbsp;&nbsp;<b>Confirm Collaboration</b>
+                            <p>This box must be checked to make this grant immune from funding cuts. A representative from each collaborating club should be present.</p>
+                        </div>
+                    {% endif %}
                     <div class="text-right">
                         <button type="submit" class="btn btn-primary">Submit</button>
                     </div>
@@ -148,15 +154,15 @@
                         <td>
                             {% if grant.revenue1_amount %}
                                 {{ grant.revenue1_type }}: {{ grant.revenue1_description }}
-                                {{ "<br>" + grant.revenue2_type + ": " + grant.revenue2_description if grant.revenue2_amount }}
-                                {{ "<br>" + grant.revenue3_type + ": " + grant.revenue3_description if grant.revenue3_amount }}
-                                {{ "<br>" + grant.revenue4_type + ": " + grant.revenue4_description if grant.revenue4_amount }}
-                                {{ "<br>" + grant.revenue5_type + ": " + grant.revenue5_description if grant.revenue5_amount }}
-                                {{ "<br>" + grant.revenue6_type + ": " + grant.revenue6_description if grant.revenue6_amount }}
-                                {{ "<br>" + grant.revenue7_type + ": " + grant.revenue7_description if grant.revenue7_amount }}
-                                {{ "<br>" + grant.revenue8_type + ": " + grant.revenue8_description if grant.revenue8_amount }}
-                                {{ "<br>" + grant.revenue9_type + ": " + grant.revenue9_description if grant.revenue9_amount }}
-                                {{ "<br>" + grant.revenue10_type + ": " + grant.revenue10_description if grant.revenue10_amount }}
+                                {{ "<br><br>" | safe + grant.revenue2_type | suppress_none + ": " + grant.revenue2_description | suppress_none + " (" + grant.revenue2_amount | usd + ")" if grant.revenue2_amount }}
+                                {{ "<br><br>" | safe + grant.revenue3_type | suppress_none + ": " + grant.revenue3_description | suppress_none + " (" + grant.revenue3_amount | usd + ")" if grant.revenue3_amount }}
+                                {{ "<br><br>" | safe + grant.revenue4_type | suppress_none + ": " + grant.revenue4_description | suppress_none + " (" + grant.revenue4_amount | usd + ")" if grant.revenue4_amount }}
+                                {{ "<br><br>" | safe + grant.revenue5_type | suppress_none + ": " + grant.revenue5_description | suppress_none + " (" + grant.revenue5_amount | usd + ")" if grant.revenue5_amount }}
+                                {{ "<br><br>" | safe + grant.revenue6_type | suppress_none + ": " + grant.revenue6_description | suppress_none + " (" + grant.revenue6_amount | usd + ")" if grant.revenue6_amount }}
+                                {{ "<br><br>" | safe + grant.revenue7_type | suppress_none + ": " + grant.revenue7_description | suppress_none + " (" + grant.revenue7_amount | usd + ")" if grant.revenue7_amount }}
+                                {{ "<br><br>" | safe + grant.revenue8_type | suppress_none + ": " + grant.revenue8_description | suppress_none + " (" + grant.revenue8_amount | usd + ")" if grant.revenue8_amount }}
+                                {{ "<br><br>" | safe + grant.revenue9_type | suppress_none + ": " + grant.revenue9_description | suppress_none + " (" + grant.revenue9_amount | usd + ")" if grant.revenue9_amount }}
+                                {{ "<br><br>" | safe + grant.revenue10_type | suppress_none + ": " + grant.revenue10_description | suppress_none + " (" + grant.revenue10_amount | usd + ")" if grant.revenue10_amount }}
                             {% else %}
                                 None
                             {% endif %}

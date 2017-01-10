@@ -96,7 +96,7 @@
                 {% endfor %}
               </select>
         </div>
-        <a id="submit" href="{{ url_for('grants_pack_cuts') }}" class="btn btn-default float-right" style="margin: 10px 15px">Submit</a>
+        <a id="submit" href="{{ url_for('grants_pack_cuts_pack', grants_pack=grants_pack) }}" class="btn btn-default float-right" style="margin: 10px 15px">Submit</a>
     </div>
     
     <div class="row">
@@ -171,7 +171,7 @@
             for (var i=0; i< items.length; i++) {
                 funding += '<tr>';
                 funding += '<td>' + items[i].category + '</td>';
-                funding += '<td>$' + items[i].amount + '</td>';
+                funding += '<td>$' + items[i].amount.toFixed(2) + '</td>';
                 funding += '<td>' + items[i].description + '</td>';
                 funding += '</tr>';
             }
@@ -181,7 +181,7 @@
             $('#grant_project').text(project);
             $('#grant_subtitle').text(organization + ", " + id);
             $('#grant_notes').text(notes);
-            $('#grant_interviewer').html(interviewer + ' <a href="/interview/' + id + '?review=1">Edit</a>');
+            $('#grant_interviewer').html(interviewer + ' <a href="/interview/' + id + '?review={{ grants_pack }}">Edit</a>');
             $('#grant_funding').html(funding);
             
         }

@@ -77,3 +77,15 @@ def get_grant_args(query_string):
     # Rebuild query string and parse as if normal
     clean_query = "&".join(parsed_args)
     return parse_qs(clean_query)
+
+def serialize_grant(grant):
+    """ Turns grant object into a dictionary that can be easily JSONified for API calls """
+    return {
+            'grant_id' : grant.grant_id,
+            'organization' : grant.organization,
+            'project' : grant.project,
+            'grants_pack' : grant.grants_pack,
+            'interview_or_review_occurred' : grant.small_grant_is_reviewed if grant.is_small_grant else grant.interview_occurred,
+            'cpf_submitted' : grant.receipts_submitted,
+            'funds_dispensed' : grant.is_paid
+        }

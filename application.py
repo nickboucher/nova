@@ -804,7 +804,7 @@ def search():
         # Render the page to the user
         return render_template('search.html', k=sec_key.value)
         
-@app.route('/organizations')
+@app.route('/search/organizations')
 def organizations():
     """ Provides an API endpoint which returns a list of all organizations in JSON """
     
@@ -829,7 +829,7 @@ def organizations():
     # Return the JSON response
     return jsonify(orgs)
     
-@app.route('/projects')
+@app.route('/search/projects')
 def projects():
     """ Provides an API endpoint for which projects can be queried """
     
@@ -853,3 +853,39 @@ def projects():
         
     # Return the JSON response
     return jsonify(projects)
+    
+@app.route('/search/lookup-grants')
+def lookup_grants():
+    """ API endpoint that returns a list of all grants from an organization """
+    
+    # Get Security Key
+    sec_key = Config.query.filter_by(key="security_key").first()
+    if sec_key == None:
+        return "Security Key not set."
+    
+    # Verify the security key
+    if request.args.get('k') != sec_key.value:
+        return "Invlalid Security Key. You do not have access to this system."
+        
+    # Get Search criteria
+    query = request.args.get('query')
+    
+    # Ensure that query was specified
+    if not query:
+        return "Must specify query"
+        
+    # Query for grants by organization
+    org_grants = Grant.query.filter_by(organization=query).all()
+    
+    # Build list of grant data for JSON serialization
+    results = list(map(serialize_grant, org_grants))
+        
+    # Query for grants by project name
+    project_grants = Grant.query.filter_by(project=query).all()
+    
+    # Add grant if it exists
+    if grant:
+        results += list(map(serialize_grant, project_grants))
+        
+    # Return results in JSON form
+    return jsonify(results)

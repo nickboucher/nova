@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Grants Pack {{ grants_pack.grant_week }} Approval
+{% endblock %}
+
+{% block main %}
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="center">
+                <h1>Grants Pack {{ grants_pack.grant_week }} Approval</h1>
+                <h3>Confirm that this grants pack has been passed favorably by the UC General Council.</h3>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-12 margin40">
+            <div class="center">
+                <h2 class="margin40 bold">Amount Allocated: {{ grants_pack.allocated | usd }}</h2>
+                <form action="{{ url_for('grants_pack_council_approve', grants_pack=grants_pack.grant_week) }}" method="post">
+                    <input type="hidden" name="approve" value="true">
+                    <div class="alert alert-danger" role="alert"><p>Once a grants pack has been approved, it can no longer be edited.</p></div>
+                    <a href="{{ url_for('grants_pack_view_pack', grants_pack=grants_pack.grant_week) }}" class="btn btn-default">Review Grants Pack</a>
+                    <input type="submit" class="btn btn-danger" value="Approve">
+                </form>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

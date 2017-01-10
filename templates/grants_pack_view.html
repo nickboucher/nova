@@ -1,0 +1,54 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Grants Pack {{ grants_pack.grant_week }}
+{% endblock %}
+
+{% block main %}
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="center">
+                <h1>Grants Pack {{ grants_pack.grant_week }}</h1>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-striped table-hover table-responsive">
+                <thead>
+                    <tr>
+                        <th>Grant ID</th>
+                        <th>Organization</th>
+                        <th>Project</th>
+                        <th>Requested</th>
+                        <th>Allocated</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for grant in grants %}
+                        <tr>
+                            <td class="text-nowrap">{{ grant.grant_id }}</td>
+                            <td>{{ grant.organization }}</td>
+                            <td>{{ grant.project }}</td>
+                            <td>{{ grant.amount_requested | usd }}</td>
+                            <td>{{ grant.amount_allocated | usd }}</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+            <div class="float-right" style="margin-right: 15px;">
+                <div>
+                    <b>Total Requested: {{ grants_pack.requested | usd }}</b>
+                </div>
+                <div>
+                    <b>Total Allocated: {{ grants_pack.allocated | usd }}</b>
+                </div>
+            </div>
+
+        </div>
+    </div>
+    
+
+{% endblock %}

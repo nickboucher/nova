@@ -1,0 +1,132 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Search
+{% endblock %}
+
+{% block head %}
+    <!-- Typeahead Styles -->
+    <style>
+        .tt-query {
+          -webkit-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+             -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+                  box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
+        }
+        
+        .tt-hint {
+          color: #999
+        }
+        
+        .tt-menu {    /* used to be tt-dropdown-menu in older versions */
+          width: 422px;
+          margin-top: 4px;
+          padding: 4px 0;
+          background-color: #fff;
+          border: 1px solid #ccc;
+          border: 1px solid rgba(0, 0, 0, 0.2);
+          -webkit-border-radius: 4px;
+             -moz-border-radius: 4px;
+                  border-radius: 4px;
+          -webkit-box-shadow: 0 5px 10px rgba(0,0,0,.2);
+             -moz-box-shadow: 0 5px 10px rgba(0,0,0,.2);
+                  box-shadow: 0 5px 10px rgba(0,0,0,.2);
+        }
+        
+        .tt-suggestion {
+          padding: 3px 20px;
+          line-height: 24px;
+        }
+        
+        .tt-suggestion.tt-cursor,.tt-suggestion:hover {
+          color: #fff;
+          background-color: #0097cf;
+        
+        }
+        
+        .tt-suggestion p {
+          margin: 0;
+        }
+        
+        .typeahead-title {
+          margin: 0 20px 5px 20px;
+          padding: 3px 0;
+          border-bottom: 1px solid #ccc;
+        }
+        
+        .typeahead {
+            width: 422px;
+            height: 45px;
+            padding: 8px 12px;
+            font-size: 24px;
+            line-height: 30px;
+            border: 2px solid #ccc;
+            -webkit-border-radius: 8px;
+            -moz-border-radius: 8px;
+            border-radius: 8px;
+            outline: none;
+        }
+    </style>
+{% endblock %}
+
+{% block main %}
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="center">
+                <h1>Search</h1>
+                <h3>Search for grants.</h3>
+                
+                 <input class="form-control typeahead" type="text" placeholder="Organization or Project">
+                
+            </div>
+        </div>
+    </div>
+    
+{% endblock %}
+
+{% block scripts %}
+
+    <script src="{{ url_for('static', filename='typeahead.bundle.min.js') }}"></script>
+
+    <script type="text/javascript">
+    
+        var organizations = new Bloodhound({
+          datumTokenizer: Bloodhound.tokenizers.whitespace,
+          queryTokenizer: Bloodhound.tokenizers.whitespace,
+          prefetch: '{{ url_for("organizations", k=k) }}',
+          remote: {
+            url: '{{ url_for("organizations", k=k) }}&query=%QUERY',
+            wildcard: '%QUERY'
+          }
+        });
+        
+        var projects = new Bloodhound({
+          datumTokenizer: Bloodhound.tokenizers.whitespace,
+          queryTokenizer: Bloodhound.tokenizers.whitespace,
+          remote: {
+            url: '{{ url_for("projects", k=k) }}&query=%QUERY',
+            wildcard: '%QUERY'
+          }
+        });
+        
+        $('.typeahead').typeahead({
+                highlight: true
+            },
+            {
+                name: 'organizations',
+                source: organizations,
+                templates: {
+                    header: '<h3 class="typeahead-title">Organizations</h3>'
+                }
+            },
+            {
+                name: 'projects',
+                source: projects,
+                templates: {
+                    header: '<h3 class="typeahead-title">Projects</h3>'
+                }
+            });
+        
+    </script>
+
+{% endblock %}

@@ -6,7 +6,7 @@
 # all URL endpoints to FLASK functions
 #
 
-from flask import Flask, flash, redirect, render_template, request, session, url_for
+from flask import Flask, flash, redirect, render_template, request, session, url_for, jsonify
 from sqlalchemy.exc import IntegrityError
 from datetime import datetime, timezone
 from sqlalchemy.sql.expression import or_ as OR, and_ as AND
@@ -174,6 +174,13 @@ def new_grant():
         for expense in expenses:
             if expense and expense not in small_grant_expense_types:
                 grant.is_small_grant = False
+                
+    # If the organization does not yet exist in our Organizations Database, add the organization
+    if grant.organization:
+        org = Organization.query.filter_by(name=grant.organization).first()
+        if org == None:
+            org = Organization(grant.organization)
+            db.session.add(org)
     
     # Commit New Grant to Database
     try:
@@ -782,3 +789,67 @@ def grants_pack_council_approve(grants_pack):
         # Redirect to grants packs listing
         return redirect(url_for('grants_packs'))
     
+@app.route('/search', methods=['GET','POST'])
+def search():
+    """ Allows the user to search for grants by Organization, Project, or Grant ID """
+    
+    # Get Security Key
+    sec_key = Config.query.filter_by(key="security_key").first()
+    if sec_key == None:
+        return "Security Key not set."
+    
+    # User is requesting the search form
+    if request.method == 'GET':
+        
+        # Render the page to the user
+        return render_template('search.html', k=sec_key.value)
+        
+@app.route('/organizations')
+def organizations():
+    """ Provides an API endpoint which returns a list of all organizations in JSON """
+    
+    # Get Security Key
+    sec_key = Config.query.filter_by(key="security_key").first()
+    if sec_key == None:
+        return "Security Key not set."
+    
+    # Verify the security key
+    if request.args.get('k') != sec_key.value:
+        return "Invlalid Security Key. You do not have access to this system."
+        
+    # See if there is a query
+    query = request.args.get('query')
+    if query:
+        # Search for the query
+        orgs = [i.name for i in Organization.query.filter(Organization.name.like('%' + query + '%'))]
+    else:
+        # Respond with JSON of all organizations
+        orgs = [i.name for i in Organization.query.all()]
+        
+    # Return the JSON response
+    return jsonify(orgs)
+    
+@app.route('/projects')
+def projects():
+    """ Provides an API endpoint for which projects can be queried """
+    
+    # Get Security Key
+    sec_key = Config.query.filter_by(key="security_key").first()
+    if sec_key == None:
+        return "Security Key not set."
+    
+    # Verify the security key
+    if request.args.get('k') != sec_key.value:
+        return "Invlalid Security Key. You do not have access to this system."
+        
+    # See if there is a query
+    query = request.args.get('query')
+    if query:
+        # Search for the query
+        projects = [grant.project for grant in Grant.query.filter(Grant.project.like('%' + query + '%'))]
+    else:
+        # If there is no query, return an empty response
+        return "[]"
+        
+    # Return the JSON response
+    return jsonify(projects)

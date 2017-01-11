@@ -1,0 +1,297 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Treasurer - Grant {{ grant.grant_id }}
+{% endblock %}
+
+{% block main %}
+
+ <div class="wrapper">
+        <div class="row">
+            <div class="top">
+                <div class="center">
+                    <h1>"{{ grant.project }}" Receipts</h1>
+                    <h3>{{ grant.organization }}, Grant: {{ grant.grant_id }}</h3>
+                </div>
+            </div>
+        </div>
+        <div class="row container2">
+            <div class="left border-right">
+                <div class="center" style="margin-top: -20px;">
+                    <hr />
+                    <h3>Receipt Images</h3>
+                    <hr />
+                </div>
+                
+                {% for receipt in receipts %}
+                    <img src="{{ receipt }}" class="fullwidth">
+                {% endfor %}
+            
+            </div>
+            <div class="right">
+                <div class="center" style="margin-top: -20px;">
+                    <hr />
+                    <h3>Completed Project</h3>
+                    <hr />
+                </div>
+                
+                <table class="table table-striped table-hover table-responsive">
+                    <thead>
+                        <tr>
+                            <th>Description</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if expense1_amount %}
+                            <tr>
+                                <td>{{ grant.expense1_description | suppress_none }}</td>
+                                <td>{{ grant.expense1_amount | usd }}</td>
+                            </tr>
+                        {% endif %}
+                        {% if expense2_amount %}
+                            <tr>
+                                <td>{{ grant.expense2_description | suppress_none }}</td>
+                                <td>{{ grant.expense2_amount | usd }}</td>
+                            </tr>
+                        {% endif %}
+                        {% if expense3_amount %}
+                            <tr>
+                                <td>{{ grant.expense3_description | suppress_none }}</td>
+                                <td>{{ grant.expense3_amount | usd }}</td>
+                            </tr>
+                        {% endif %}
+                        {% if expense4_amount %}
+                            <tr>
+                                <td>{{ grant.expense4_description | suppress_none }}</td>
+                                <td>{{ grant.expense4_amount | usd }}</td>
+                            </tr>
+                        {% endif %}
+                        {% if expense5_amount %}
+                            <tr>
+                                <td>{{ grant.expense5_description | suppress_none }}</td>
+                                <td>{{ grant.expense5_amount | usd }}</td>
+                            </tr>
+                        {% endif %}
+                        {% if expense6_amount %}
+                            <tr>
+                                <td>{{ grant.expense6_description | suppress_none }}</td>
+                                <td>{{ grant.expense6_amount | usd }}</td>
+                            </tr>
+                        {% endif %}
+                        {% if expense7_amount %}
+                            <tr>
+                                <td>{{ grant.expense7_description | suppress_none }}</td>
+                                <td>{{ grant.expense7_amount | usd }}</td>
+                            </tr>
+                        {% endif %}
+                        {% if expense8_amount %}
+                            <tr>
+                                <td>{{ grant.expense8_description | suppress_none }}</td>
+                                <td>{{ grant.expense8_amount | usd }}</td>
+                            </tr>
+                        {% endif %}
+                        {% if expense9_amount %}
+                            <tr>
+                                <td>{{ grant.expense9_description | suppress_none }}</td>
+                                <td>{{ grant.expense9_amount | usd }}</td>
+                            </tr>
+                        {% endif %}
+                        {% if expense10_amount %}
+                            <tr>
+                                <td>{{ grant.expense10_description | suppress_none }}</td>
+                                <td>{{ grant.expense10_amount | usd }}</td>
+                            </tr>
+                        {% endif %}
+                        {% if expense11_amount %}
+                            <tr>
+                                <td>{{ grant.expense11_description | suppress_none }}</td>
+                                <td>{{ grant.expense11_amount | usd }}</td>
+                            </tr>
+                        {% endif %}
+                        {% if expense12_amount %}
+                            <tr>
+                                <td>{{ grant.expense12_description | suppress_none }}</td>
+                                <td>{{ grant.expense12_amount | usd }}</td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+                
+                <div class="center">
+                    <p>{{ grant.completed_proj_comments }}</p>
+                </div>
+                
+                
+                <div class="center">
+                    <hr />
+                    <h3>Dispense Funds</h3>
+                    <hr />
+                </div>
+                
+                <table class="table table-striped table-hover table-responsive">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Comment</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if grant.food_allocated %}
+                            <tr>
+                                <td>Food</td>
+                                <td>{{ grant.food_allocated_notes | suppress_none }}</td>
+                                <td><input type="number" class="funding" id="food_funding" step=".01" value="{{ grant.food_allocated | two_decimals }}"></td>
+                            </tr>
+                        {% endif %}
+                        {% if grant.travel_allocated %}
+                            <tr>
+                                <td>Travel</td>
+                                <td>{{ grant.travel_allocated_notes | suppress_none }}</td>
+                                <td><input type="number" class="funding" id="travel_funding" step=".01" value="{{ grant.travel_allocated | two_decimals }}"></td>
+                            </tr>
+                        {% endif %}
+                        {% if grant.publicity_allocated %}
+                            <tr>
+                                <td>Publicity</td>
+                                <td>{{ grant.publicity_allocated_notes | suppress_none }}</td>
+                                <td><input type="number" class="funding" id="publicity_funding" step=".01" value="{{ grant.publicity_allocated | two_decimals }}"></td>
+                            </tr>
+                        {% endif %}
+                        {% if grant.materials_allocated %}
+                            <tr>
+                                <td>Materials & Supplies</td>
+                                <td>{{ grant.materials_allocated_notes | suppress_none }}</td>
+                                <td><input type="number" class="funding" id="materials_funding" step=".01" value="{{ grant.materials_allocated | two_decimals }}"></td>
+                            </tr>
+                        {% endif %}
+                        {% if grant.venue_allocated %}
+                            <tr>
+                                <td>Venue</td>
+                                <td>{{ grant.venue_allocated_notes | suppress_none }}</td>
+                                <td><input type="number" class="funding" id="venue_funding" step=".01" value="{{ grant.venue_allocated | two_decimals }}"></td>
+                            </tr>
+                        {% endif %}
+                        {% if grant.decorations_allocated %}
+                            <tr>
+                                <td>Decorations</td>
+                                <td>{{ grant.decorations_allocated_notes | suppress_none }}</td>
+                                <td><input type="number" class="funding" id="decorations_funding" step=".01" value="{{ grant.decorations_allocated | two_decimals }}"></td>
+                            </tr>
+                        {% endif %}
+                        {% if grant.media_allocated %}
+                            <tr>
+                                <td>AV/Media</td>
+                                <td>{{ grant.media_allocated_notes | suppress_none }}</td>
+                                <td><input type="number" class="funding" id="media_funding" step=".01" value="{{ grant.media_allocated | two_decimals }}"></td>
+                            </tr>
+                        {% endif %}
+                        {% if grant.admissions_allocated %}
+                            <tr>
+                                <td>Admissions</td>
+                                <td>{{ grant.admissions_allocated_notes | suppress_none }}</td>
+                                <td><input type="number" class="funding" id="admissions_funding" step=".01" value="{{ grant.admissions_allocated | two_decimals }}"></td>
+                            </tr>
+                        {% endif %}
+                        {% if grant.hupd_allocated %}
+                            <tr>
+                                <td>HUPD/BAT/DJ</td>
+                                <td>{{ grant.hupd_allocated_notes | suppress_none }}</td>
+                                <td><input type="number" class="funding" id="hupd_funding" step=".01" value="{{ grant.hupd_allocated | two_decimals }}"></td>
+                            </tr>
+                        {% endif %}
+                        {% if grant.personnel_allocated %}
+                            <tr>
+                                <td>Personnel</td>
+                                <td>{{ grant.personnel_allocated_notes | suppress_none }}</td>
+                                <td><input type="number" class="funding" id="personnel_funding" step=".01" value="{{ grant.personnel_allocated | two_decimals }}"></td>
+                            </tr>
+                        {% endif %}
+                        {% if grant.other_allocated %}
+                            <tr>
+                                <td>Other</td>
+                                <td>{{ grant.other_allocated_notes | suppress_none }}</td>
+                                <td><input type="number" class="funding" id="other_funding" step=".01" value="{{ grant.other_allocated | two_decimals }}"></td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+                
+                <div class="center">
+                    <p>{{ grant.interviewer_notes | suppress_none }}</p>
+                </div>
+                
+                <div class="float-right">
+                    <p id="total" class="bold" style="font-size:1.5em;">{{ grant.amount_allocated | usd }}</p>
+                </div>
+                <form action="{{ url_for('review_grant_receipts', grant_id=grant.grant_id) }}" method="post">
+                    <div class="row">
+                        <input type="hidden" name="amount" value="{{ grant.amount_allocated | usd }}">
+                        <div class="col-md-12">
+                            <div class="form-group">
+                                <label for="interviewer_notes">Treasurer Notes<br><span class="regular"><i>will be sent to grant applicant</i></span></label>
+                                <textarea class="form-control resize-vertical" rows="1" name="interviewer_notes">{{ grant.interviewer_notes | suppress_none }}</textarea>
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="form-group">
+                                <label for="is_check">Issuing Check</label>
+                                <input type="checkbox" name="is_check" id="is_check" value="check">
+                            </div>
+                        </div>
+                        <div class="col-md-8">
+                            <div id="check_number" class="form-group">
+                                <label for="is_check">Check Number</label>
+                                <input type="text" name="check_number">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+
+
+{% endblock %}
+
+{% block scripts %}
+
+    <script type="text/javascript">
+        
+        /* Updates the total value textbox */
+        function UpdateTotal() {
+            
+            // Sums the total value
+            var total = 0.0;
+            $(".funding").each(function() {
+                total += parseFloat($(this).val());
+            });
+            
+            // Set the value
+            $("#total").text("$" + total.toFixed(2));
+            
+            // Update hidden form value
+            $('input[name="amount"]').val(total.toFixed(2));
+        }
+        
+        // Update total on change
+        $(".funding").change(UpdateTotal);
+        
+        /* Hide/show check number textbox */
+        function ShowHideCheck() {
+            if ($(this).prop('checked')) $("#check_number").show();
+            else $("#check_number").hide();
+        }
+        
+        // Handle checkbox click
+        $("#is_check").click(ShowHideCheck);
+        // Run on page load
+        ShowHideCheck();
+        
+    </script>
+
+{% endblock %}

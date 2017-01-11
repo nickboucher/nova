@@ -9,7 +9,7 @@
     <div class="row">
         <div class="col-md-12">
             <div class="center">
-                <h1>Treasurer Home</h1>
+                <h1>Treasurer</h1>
                 <h3>These grants are ready to be receipt-processed.</h3>
             </div>
         </div>
@@ -29,11 +29,11 @@
                 </thead>
                 <tbody>
                     {% for grant in grants %}
-                        <tr>
+                        <tr class="clickable-row" data-href="{{ url_for('review_grant_receipts', grant_id=grant.grant_id) }}">
                             <td>{{ grant.grant_id }}</td>
                             <td>{{ grant.organization }}</td>
                             <td>{{ grant.project }}</td>
-                            <td>{{ grant.amount_allocated }}</td>
+                            <td>{{ grant.amount_allocated | usd }}</td>
                             <td>{{ grant.receipts_submit_date | date }}</td>
                         </tr>
                     {% endfor %}
@@ -41,5 +41,15 @@
             </table>
         </div>
     </div>
+
+{% endblock %}
+
+{% block scripts %}
+
+    <script type="text/javascript">
+        $(".clickable-row").click(function() {
+           window.document.location = $(this).data("href"); 
+        });
+    </script>
 
 {% endblock %}

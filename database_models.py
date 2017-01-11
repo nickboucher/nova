@@ -150,7 +150,7 @@ class Grant(db.Model):
     personnel_allocated_notes = db.Column(db.Text)
     other_allocated = db.Column(db.Float) # Does not include cuts
     other_allocated_notes = db.Column(db.Text)
-    percentage_cut = db.Column(db.Float) # Decimal in [0,1] representing percentage deducted due to cuts
+    percentage_cut = db.Column(db.Float) # Decimal Number in [0,100] representing percentage deducted due to cuts
     amount_allocated = db.Column(db.Float) # Total Amount allocated with all cuts factored in
     is_collaboration_confirmed = db.Column(db.Boolean)
     # Completed Project Info
@@ -189,6 +189,7 @@ class Grant(db.Model):
     # Treasurer Info
     is_paid = db.Column(db.Boolean, default=False)
     pay_date = db.Column(db.DateTime)
+    receipts_reviewer = db.Column(db.Text)
     is_direct_deposit = db.Column(db.Boolean)
     check_number = db.Column(db.Text)
     amount_dispensed = db.Column(db.Float)

@@ -56,6 +56,15 @@
     display: inline-block;
 }
 
+.fullwidth {
+    max-width: 100%;
+    height: auto;
+}
+
+.regular {
+    font-weight: normal;
+}
+
 /* Grants Pack Review Page CSS */
 .status-indicator {
     position: absolute;
@@ -84,8 +93,8 @@
     display: flex;
     overflow: hidden;
     height: 100vh;
-    margin-top: -100px;
-    padding-top: 130px;
+    margin-top: -170px;
+    padding-top: 200px;
     position: relative;
     width: 100%;
     backface-visibility: hidden;

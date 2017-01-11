@@ -777,6 +777,13 @@ def grants_pack_council_approve(grants_pack):
     # User is POSTing the confirmation to the server
     else:
         
+        # Query for each grant in the grants pack
+        grants = Grant.query.filter_by(grants_pack=grants_pack).all()
+        
+        # Update each grant to council approved
+        for grant in grants:
+            grant.council_approved = True
+        
         # Update database to approve grants pack
         grants_pack_db.grants_pack_finalized = True
         
@@ -899,3 +906,70 @@ def review_receipts():
     
     # Render grants page to the user
     return render_template('review_receipts.html', grants=grants)
+    
+@app.route('/treasurer/<grant_id>', methods=['GET','POST'])
+def review_grant_receipts(grant_id):
+    """ Displays receipts for specified grant to the treasurer for review """
+    
+    # Ensure that grant_id was specified
+    if not grant_id:
+        return "Must specify grant id."
+        
+    # Query for grant
+    grant = Grant.query.filter_by(grant_id=grant_id).first()
+    
+    # Ensure that grant exists
+    if not grant:
+        return "Grant " + grant_id + " does not exist."
+        
+    # Ensure that the grant is ready for treasurer review
+    if not grant.council_approved or not grant.receipts_submitted or grant.is_paid:
+        return "Grant " + grant_id + " is not elligible to be reviewed by the Treasurer."
+        
+    # User is requesting grant page
+    if request.method == 'GET':
+        
+        # Ensure that the percentage cut was specified
+        if grant.percentage_cut == None:
+            return "Error: No percentage cut associated with grant."
+            
+        # Apply funding cuts to local variable (for page rendering) without committing to DB
+        cut_multiplier = (100.0 - grant.percentage_cut) / 100
+        if grant.food_allocated: grant.food_allocated *= cut_multiplier
+        if grant.travel_allocated: grant.travel_allocated *= cut_multiplier
+        if grant.publicity_allocated: grant.publicity_allocated *= cut_multiplier
+        if grant.materials_allocated: grant.materials_allocated *= cut_multiplier
+        if grant.venue_allocated: grant.venue_allocated *= cut_multiplier
+        if grant.decorations_allocated: grant.decorations_allocated *= cut_multiplier
+        if grant.media_allocated: grant.media_allocated *= cut_multiplier
+        if grant.admissions_allocated: grant.admissions_allocated *= cut_multiplier
+        if grant.hupd_allocated: grant.hupd_allocated *= cut_multiplier
+        if grant.personnel_allocated: grant.personnel_allocated *= cut_multiplier
+        if grant.other_allocated: grant.other_allocated *= cut_multiplier
+            
+        receipts = grant.receipt_images.split(", ")
+            
+        # Render the template to the user
+        return render_template('review_grant_receipts.html', grant=grant, receipts=receipts)
+        
+    # User is submitting form
+    else:
+        # Updates grant information
+        grant.is_paid = True
+        grant.pay_date = datetime.now(utc)
+        # TODO grant.receipts_reviewer = 
+        if request.form.get('is_check'):
+            grant.is_direct_deposit = False
+            grant.check_number = request.form.get('check_number')
+        else:
+            grant.is_direct_deposit = True
+        grant.amount_dispensed = request.form.get('amount')
+        
+        # Commit all changes to database
+        db.session.commit()
+        
+        # Display success message to user
+        flash("Successfully finalized Grant " + grant.grant_id + ' "' + grant.project + '".', 'success')
+            
+        # Redirect to treasurer page
+        return redirect(url_for('review_receipts'))

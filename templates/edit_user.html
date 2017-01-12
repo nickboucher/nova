@@ -1,0 +1,71 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Edit User
+{% endblock %}
+
+{% block main %}
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="center">
+                <h1>Edit User</h1>
+                <h3>Change user account info</h3>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row margin40">
+        {% if user != current_user %}
+            <div id="warning" class="alert alert-danger">
+                <strong>Warning</strong> Selecting "Reset Password" sets the users password to "password" until they update it.
+            </div>
+        {% endif %}
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+            <form action="{{ url_for('edit_user', user=user.email) }}" method="post">
+                <div class="form-group">
+                    <label for="first_name">First Name:</label>
+                    <input type="text" class="form-control max400" id="first_name" name="first_name" value="{{ user.first_name }}">
+                </div>
+                <div class="form-group">
+                    <label for="last_name">Last Name:</label>
+                    <input type="text" class="form-control max400" id="last_name" name="last_name" value="{{ user.last_name }}">
+                </div>
+                <div class="form-group">
+                    <label for="email">Email:</label>
+                    <input type="email" class="form-control max400" id="email" name="email" value="{{ user.email }}">
+                </div>
+                {% if user != current_user %}
+                    <div class="row">
+                        <div class="col-md-6">
+                            <div class="checkbox">
+                                <label><input type="checkbox" name="admin" value="True" {{ 'checked' if user.admin }}> Administrator</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="checkbox">
+                                <label><input type="checkbox" id="reset_pw" name="reset_pw" value="True"> Reset Password</label>
+                            </div>
+                        </div>
+                    </div>
+                {% endif %}
+                <button type="submit" class="btn btn-default margin15">Submit</button>
+            </form>
+        </div>
+        <div class="col-md-4"></div>
+    </div>
+
+{% endblock %}
+
+{% block scripts %}
+
+    {% if user != current_user %}
+        <script type="text/javascript">
+            $('#reset_pw').change(function () {                
+                 $('#warning').toggle(this.checked);
+              }).change(); //ensure visible state matches initially
+        </script>
+    {% endif %}
+
+{% endblock %}

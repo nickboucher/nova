@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Delete User
+{% endblock %}
+
+{% block main %}
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="center">
+                <h1>Delete User</h1>
+                <h3>Remove user accounts from nova</h3>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row margin40 center">
+        <h2>Are you sure that you want to delete user <b>{{ user.first_name }} {{ user.last_name }}</b>?</h2>
+        <div class="alert alert-danger">
+            <strong>Warning</strong> This action cannot be undone
+        </div>
+        <form action="{{ url_for('delete_user', user=user.email) }}" method="post">
+            <input type="hidden" name="delete" value="True">
+            <input type="submit" class="btn btn-default bold" value="Delete">
+        </form>
+        
+    </div>
+
+{% endblock %}

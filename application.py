@@ -10,7 +10,7 @@ from flask import Flask, flash, redirect, render_template, request, session, url
 from sqlalchemy.exc import IntegrityError
 from datetime import datetime, timezone
 from sqlalchemy.sql.expression import or_ as OR, and_ as AND
-from flask_login import login_required, login_user, logout_user
+from flask_login import login_required, login_user, logout_user, current_user
 from database_models import *
 from helpers import *
 
@@ -1060,3 +1060,169 @@ def review_grant_receipts(grant_id):
             
         # Redirect to treasurer page
         return redirect(url_for('review_receipts'))
+        
+@app.route('/settings')
+@login_required
+@admin_required
+def settings():
+    """ Provides a page for grants-pack advancing, user
+        management, and general settings. """
+    
+    # Query for all users
+    users = User.query.all()
+    
+    # Render page to user
+    return render_template('settings.html', users=users)
+    
+@app.route('/settings/edit-user', methods=['GET','POST'])
+@login_required
+@admin_required
+def edit_user():
+    """ Provides an interface where an administrator can edit users """
+    
+    # Get the user from the arguments
+    email = request.args.get('user')
+    
+    # Verify that the user was specified
+    if not email:
+        return "Must specify a user"
+        
+    # Query for the user
+    user = User.query.filter_by(email=email).first()
+    
+    # Ensure that user exists
+    if not user:
+        return "User does not exist"
+        
+    # User is requesting form
+    if request.method == 'GET':
+        
+        # Render page to user
+        return render_template('edit_user.html', user=user)
+        
+    # User is submitting form data
+    else:
+        
+        # Get all form data
+        first_name = request.form.get('first_name')
+        last_name = request.form.get('last_name')
+        email = request.form.get('email')
+        if request.form.get('admin'):
+            admin = True
+        else:
+            admin = False
+        if request.form.get('reset_pw'):
+            reset_pw = True
+        else:
+            reset_pw = False
+        
+        # Verify that required fields have been completed
+        if not first_name or not last_name or not email:
+            flash("All fields are required", 'error')
+            return render_template('edit_user.html', user=user)
+            
+        # Update value
+        user.first_name = first_name
+        user.last_name = last_name
+        user.email = email
+        
+        # Ensure current user isn't changing important details about self
+        if user != current_user:
+            
+            # Update Admin value
+            user.admin = admin
+            
+            # Reset user password if requested
+            if reset_pw:
+                user.pw_hash = encrypt("password", user.salt)
+        
+        # Commit changes to database
+        db.session.commit()
+        
+        # Display success message
+        flash('User "' + user.first_name + ' ' + user.last_name + '" Updated Successfully')
+        
+        return redirect(url_for('settings'))
+        
+@app.route('/settings/add-user', methods=['GET','POST'])
+@login_required
+@admin_required
+def add_user():
+    """ Allows an admin to add users to the system """
+    
+    # User is requesting form
+    if request.method == 'GET':
+        
+        # Render page to user
+        return render_template('add_user.html')
+        
+    # User is submitting form data
+    else:
+        # Get all form data
+        first_name = request.form.get('first_name')
+        last_name = request.form.get('last_name')
+        email = request.form.get('email')
+        if request.form.get('admin'):
+            admin = True
+        else:
+            admin = False
+        
+        # Verify that required fields have been completed
+        if not first_name or not last_name or not email:
+            flash("All fields are required", 'error')
+            return render_template('add_user.html')
+            
+        # Create user
+        user = create_user(email, first_name, last_name, "password", admin)
+        
+        # Add new user to database
+        db.session.add(user)
+        db.session.commit()
+        
+        # Display success message
+        flash('User "' + user.first_name + ' ' + user.last_name + '" Created Successfully')
+        
+        return redirect(url_for('settings'))
+        
+@app.route('/settings/delete-user', methods=['GET','POST'])
+@login_required
+@admin_required
+def delete_user():
+    """ Allows an admin to remove users from the system """
+    
+    # Get the user from the arguments
+    email = request.args.get('user')
+    
+    # Verify that the user was specified
+    if not email:
+        return "Must specify a user"
+        
+    # Query for the user
+    user = User.query.filter_by(email=email).first()
+    
+    # Ensure that user exists
+    if not user:
+        return "User does not exist"
+        
+    # Ensure that user is not deleting their own account
+    if user == current_user:
+        return "Cannot delete current user account"
+        
+    # User is requesting form
+    if request.method == 'GET':
+        
+        # Render page to user
+        return render_template('delete_user.html', user=user)
+        
+    # User is submitting form data
+    else:
+        
+        # Remove the user from the database
+        db.session.delete(user)
+        db.session.commit()
+        
+        # Dispaly success message
+        flash('User "' + user.first_name + ' ' + user.last_name + '" Deleted Successfully')
+        
+        # Redirect to settings page
+        return redirect(url_for('settings'))

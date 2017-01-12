@@ -10,7 +10,7 @@
 from urllib.parse import parse_qs
 from pytz import timezone, utc
 from flask_login import LoginManager, current_user, login_required
-from flask import current_app
+from flask import flash, redirect, url_for
 from hashlib import pbkdf2_hmac
 from binascii import hexlify
 from functools import wraps
@@ -122,6 +122,7 @@ def admin_required(func):
     @wraps(func)
     def decorated_view(*args, **kwargs):
         if not current_user.admin:
-            return current_app.login_manager.unauthorized()
+            flash("You must be an adminstrator to access this page.", "message")
+            return redirect(url_for('index'))
         return func(*args, **kwargs)
     return decorated_view

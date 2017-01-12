@@ -3,11 +3,18 @@
 # Nicholas Boucher 2017
 #
 # Contains a set of general functions that assist the main 
-# application in data-processing
+# application in data-processing. Also contain the login
+# class.
 #
 
 from urllib.parse import parse_qs
 from pytz import timezone, utc
+from flask_login import LoginManager, current_user, login_required
+from flask import current_app
+from hashlib import pbkdf2_hmac
+from binascii import hexlify
+from functools import wraps
+from os import urandom
 from database_models import *
 
 def usd(value):
@@ -89,3 +96,32 @@ def serialize_grant(grant):
             'cpf_submitted' : grant.receipts_submitted,
             'funds_dispensed' : grant.is_paid
         }
+        
+def encrypt(password, salt):
+    """ Provides a default implementation of the encryption algorithm used by nova """
+    return hexlify(pbkdf2_hmac('sha256', str.encode(password), str.encode(salt), 100000)).decode('utf-8')
+    
+def verify_password(user, password):
+    """ Checks whether the password is correct for a given user """
+    return user.pw_hash == encrypt(password, user.salt)
+
+def create_user(email, first_name, last_name, password, admin):
+    """ Handy function to create a new user """
+        
+    # Generate a random 32-byte salt
+    salt = hexlify(urandom(32)).decode('utf-8')
+    # Hash the password
+    pw_hash = encrypt(password, salt)
+        
+    # Create the new User object
+    return User(email, first_name, last_name, admin, pw_hash, salt)
+    
+def admin_required(func):
+    """ Requires admin priveleges on page. Should wrap with
+        @login_required above this wrapper """
+    @wraps(func)
+    def decorated_view(*args, **kwargs):
+        if not current_user.admin:
+            return current_app.login_manager.unauthorized()
+        return func(*args, **kwargs)
+    return decorated_view

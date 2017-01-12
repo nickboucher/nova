@@ -10,6 +10,7 @@ from flask import Flask, flash, redirect, render_template, request, session, url
 from sqlalchemy.exc import IntegrityError
 from datetime import datetime, timezone
 from sqlalchemy.sql.expression import or_ as OR, and_ as AND
+from flask_login import login_required, login_user, logout_user
 from database_models import *
 from helpers import *
 
@@ -42,10 +43,70 @@ app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///database.db'
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db.init_app(app)
 
+# Enable authentication
+login_manager = LoginManager()
+login_manager.init_app(app)
+
+# Tell Authenticator where the login page is located
+login_manager.login_view = "login"
+login_manager.login_message_category = "message"
+
+# Define authentication function to lookup users
+@login_manager.user_loader
+def user_loader(email):
+    return User.query.get(email)
         
 @app.route('/')
+@login_required
 def index():
     return render_template("index.html")
+    
+@app.route('/login', methods=['GET','POST'])
+def login():
+    """ Allows users to login to the system """
+    
+    # User is requesting login page
+    if request.method == 'GET':
+        
+        # Render page to user
+        return render_template('login.html')
+        
+    # User is submitting login data
+    else:
+        email = request.form.get('email')
+        password = request.form.get('password')
+        remember = True if request.form.get('remember') else False
+        
+        # Verify that email and password were submitted
+        if not email or not password:
+            flash("Must enter username and password", 'error')
+            return render_template('login.html')
+            
+        # Query for User
+        user = User.query.get(email)
+        
+        # Verify that user exists
+        if not user:
+            flash("Username or password incorrect", 'message')
+            return redirect(url_for('login'))
+            
+        # Verify that password is correct
+        if not verify_password(user, password):
+            flash("Username or password incorrect", 'message')
+            return redirect(url_for('login'))
+            
+        # User has successfully authenticated, log them in
+        login_user(user, remember=remember)
+        
+        # Redirect user to the homepage
+        return redirect(url_for('index'))
+        
+@app.route("/logout")
+@login_required
+def logout():
+    logout_user()
+    flash("Successfully logged out", 'message')
+    return redirect(url_for('login'))
 
 @app.route('/new_grant')
 def new_grant():
@@ -389,6 +450,7 @@ def grant_allocations(grant_id):
     return render_template("grant_allocations.html", grant=grant)
     
 @app.route('/interview')
+@login_required
 def interviews():
     """ Displays a searchable list of grants eligible for interviews """
     
@@ -399,6 +461,7 @@ def interviews():
     return render_template("interviews.html", grants=grants)
     
 @app.route('/interview/<grant_id>', methods=['GET','POST'])
+@login_required
 def grant_interview(grant_id):
     """ Displays interview page for FiCom Members to conduct grant interviews and processes responses """
     
@@ -473,6 +536,7 @@ def grant_interview(grant_id):
             return redirect(url_for('interviews'))
     
 @app.route('/small-grant-review')
+@login_required
 def small_grants():
     """ Displays a list of grants eligible for small-grant processing """
     
@@ -483,6 +547,7 @@ def small_grants():
     return render_template("small_grants.html", grants=grants)
     
 @app.route('/small-grant-review/<grant_id>', methods=['GET','POST'])
+@login_required
 def small_grant_review(grant_id):
     """ Displays review page for FiCom Members to conduct small grant reviews and processes responses """
     
@@ -539,6 +604,8 @@ def small_grant_review(grant_id):
             return redirect(url_for('small_grants'))
         
 @app.route('/grants-pack/edit', methods=['GET','POST'])
+@login_required
+@admin_required
 def grants_pack_edit(grants_pack=None):
     """ Displays page to review and select grants that are elligible for adding to a grants pack,
         and processes updates POSTed by the page """
@@ -600,11 +667,15 @@ def grants_pack_edit(grants_pack=None):
         return 'Error',400
         
 @app.route('/grants-pack/<grants_pack>/edit')
+@login_required
+@admin_required
 def grants_pack_edit_pack(grants_pack):
     """ Allows editing of a specific grants pack """
     return grants_pack_edit(grants_pack)
     
 @app.route('/grants-pack/cuts', methods=['GET','POST'])
+@login_required
+@admin_required
 def grants_pack_cuts(grants_pack=None):
     """ Displays a page to the user with the calculated cut amounts """
     
@@ -715,11 +786,15 @@ def grants_pack_cuts(grants_pack=None):
         return redirect(url_for('grants_packs'))
         
 @app.route('/grants-pack/<grants_pack>/cuts')
+@login_required
+@admin_required
 def grants_pack_cuts_pack(grants_pack):
     """ Allows calculating cuts of any given grants pack """
     return grants_pack_cuts(grants_pack)
         
 @app.route('/grants-pack')
+@login_required
+@admin_required
 def grants_packs():
     """ Shows page listing all grants packs and their status """
     # Query for all existing grants packs
@@ -728,6 +803,8 @@ def grants_packs():
     return render_template('grants_packs.html', grants_packs=grants_packs)
     
 @app.route('/grants-pack/<grants_pack>/view')
+@login_required
+@admin_required
 def grants_pack_view_pack(grants_pack):
     """ Gives a basic overview page containing the grants pack data """
     
@@ -752,6 +829,8 @@ def grants_pack_view_pack(grants_pack):
     return render_template('grants_pack_view.html', grants_pack=grants_pack_db, grants=grants)
     
 @app.route('/grants_pack/<grants_pack>/approve', methods=['GET','POST'])
+@login_required
+@admin_required
 def grants_pack_council_approve(grants_pack):
     """ Allows the user to verify that a grants pack has been approved by the council """
     
@@ -797,6 +876,7 @@ def grants_pack_council_approve(grants_pack):
         return redirect(url_for('grants_packs'))
     
 @app.route('/search', methods=['GET','POST'])
+@login_required
 def search():
     """ Allows the user to search for grants by Organization, Project, or Grant ID """
     
@@ -812,6 +892,7 @@ def search():
         return render_template('search.html', k=sec_key.value)
         
 @app.route('/search/organizations')
+@login_required
 def organizations():
     """ Provides an API endpoint which returns a list of all organizations in JSON """
     
@@ -837,6 +918,7 @@ def organizations():
     return jsonify(orgs)
     
 @app.route('/search/projects')
+@login_required
 def projects():
     """ Provides an API endpoint for which projects can be queried """
     
@@ -862,6 +944,7 @@ def projects():
     return jsonify(projects)
     
 @app.route('/search/lookup-grants')
+@login_required
 def lookup_grants():
     """ API endpoint that returns a list of all grants from an organization """
     
@@ -898,6 +981,8 @@ def lookup_grants():
     return jsonify(results)
     
 @app.route('/treasurer')
+@login_required
+@admin_required
 def review_receipts():
     """ Displays a page to the user of grants that are ready to have receipts verified """
     
@@ -908,6 +993,8 @@ def review_receipts():
     return render_template('review_receipts.html', grants=grants)
     
 @app.route('/treasurer/<grant_id>', methods=['GET','POST'])
+@login_required
+@admin_required
 def review_grant_receipts(grant_id):
     """ Displays receipts for specified grant to the treasurer for review """
     

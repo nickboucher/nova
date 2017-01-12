@@ -11,7 +11,9 @@
 from sys import exit
 from os import path, rename
 from datetime import datetime
+from getpass import getpass
 from database_models import db, Config, Grants_Week
+from helpers import create_user
 from application import app
 
 def install_wizard():
@@ -52,7 +54,34 @@ def install_wizard():
     if not week.isdigit() or not int(week) in range(1,100):
         print('Error: Grant Week must be a 1-2 digit positive number.\nNo changes were made. Exiting.')
         exit("Input Error")
-    
+        
+    # Prompt user for admin email address to create admin user account
+    email = input("Administrator Email: ")
+    if not email:
+        print('Error: Must enter an email address.\nNo changes were made. Exiting.')
+        exit("Input Error")
+        
+    # Prompt user for admin first name to create admin user account
+    first_name = input("Administrator First Name: ")
+    if not first_name:
+        print('Error: Must enter a first name.\nNo changes were made. Exiting.')
+        exit("Input Error")
+        
+    # Prompt user for admin first name to create admin user account
+    last_name = input("Administrator Last Name: ")
+    if not last_name:
+        print('Error: Must enter a last name.\nNo changes were made. Exiting.')
+        exit("Input Error")
+        
+    # Prompt user for admin password to create admin user account
+    password = getpass("Administrator Password: ")
+    if not password:
+        print('Error: Must enter a password.\nNo changes were made. Exiting.')
+        exit("Input Error")
+    password_verify = getpass("Verify Password: ")
+    if password != password_verify:
+        print('Error: Passwords do not match.\nNo changes were made. Exiting.')
+        exit("Input Error")
     
     # Set application context for SQLAlchemy
     db.init_app(app)
@@ -76,6 +105,10 @@ def install_wizard():
     # Add empty number of Grants for current week
     grants_week = Grants_Week(council + semester + '-' + week)
     db.session.add(grants_week)
+    
+    # Add administrator user account
+    admin = create_user(email, first_name, last_name, password, True)
+    db.session.add(admin)
     
     # Commit changes to databse
     db.session.commit()

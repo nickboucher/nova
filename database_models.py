@@ -7,6 +7,7 @@
 #
 
 from flask_sqlalchemy import SQLAlchemy
+from flask_login import UserMixin as FlaskLoginUser
 from datetime import datetime
 
 # Initialize db variable to avoid namespace errors
@@ -214,7 +215,7 @@ class Organization(db.Model):
         
 class Config(db.Model):
     """ Contains configuration <key,value> pairs used for general application setup """
-    key = db.Column(db.String(64), primary_key=True)
+    key = db.Column(db.Text, primary_key=True)
     value = db.Column(db.Text)
 
     def __init__(self, key, value):
@@ -240,3 +241,27 @@ class Grants_Week(db.Model):
 
     def __repr__(self):
         return '<Grants_Week %r>' % self.grant_week
+        
+class User(db.Model, FlaskLoginUser):
+    """ Implements a User class that can be accessed by flask-login and handled by flask-sqlalchemy """
+    
+    email = db.Column(db.Text, primary_key=True)
+    first_name = db.Column(db.Text)
+    last_name = db.Column(db.Text)
+    admin = db.Column(db.Boolean, default=False)
+    pw_hash = db.Column(db.Text)
+    salt = db.Column(db.Text)
+    
+    def __init__(self, email, first_name, last_name, admin, pw_hash, salt):
+        self.email = email
+        self.first_name = first_name
+        self.last_name = last_name
+        self.admin = admin
+        self.pw_hash = pw_hash
+        self.salt = salt
+        
+    def get_id(self):
+        return self.email
+        
+    def __repr__(self):
+        return '<User %r>' % self.email

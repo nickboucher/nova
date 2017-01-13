@@ -10,7 +10,7 @@ from flask import Flask, flash, redirect, render_template, request, session, url
 from sqlalchemy.exc import IntegrityError
 from datetime import datetime, timezone
 from sqlalchemy.sql.expression import or_ as OR, and_ as AND
-from flask_login import login_required, login_user, logout_user, current_user
+from flask_login import login_required, fresh_login_required, login_user, logout_user, current_user
 from database_models import *
 from helpers import *
 
@@ -1274,3 +1274,44 @@ def default_budget():
     
     # Send user to settings page
     return redirect(url_for('settings'))
+    
+@app.route('/change-password', methods=['GET','POST'])
+@fresh_login_required
+def change_password():
+    """ Allows any given user to change their password """
+    
+    # User is requesting form
+    if request.method == 'GET':
+        
+        # Render form to user
+        return render_template('change_password.html')
+        
+    # User is submitting form
+    else:
+        
+        # Get form data
+        password = request.form.get('password')
+        confirm = request.form.get('password_confirmation')
+        
+        # Ensure that both passwords exist and match
+        if not password or not confirm:
+            return "Must supply both password and confirmation"
+        if password != confirm:
+            flash("Passwords do not match", 'error')
+            return render_template('change_password.html')
+            
+        # Query for user and verify existence
+        user = User.query.filter_by(email=current_user.email).first()
+        if not user:
+            return "Error: user does not exist"
+            
+        # Update password
+        user.pw_hash = encrypt(password, user.salt)
+        
+        # Commit changes to database
+        db.session.commit()
+        
+        # Flash confirmation message and return to index
+        flash("Password changed successfully", 'message')
+        return redirect(url_for('index'))
+        

@@ -18,16 +18,33 @@
     <div class="row">
         <div class="col-md-12">
             <h2>Grants Pack</h2>
-            <form action="{{ url_for('default_budget') }}" class="form-inline" method="post">
-                <div class="form-group">
-                    <label for="default_budget">Default Weekly Budget: $</label>
-                    <input type="number" step=".01" class="form-control" id="default_budget" name="default_budget" value="{{ default_budget }}">
+            <div class="row">
+                <div class="col-md-6">
+                    <form action="{{ url_for('default_budget') }}" class="form-inline margin40" method="post">
+                        <div class="form-group">
+                            <label for="default_budget">Default Weekly Budget: $</label>
+                            <input type="number" step=".01" class="form-control" id="default_budget" name="default_budget" value="{{ default_budget }}">
+                        </div>
+                        <button type="submit" class="btn btn-default">Update</button>
+                    </form>
+                    <form action="#" class="form-inline margin40" method="post">
+                        <div class="form-group">
+                            <label for="council_semester">Council Semester: </label>
+                            <input type="text" pattern="\d{2}[FS]" class="form-control" id="council_semester" name="council_semester" value="{{ council_semester }}">
+                        </div>
+                        <button type="submit" class="btn btn-default">Update</button>
+                    </form>
                 </div>
-                <button type="submit" class="btn btn-default">Update</button>
-            </form>
+                <div class="col-md-6">
+                    <div class="margin40">
+                        <b>Current Grants Pack: </b><input type="text" value="{{ grants_pack }}" class="form-control" disabled="disabled" style="max-width:170px;display:inline-block;">
+                        <br><i>To advance, submit current grants pack</i>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
-    <hr />
+    <hr class="margin40" />
     <div class="row">
         <div class="col-md-12">
             <h2>User Management</h2>

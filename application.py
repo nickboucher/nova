@@ -1073,12 +1073,23 @@ def settings():
     
     # Query for default weekly budget
     default_budget = Config.query.filter_by(key="default_budget").first()
-    
     if not default_budget:
         return "Error: Default budget not specified in database"
+        
+    # Query for current council semester
+    council_semester = Config.query.filter_by(key="council_semester").first()
+    if not council_semester:
+        return "Error: Council semester not specified in database"
+        
+    # Query for current grants week
+    grant_week = Config.query.filter_by(key="grant_week").first()
+    if not grant_week:
+        return "Error: Grant week not specified in database"
+        
+    grants_pack = council_semester.value + '-' + grant_week.value
     
     # Render page to user
-    return render_template('settings.html', users=users, default_budget=default_budget.value)
+    return render_template('settings.html', users=users, default_budget=default_budget.value, council_semester=council_semester.value, grants_pack=grants_pack)
     
 @app.route('/settings/edit-user', methods=['GET','POST'])
 @login_required

@@ -523,7 +523,8 @@ def grant_interview(grant_id):
         grant.interview_occurred = True
         grant.interview_date = datetime.now(utc)
         
-        # TODO - add user information automatically as interviewer field
+        # Add interviewer information for grant record
+        grant.interviewer = current_user.first_name + " " + current_user.last_name
         
         # Commit Changes to Databse
         db.session.commit()
@@ -591,7 +592,8 @@ def small_grant_review(grant_id):
         grant.small_grant_is_reviewed = True
         grant.small_grant_review_date = datetime.now(utc)
         
-        # TODO - add user information automatically as interviewer field
+        # Add interviewer information for grant record
+        grant.small_grant_reviewer = current_user.first_name + " " + current_user.last_name
         
         # Commit Changes to Databse
         db.session.commit()
@@ -1080,7 +1082,7 @@ def review_grant_receipts(grant_id):
         # Updates grant information
         grant.is_paid = True
         grant.pay_date = datetime.now(utc)
-        # TODO grant.receipts_reviewer = 
+        grant.receipts_reviewer = current_user.first_name + " " + current_user.last_name
         if request.form.get('is_check'):
             grant.is_direct_deposit = False
             grant.check_number = request.form.get('check_number')

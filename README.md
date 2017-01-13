@@ -7,7 +7,7 @@ Nova is an web application written in Python/Flask that will handle all UC grant
 
 ## Implementation TODO
 
-0. Add interviewer=current_user after creating login system for interviews & small grant reviews
+0. Implement nice confirmation pages
 1. Add query string redirect URL to Grant Application Survey
 2. Add query string redirect URL to CPF Survey
 3. Modify CPF Survey to accept Grant ID as Embedded Value from Query String

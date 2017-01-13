@@ -25,7 +25,7 @@
         <div class="col-md-12 margin40 listboxes">
             <select multiple="multiple" size="10" name="grants_list" class="grants_dual_listbox">
                 {% for grant in orphan_grants %}
-                    <option id="{{ grant.grant_id }}" value="{{ grant.grant_id }}" data-project="{{ grant.project }}" data-organization="{{ grant.organization }}" data-interviewer="{{ grant.interviewer if grant.is_small_grant else grant.small_grant_reviewer }}" data-notes="{{ grant.interviewer_notes | suppress_none }}" data-funding="[{%- if grant.food_allocated -%}
+                    <option id="{{ grant.grant_id }}" value="{{ grant.grant_id }}" data-project="{{ grant.project }}" data-organization="{{ grant.organization }}" data-interviewer="{{ grant.small_grant_reviewer if grant.is_small_grant else grant.interviewer }}" data-notes="{{ grant.interviewer_notes | suppress_none }}" data-funding="[{%- if grant.food_allocated -%}
                             {&quot;category&quot;:&quot;Food&quot;,&quot;amount&quot;:{{ grant.food_allocated }},&quot;description&quot;:&quot;{{ grant.food_allocated_notes | suppress_none }}&quot;},
                         {%- endif -%}
                         {%- if grant.travel_allocated -%}
@@ -60,7 +60,7 @@
                         {%- endif -%}]">{{ grant.organization }}&nbsp;"{{ grant.project }}"</option>
                 {% endfor %}
                 {% for grant in child_grants %}
-                    <option selected="selected" id="{{ grant.grant_id }}" value="{{ grant.grant_id }}" data-project="{{ grant.project }}" data-organization="{{ grant.organization }}" data-interviewer="{{ grant.interviewer if grant.is_small_grant else grant.small_grant_reviewer }}" data-notes="{{ grant.interviewer_notes | suppress_none }}" data-funding="[{%- if grant.food_allocated -%}
+                    <option selected="selected" id="{{ grant.grant_id }}" value="{{ grant.grant_id }}" data-project="{{ grant.project }}" data-organization="{{ grant.organization }}" data-interviewer="{{ grant.small_grant_reviewer if grant.is_small_grant else grant.interviewer }}" data-notes="{{ grant.interviewer_notes | suppress_none }}" data-funding="[{%- if grant.food_allocated -%}
                             {&quot;category&quot;:&quot;Food&quot;,&quot;amount&quot;:{{ grant.food_allocated }},&quot;description&quot;:&quot;{{ grant.food_allocated_notes | suppress_none }}&quot;},
                         {%- endif -%}
                         {%- if grant.travel_allocated -%}

@@ -114,6 +114,7 @@ def install_wizard():
     
     # Add empty number of Grants for current week
     grants_week = Grants_Week(council + semester + '-' + week)
+    grants_week.budget = budget
     db.session.add(grants_week)
     
     # Add administrator user account

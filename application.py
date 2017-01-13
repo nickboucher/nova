@@ -1071,8 +1071,14 @@ def settings():
     # Query for all users
     users = User.query.all()
     
+    # Query for default weekly budget
+    default_budget = Config.query.filter_by(key="default_budget").first()
+    
+    if not default_budget:
+        return "Error: Default budget not specified in database"
+    
     # Render page to user
-    return render_template('settings.html', users=users)
+    return render_template('settings.html', users=users, default_budget=default_budget.value)
     
 @app.route('/settings/edit-user', methods=['GET','POST'])
 @login_required
@@ -1226,3 +1232,34 @@ def delete_user():
         
         # Redirect to settings page
         return redirect(url_for('settings'))
+        
+@app.route('/settings/default-budget', methods=['POST'])
+@login_required
+@admin_required
+def default_budget():
+    """ Allows an administrator to set the default budget """
+    
+    # Get budget value from form and verify its existence
+    budget = request.form.get('default_budget')
+    if not budget:
+        return "Budget value not specified"
+        
+    # Verify valid content
+    if not isfloat(budget):
+        return "Invalid budget quantity"
+        
+    # Query for default weekly budget
+    def_budget = Config.query.filter_by(key="default_budget").first()
+    
+    if not def_budget:
+        return "Error: Default budget not specified in database"
+        
+    # Update value and commit changes
+    def_budget.value = budget
+    db.session.commit()
+    
+    # Display success message
+    flash("Successfully updated default budget")
+    
+    # Send user to settings page
+    return redirect(url_for('settings'))

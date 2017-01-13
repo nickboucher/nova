@@ -126,3 +126,12 @@ def admin_required(func):
             return redirect(url_for('index'))
         return func(*args, **kwargs)
     return decorated_view
+    
+def isfloat(value):
+    """ Simple function that return a Boolean representing whether
+        the input string was in valid float form """
+    try:
+        float(value)
+    except ValueError:
+        return False
+    return True

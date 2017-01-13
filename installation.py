@@ -55,6 +55,12 @@ def install_wizard():
         print('Error: Grant Week must be a 1-2 digit positive number.\nNo changes were made. Exiting.')
         exit("Input Error")
         
+    # Prompt User for Weekly Default Budget
+    budget = input("Default Weekly Budget: ")
+    if not week.isdigit() or not int(week) > 0:
+        print('Error: Default weekly budget must be a postitive whole number.\nNo changes were made. Exiting.')
+        exit("Input Error")
+        
     # Prompt user for admin email address to create admin user account
     email = input("Administrator Email: ")
     if not email:
@@ -101,6 +107,10 @@ def install_wizard():
     # Add Grant Week to config
     grant_week = Config('grant_week', week)
     db.session.add(grant_week)
+    
+    # Add Default Weekly Budget
+    default_budget = Config('default_budget', budget)
+    db.session.add(default_budget)
     
     # Add empty number of Grants for current week
     grants_week = Grants_Week(council + semester + '-' + week)

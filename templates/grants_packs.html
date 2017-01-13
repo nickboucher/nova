@@ -32,7 +32,13 @@
                     {% for grants_pack in grants_packs %}
                         <tr>
                             <td class="text-nowrap">{{ grants_pack.grant_week }}</td>
-                            <td>{{ grants_pack.budget | usd }}</td>
+                            <td>
+                                {% if grants_pack.allocated == None and not grants_pack.finalized %}
+                                    <a href="{{ url_for('grants_pack_budget', grants_pack=grants_pack.grant_week) }}">{{ grants_pack.budget | usd }}</a>
+                                {% else %}
+                                    {{ grants_pack.budget | usd }}
+                                {% endif %}
+                            </td>
                             <td>{{ grants_pack.allocated | usd }}</td>
                             <td>
                                 {% if grants_pack.grants_pack_finalized %}

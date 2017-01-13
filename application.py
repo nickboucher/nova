@@ -11,6 +11,7 @@ from sqlalchemy.exc import IntegrityError
 from datetime import datetime, timezone
 from sqlalchemy.sql.expression import or_ as OR, and_ as AND
 from flask_login import login_required, fresh_login_required, login_user, logout_user, current_user
+from re import match
 from database_models import *
 from helpers import *
 
@@ -780,9 +781,44 @@ def grants_pack_cuts(grants_pack=None):
             grant.amount_allocated = round((100 - cut) / 100 * allocated, 2)
             grant_week.allocated += grant.amount_allocated
             
+        # Notify user of successful submit
+        flash("Grants Pack " + grants_pack + " submitted successfully.", 'success')
+        
+        # Get the current council semester and grants week
+        grant_week_config = Config.query.filter_by(key="grant_week").first()
+        if not grant_week_config:
+            return "Error: grant_week not defined in Config database"
+        council_semester = Config.query.filter_by(key="council_semester").first()
+        if not council_semester:
+            return "Error: council semester not defined in config database"
+            
+        # If this was the current grants_pack, create a new one and set it as current
+        if grant_week.grant_week == council_semester.value + '-' + grant_week_config.value:
+            
+            # Get the next uncreated grants_week in the semester
+            next_grant_week = int(grant_week_config.value) + 1
+            while Grants_Week.query.filter_by(grant_week=(council_semester.value + '-' + str(next_grant_week))).first() != None:
+                next_grant_week += 1
+                
+            # Query for default budget
+            budget = Config.query.filter_by(key="default_budget").first()
+            if not budget:
+                "Error: Default Budget not defined in Config database"
+                
+            # Create the new grants week
+            next_grant_week_db = Grants_Week(council_semester.value + '-' + str(next_grant_week))
+            next_grant_week_db.budget = float(budget.value)
+            db.session.add(next_grant_week_db)
+            
+            # Update the config
+            grant_week_config.value = str(next_grant_week)
+            
+            # Display notice to user of new grants pack
+            flash("Grants Pack " + next_grant_week_db.grant_week + " created and set as the current grants pack.", "warning")
+            
         # Commit all changes at once
         db.session.commit()
-        flash("Grants Pack " + grants_pack + " submitted successfully.", 'success')
+        
         return redirect(url_for('grants_packs'))
         
 @app.route('/grants-pack/<grants_pack>/cuts')
@@ -798,7 +834,7 @@ def grants_pack_cuts_pack(grants_pack):
 def grants_packs():
     """ Shows page listing all grants packs and their status """
     # Query for all existing grants packs
-    grants_packs = Grants_Week.query.all()
+    grants_packs = Grants_Week.query.order_by(Grants_Week.grant_week.desc()).all()
     # Render the page to the user
     return render_template('grants_packs.html', grants_packs=grants_packs)
     
@@ -1315,3 +1351,91 @@ def change_password():
         flash("Password changed successfully", 'message')
         return redirect(url_for('index'))
         
+@app.route('/grants-pack/<grants_pack>/budget', methods=['GET','POST'])
+@login_required
+@admin_required
+def grants_pack_budget(grants_pack):
+    """ Allows the editing of the budget for a specific grants pack """
+    
+    # Ensure grants_pack was provided
+    if not grants_pack:
+        return "Grants pack not specified"
+        
+    # Query for grants pack and ensure existence
+    grants_week = Grants_Week.query.filter_by(grant_week=grants_pack).first()
+    if not grants_week:
+        return "Grants Pack does not exist"
+        
+    # Ensure grants pack has not been finalized
+    if grants_week.grants_pack_finalized or grants_week.allocated:
+        return "Cannot edit budget for finalized grant"
+    
+    # User is requesting form
+    if request.method == 'GET':
+        return render_template('grants_pack_budget.html', grants_pack=grants_week)
+        
+    # User is submitting form data
+    else:
+        
+        # Get budget from form data and verify existence
+        budget = request.form.get('budget')
+        if not budget:
+            flash("Budget not specified", "error")
+            return render_template('grants_pack_budget.html', grants_pack=grants_week)
+            
+        # Verify budget in correct format
+        if not isfloat(budget):
+            print(budget)
+            flash("Budget format not valid", "error")
+            return render_template('grants_pack_budget.html', grants_pack=grants_week)
+            
+        # Edit DB value and commit
+        grants_week.budget = budget
+        db.session.commit()
+        
+        # return user to grant packs page
+        return redirect(url_for('grants_packs'))
+        
+@app.route('/settings/council-semester', methods=['POST'])
+@login_required
+@admin_required
+def edit_council_semester():
+    """ Provides an endpoint which allows admins to update
+        the council semester via the settings page """
+    
+    # Get value from form and verify
+    council_semester = request.form.get('council_semester')
+    if not council_semester:
+        flash("Council Semester not supplied", "error")
+        return redirect(url_for(settings))
+    if not match("\d{2}(F|S)", council_semester):
+        flash("Invalid Council Semester Format", "error")
+        return redirect(url_for(settings))
+        
+    # Update value in DB
+    council_semester_db = Config.query.filter_by(key="council_semester").first()
+    if not council_semester_db:
+        return "Error: council semester not defined in config database"
+    council_semester_db.value = council_semester
+    
+    # Get the next uncreated grants_week in the semester
+    grant_week = 1
+    while Grants_Week.query.filter_by(grant_week=(council_semester + '-' + str(grant_week))).first() != None:
+        grant_week += 1
+        
+    # Create new grant week and add it to the DB
+    grant_pack = Grants_Week(council_semester + '-' + str(grant_week))
+    db.session.add(grant_pack)
+        
+    # Update Grant Week in Config DB
+    grant_week_db = Config.query.filter_by(key="grant_week").first()
+    if not grant_week_db:
+        return "Error: grant_week not defined in Config database"
+    grant_week_db.value = grant_week
+    
+    # Commit all changes to DB
+    db.session.commit()
+    
+    # Display message to user and send to settings page
+    flash("Council Semester has been updated successfully. A new grants pack was created.")
+    return redirect(url_for('settings'))

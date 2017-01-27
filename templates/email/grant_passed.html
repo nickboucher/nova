@@ -1,0 +1,14 @@
+
+<div style="text-align:center;">
+    <img src="cid:{{ image }}" style="max-height:200px;">
+</div>
+
+<div style="text-align:left;">
+    <p>Dear {{ grant.contact_first_name }} {{ grant.contact_last_name }},</p>
+    <p>Congratulations! Your grant application for <i>{{ grant.project }}</i> has been approved for funding by majority vote of the Undergraduate Council.
+        You have been awarded <b>${{ grant.amount_allocated }}</b>.
+    <p>Please submit your receipts as soon as possible. You view what you were allocated funds for and submit your receipts via your <a href="{{ url_for('grant', grant_id=grant.grant_id, _external=True)}}">grant status page</a>.</p>
+    <p>Best,
+    <br>Nicholas Boucher
+    <br><i>Treasurer, Undergraduate Council</i></p>
+</div>

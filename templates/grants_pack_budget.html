@@ -1,0 +1,30 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Edit Budget
+{% endblock %}
+
+{% block main %}
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="center">
+                <h1>Grants Pack {{ grants_pack.grant_week }} Budget</h1>
+                <h3>Edit the weekly budget</h3>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-12 margin40 center">
+            <form action="{{ url_for('grants_pack_budget', grants_pack=grants_pack.grant_week) }}" class="form-inline" method="post">
+                <div class="form-group">
+                    <label for="budget">Budget: $</label>
+                    <input type="number" step=".01" class="form-control" id="budget" name="budget" value="{{ grants_pack.budget }}">
+                </div>
+                <input type="submit" class="btn btn-default">
+            </form>
+        </div>
+    </div>
+
+{% endblock %}

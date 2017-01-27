@@ -10,12 +10,18 @@
 from urllib.parse import parse_qs
 from pytz import timezone, utc
 from flask_login import LoginManager, current_user, login_required
-from flask import flash, redirect, url_for
+from flask import flash, redirect, url_for, render_template
 from hashlib import pbkdf2_hmac
 from binascii import hexlify
 from functools import wraps
 from os import urandom
+from flask_mail import Message
+from sys import argv
 from database_models import *
+
+# Avoid import errors for installation script
+if "installation" not in argv[0]:
+    import application
 
 def usd(value):
     """ Formats value as USD. """
@@ -135,3 +141,86 @@ def isfloat(value):
     except ValueError:
         return False
     return True
+    
+def email_application_submitted(grant):
+    """ Sends an application submitted confirmation email to the grant applicant """
+        
+    # Create Message
+    msg = Message("Grant Application Submitted", recipients=[grant.contact_email])
+    
+    # Define attached image
+    image = "submitted.gif"
+    
+    # Attach HTML Body
+    html = render_template("email/grant_submit.html", grant=grant, image=image)
+    msg.html = html
+    
+    # Attach Image
+    with application.app.open_resource("templates/email/images/%s" % image) as fp:
+        msg.attach(image, "image/gif", fp.read(), headers=[['Content-ID', '<%s>' % image],])
+        
+    # Send Email
+    application.mail.send(msg)
+    
+def email_application_passed(grant):
+    """ Sends an email to the grant applicant stating the grant has passed the council
+        and requesting receipts """
+        
+    # Create Message
+    msg = Message("Grant Application Passed", recipients=[grant.contact_email])
+    
+    # Define attached image
+    image = "receipts.gif"
+    
+    # Attach HTML Body
+    html = render_template("email/grant_passed.html", grant=grant, image=image)
+    msg.html = html
+    
+    # Attach Image
+    with application.app.open_resource("templates/email/images/%s" % image) as fp:
+        msg.attach(image, "image/gif", fp.read(), headers=[['Content-ID', '<%s>' % image],])
+        
+    # Send Email
+    application.mail.send(msg)
+    
+def email_application_denied(grant):
+    """ Sends an email to the grant applicant stating the grant has been denied
+        by the council """
+        
+    # Create Message
+    msg = Message("Grant Application Denied", recipients=[grant.contact_email])
+    
+    # Define attached image
+    image = "denied.gif"
+    
+    # Attach HTML Body
+    html = render_template("email/grant_denied.html", grant=grant, image=image)
+    msg.html = html
+    
+    # Attach Image
+    with application.app.open_resource("templates/email/images/%s" % image) as fp:
+        msg.attach(image, "image/gif", fp.read(), headers=[['Content-ID', '<%s>' % image],])
+        
+    # Send Email
+    application.mail.send(msg)
+    
+def email_interview_scheduled(grant):
+    """ Sends an email to the grant applicant stating the interview for the grant
+        has been scheduled """
+        
+    # Create Message
+    msg = Message("Grant Interview Scheduled", recipients=[grant.contact_email])
+    
+    # Define attached image
+    image = "scheduled.gif"
+    
+    # Attach HTML Body
+    html = render_template("email/interview_scheduled.html", grant=grant, image=image)
+    msg.html = html
+    
+    # Attach Image
+    with application.app.open_resource("templates/email/images/%s" % image) as fp:
+        msg.attach(image, "image/gif", fp.read(), headers=[['Content-ID', '<%s>' % image],])
+        
+    # Send Email
+    application.mail.send(msg)

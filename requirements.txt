@@ -10,3 +10,4 @@ flask_sqlalchemy
 requests
 pytz
 flask-login
+Flask-Mail

@@ -1,0 +1,23 @@
+
+<div style="text-align:center;">
+    <img src="cid:{{ image }}" style="max-height:200px;">
+</div>
+
+<div style="text-align:left;">
+    <p>Dear {{ grant.contact_first_name }} {{ grant.contact_last_name }},</p>
+    <p>An interview has been scheduled for your grant application <i>{{ grant.project }}</i>. The interview is schuled for:</p>
+    <div style="text-align:center;margin:15px;font-size:1.5em;"><b>{{ grant.interview_schedule_date | datetime }}</b></div>
+    <p>Please send a representative from your organization to attend the interview (it does not have to be you).
+        In order for your grant application to receive any funding, someone from {{ grant.organization }} must attend the interview.
+        {%- if grant.is_collaboration %}
+            Since you indicated that your project is a collaboration between multiple student organizations on your application, 
+            you are eligible for certain benefits which could result in additional funding for your grant. However, to secure these
+            benefits you must have one representative from each of <i>{{ grant.collaborators }}</i> attend the interview in addition
+            to the representative from {{ grant.organization }}.
+        {% endif -%}
+    </p>
+    <p>As always, you can track the status of your grant <a href="{{ url_for('grant', grant_id=grant.grant_id, _external=True)}}">here</a>.</p>
+    <p>Best,
+    <br>Nicholas Boucher
+    <br><i>Treasurer, Undergraduate Council</i></p>
+</div>

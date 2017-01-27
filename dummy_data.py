@@ -71,7 +71,7 @@ def rand_expense(small_grant=False):
     else:
         return choice(expenses)
 
-def request_new_grant(domain, small_grant):
+def request_new_grant(domain, email, small_grant):
     """ Makes a GET request to create a new grant on the target domain """
     if small_grant:
         amount_requested = rand_dollar(200.00)
@@ -87,7 +87,7 @@ def request_new_grant(domain, small_grant):
         collaboration_explanation = rand_sentence()
     contact_first_name = rand_name()
     contact_last_name = rand_name()
-    contact_email = rand_name() + "@fake-email.com"
+    contact_email = email
     contact_phone = rand_phone()
     contact_role = rand_word()
     is_upfront = str(randrange(0,2))
@@ -310,9 +310,10 @@ def main():
     # Prompt user for inputs
     domain = input("Domain: ").rstrip('/')
     num_grants = int(input("Number of Grants: "))
+    email = input("Email address for applications: ")
     # Make the http requests
     for i in range(num_grants):
-        request_new_grant(domain, rand_bool())
+        request_new_grant(domain, email, rand_bool())
     
 if __name__ == "__main__":
     main()

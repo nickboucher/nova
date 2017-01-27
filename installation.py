@@ -88,6 +88,18 @@ def install_wizard():
     if password != password_verify:
         print('Error: Passwords do not match.\nNo changes were made. Exiting.')
         exit("Input Error")
+        
+    # Prompt user for email account username
+    email_username = input("Treasurer Email Account Username: ")
+    if not email_username:
+        print('Error: Must enter an email username.\nNo changes were made. Exiting.')
+        exit("Input Error")
+        
+    # Prompt user for email account password
+    email_password = getpass("Treasurer Email Account Password: ")
+    if not email_password:
+        print('Error: Must enter an email password.\nNo changes were made. Exiting.')
+        exit("Input Error")
     
     # Set application context for SQLAlchemy
     db.init_app(app)
@@ -111,6 +123,14 @@ def install_wizard():
     # Add Default Weekly Budget
     default_budget = Config('default_budget', budget)
     db.session.add(default_budget)
+    
+    # Add Email Account Username
+    email_username_db = Config('email_username', email_username)
+    db.session.add(email_username_db)
+    
+    # Add Email Account Password
+    email_password_db = Config('email_password', email_password)
+    db.session.add(email_password_db)
     
     # Add empty number of Grants for current week
     grants_week = Grants_Week(council + semester + '-' + week)

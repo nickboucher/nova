@@ -194,6 +194,7 @@ class Grant(db.Model):
     is_direct_deposit = db.Column(db.Boolean)
     check_number = db.Column(db.Text)
     amount_dispensed = db.Column(db.Float)
+    treasurer_notes = db.Column(db.Text)
 
 
     def __init__(self, grant_id):

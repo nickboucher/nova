@@ -43,73 +43,73 @@
                         </tr>
                     </thead>
                     <tbody>
-                        {% if expense1_amount %}
+                        {% if grant.expense1_amount %}
                             <tr>
                                 <td>{{ grant.expense1_description | suppress_none }}</td>
                                 <td>{{ grant.expense1_amount | usd }}</td>
                             </tr>
                         {% endif %}
-                        {% if expense2_amount %}
+                        {% if grant.expense2_amount %}
                             <tr>
                                 <td>{{ grant.expense2_description | suppress_none }}</td>
                                 <td>{{ grant.expense2_amount | usd }}</td>
                             </tr>
                         {% endif %}
-                        {% if expense3_amount %}
+                        {% if grant.expense3_amount %}
                             <tr>
                                 <td>{{ grant.expense3_description | suppress_none }}</td>
                                 <td>{{ grant.expense3_amount | usd }}</td>
                             </tr>
                         {% endif %}
-                        {% if expense4_amount %}
+                        {% if grant.expense4_amount %}
                             <tr>
                                 <td>{{ grant.expense4_description | suppress_none }}</td>
                                 <td>{{ grant.expense4_amount | usd }}</td>
                             </tr>
                         {% endif %}
-                        {% if expense5_amount %}
+                        {% if grant.expense5_amount %}
                             <tr>
                                 <td>{{ grant.expense5_description | suppress_none }}</td>
                                 <td>{{ grant.expense5_amount | usd }}</td>
                             </tr>
                         {% endif %}
-                        {% if expense6_amount %}
+                        {% if grant.expense6_amount %}
                             <tr>
                                 <td>{{ grant.expense6_description | suppress_none }}</td>
                                 <td>{{ grant.expense6_amount | usd }}</td>
                             </tr>
                         {% endif %}
-                        {% if expense7_amount %}
+                        {% if grant.expense7_amount %}
                             <tr>
                                 <td>{{ grant.expense7_description | suppress_none }}</td>
                                 <td>{{ grant.expense7_amount | usd }}</td>
                             </tr>
                         {% endif %}
-                        {% if expense8_amount %}
+                        {% if grant.expense8_amount %}
                             <tr>
                                 <td>{{ grant.expense8_description | suppress_none }}</td>
                                 <td>{{ grant.expense8_amount | usd }}</td>
                             </tr>
                         {% endif %}
-                        {% if expense9_amount %}
+                        {% if grant.expense9_amount %}
                             <tr>
                                 <td>{{ grant.expense9_description | suppress_none }}</td>
                                 <td>{{ grant.expense9_amount | usd }}</td>
                             </tr>
                         {% endif %}
-                        {% if expense10_amount %}
+                        {% if grant.expense10_amount %}
                             <tr>
                                 <td>{{ grant.expense10_description | suppress_none }}</td>
                                 <td>{{ grant.expense10_amount | usd }}</td>
                             </tr>
                         {% endif %}
-                        {% if expense11_amount %}
+                        {% if grant.expense11_amount %}
                             <tr>
                                 <td>{{ grant.expense11_description | suppress_none }}</td>
                                 <td>{{ grant.expense11_amount | usd }}</td>
                             </tr>
                         {% endif %}
-                        {% if expense12_amount %}
+                        {% if grant.expense12_amount %}
                             <tr>
                                 <td>{{ grant.expense12_description | suppress_none }}</td>
                                 <td>{{ grant.expense12_amount | usd }}</td>
@@ -230,8 +230,8 @@
                         <input type="hidden" name="amount" value="{{ grant.amount_allocated | usd }}">
                         <div class="col-md-12">
                             <div class="form-group">
-                                <label for="interviewer_notes">Treasurer Notes<br><span class="regular"><i>will be sent to grant applicant</i></span></label>
-                                <textarea class="form-control resize-vertical" rows="1" name="interviewer_notes">{{ grant.interviewer_notes | suppress_none }}</textarea>
+                                <label for="treasurer_notes">Treasurer Notes<br><span class="regular"><i>will be sent to grant applicant</i></span></label>
+                                <textarea class="form-control resize-vertical" rows="1" name="treasurer_notes"></textarea>
                             </div>
                         </div>
                         <div class="col-md-4">

@@ -1,0 +1,17 @@
+
+<div style="text-align:center;">
+    <img src="cid:{{ image }}" style="max-height:200px;">
+</div>
+
+<div style="text-align:left;">
+    <p>Dear {{ grant.contact_first_name }} {{ grant.contact_last_name }},</p>
+    <p>You have completed the grant process for <i>{{ grant.project }}</i>! <b>{{ grant.amount_dispensed | usd }}</b> has been directly
+        deposited into {{ grant.organization }}'s University Credit Union account.</p>
+    {% if grant.treasurer_notes %}
+        <p>The following note was attached to your grant by the final reviewer of your application: <i>{{ grant.treasurer_notes }}</i></p>
+    {% endif %}
+    <p>Thanks for applying for a UC Grant; we hope to see you again in the future!</p>
+    <p>Best,
+    <br>Nicholas Boucher
+    <br><i>Treasurer, Undergraduate Council</i></p>
+</div>

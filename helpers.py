@@ -227,7 +227,7 @@ def email_interview_scheduled(grant):
     
 def email_interview_completed(grant):
     """ Sends an email to the grant applicant stating the interview for the grant
-        has been scheduled """
+        has been completed """
         
     # Create Message
     msg = Message("Grant Interview Completed", recipients=[grant.contact_email])
@@ -237,6 +237,48 @@ def email_interview_completed(grant):
     
     # Attach HTML Body
     html = render_template("email/interview_complete.html", grant=grant, image=image)
+    msg.html = html
+    
+    # Attach Image
+    with application.app.open_resource("templates/email/images/%s" % image) as fp:
+        msg.attach(image, "image/gif", fp.read(), headers=[['Content-ID', '<%s>' % image],])
+        
+    # Send Email
+    application.mail.send(msg)
+    
+def email_direct_deposit(grant):
+    """ Sends an email to the grant applicant stating the the funds have been direct deposited
+        into their bank account """
+        
+    # Create Message
+    msg = Message("Grant Funds Deposited", recipients=[grant.contact_email])
+    
+    # Define attached image
+    image = "deposited.gif"
+    
+    # Attach HTML Body
+    html = render_template("email/direct_deposit.html", grant=grant, image=image)
+    msg.html = html
+    
+    # Attach Image
+    with application.app.open_resource("templates/email/images/%s" % image) as fp:
+        msg.attach(image, "image/gif", fp.read(), headers=[['Content-ID', '<%s>' % image],])
+        
+    # Send Email
+    application.mail.send(msg)
+    
+def email_receipts_submitted(grant):
+    """ Sends an email to the grant applicant stating the the receipts have been
+        submitted """
+        
+    # Create Message
+    msg = Message("Grant Receipts Submitted", recipients=[grant.contact_email])
+    
+    # Define attached image
+    image = "receipts_submitted.gif"
+    
+    # Attach HTML Body
+    html = render_template("email/receipts_submitted.html", grant=grant, image=image)
     msg.html = html
     
     # Attach Image

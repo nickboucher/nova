@@ -78,7 +78,7 @@ def user_loader(email):
 def email_test():
 
     grant = Grant.query.first()
-    email_interview_completed(grant)
+    email_receipts_submitted(grant)
     return "Sent"
     
     
@@ -1114,6 +1114,7 @@ def review_grant_receipts(grant_id):
         else:
             grant.is_direct_deposit = True
         grant.amount_dispensed = request.form.get('amount')
+        grant.treasurer_notes = request.form.get('treasurer_notes')
         
         # Commit all changes to database
         db.session.commit()

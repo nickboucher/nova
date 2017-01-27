@@ -58,7 +58,9 @@ with app.app_context():
     # Enable email system
     email_username = Config.query.filter_by(key="email_username").first().value
     email_password = Config.query.filter_by(key="email_password").first().value
-    app.config['MAIL_DEFAULT_SENDER'] = ('Nicholas Boucher', email_username)
+    # Change the first argument below to configure the sender name on all emails
+    app.config['MAIL_DEFAULT_SENDER'] = ('UC Treasurer', email_username)
+    # Let's assume we are using gmail configuration options
     app.config['MAIL_SERVER'] = "smtp.gmail.com"
     app.config['MAIL_PORT'] = 587
     app.config['MAIL_USE_TLS'] = True

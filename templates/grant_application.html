@@ -87,15 +87,15 @@
                         <td>
                             {% if grant.revenue1_amount %}
                                 {{ grant.revenue1_type }}: {{ grant.revenue1_description }}
-                                {{ "<br>" + grant.revenue2_type + ": " + grant.revenue2_description if grant.revenue2_amount }}
-                                {{ "<br>" + grant.revenue3_type + ": " + grant.revenue3_description if grant.revenue3_amount }}
-                                {{ "<br>" + grant.revenue4_type + ": " + grant.revenue4_description if grant.revenue4_amount }}
-                                {{ "<br>" + grant.revenue5_type + ": " + grant.revenue5_description if grant.revenue5_amount }}
-                                {{ "<br>" + grant.revenue6_type + ": " + grant.revenue6_description if grant.revenue6_amount }}
-                                {{ "<br>" + grant.revenue7_type + ": " + grant.revenue7_description if grant.revenue7_amount }}
-                                {{ "<br>" + grant.revenue8_type + ": " + grant.revenue8_description if grant.revenue8_amount }}
-                                {{ "<br>" + grant.revenue9_type + ": " + grant.revenue9_description if grant.revenue9_amount }}
-                                {{ "<br>" + grant.revenue10_type + ": " + grant.revenue10_description if grant.revenue10_amount }}
+                                {{ "<br>" | safe + grant.revenue2_type + ": " + grant.revenue2_description if grant.revenue2_amount }}
+                                {{ "<br>" | safe + grant.revenue3_type + ": " + grant.revenue3_description if grant.revenue3_amount }}
+                                {{ "<br>" | safe + grant.revenue4_type + ": " + grant.revenue4_description if grant.revenue4_amount }}
+                                {{ "<br>" | safe + grant.revenue5_type + ": " + grant.revenue5_description if grant.revenue5_amount }}
+                                {{ "<br>" | safe + grant.revenue6_type + ": " + grant.revenue6_description if grant.revenue6_amount }}
+                                {{ "<br>" | safe + grant.revenue7_type + ": " + grant.revenue7_description if grant.revenue7_amount }}
+                                {{ "<br>" | safe + grant.revenue8_type + ": " + grant.revenue8_description if grant.revenue8_amount }}
+                                {{ "<br>" | safe + grant.revenue9_type + ": " + grant.revenue9_description if grant.revenue9_amount }}
+                                {{ "<br>" | safe + grant.revenue10_type + ": " + grant.revenue10_description if grant.revenue10_amount }}
                             {% else %}
                                 None
                             {% endif %}

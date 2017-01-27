@@ -224,3 +224,24 @@ def email_interview_scheduled(grant):
         
     # Send Email
     application.mail.send(msg)
+    
+def email_interview_completed(grant):
+    """ Sends an email to the grant applicant stating the interview for the grant
+        has been scheduled """
+        
+    # Create Message
+    msg = Message("Grant Interview Completed", recipients=[grant.contact_email])
+    
+    # Define attached image
+    image = "interviewed.gif"
+    
+    # Attach HTML Body
+    html = render_template("email/interview_complete.html", grant=grant, image=image)
+    msg.html = html
+    
+    # Attach Image
+    with application.app.open_resource("templates/email/images/%s" % image) as fp:
+        msg.attach(image, "image/gif", fp.read(), headers=[['Content-ID', '<%s>' % image],])
+        
+    # Send Email
+    application.mail.send(msg)

@@ -78,7 +78,7 @@ def user_loader(email):
 def email_test():
 
     grant = Grant.query.first()
-    email_application_denied(grant)
+    email_interview_completed(grant)
     return "Sent"
     
     

@@ -1,0 +1,15 @@
+
+<div style="text-align:center;">
+    <img src="cid:{{ image }}" style="max-height:200px;">
+</div>
+
+<div style="text-align:left;">
+    <p>Dear {{ grant.contact_first_name }} {{ grant.contact_last_name }},</p>
+    <p>Thank you for attending the interview for <i>{{ grant.project }}</i>! We are in the process of presenting your grant application to the
+        Undergraduate Council at large. We will be in contact at the beginning of next week with the official amount granted after the council
+        votes on your grant.</p>
+    <p>As always, you can track the status of your grant <a href="{{ url_for('grant', grant_id=grant.grant_id, _external=True)}}">here</a>.</p>
+    <p>Best,
+    <br>Nicholas Boucher
+    <br><i>Treasurer, Undergraduate Council</i></p>
+</div>

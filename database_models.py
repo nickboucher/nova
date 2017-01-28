@@ -154,6 +154,7 @@ class Grant(db.Model):
     percentage_cut = db.Column(db.Float) # Decimal Number in [0,100] representing percentage deducted due to cuts
     amount_allocated = db.Column(db.Float) # Total Amount allocated with all cuts factored in
     is_collaboration_confirmed = db.Column(db.Boolean)
+    receipts_due_date = db.Column(db.Boolean)
     # Completed Project Info
     expense1_description = db.Column(db.Text)
     expense1_amount = db.Column(db.Float)
@@ -189,12 +190,18 @@ class Grant(db.Model):
     council_approved = db.Column(db.Boolean, default=False)
     # Treasurer Info
     is_paid = db.Column(db.Boolean, default=False)
+    receipts_reviewed = db.Column(db.Boolean, default=False)
     pay_date = db.Column(db.DateTime)
     receipts_reviewer = db.Column(db.Text)
     is_direct_deposit = db.Column(db.Boolean)
     check_number = db.Column(db.Text)
     amount_dispensed = db.Column(db.Float)
     treasurer_notes = db.Column(db.Text)
+    amount_spent = db.Column(db.Float)
+    must_reimburse_uc = db.Column(db.Boolean, default=False) # If club didn't spend as much as upfront grant gave
+    reimburse_uc_amount = db.Column(db.Float) # Amount club owes/owed UC
+    reimbursed_uc = db.Column(db.Boolean, default=False) # If club paid us back
+    
 
 
     def __init__(self, grant_id):

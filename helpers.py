@@ -17,6 +17,7 @@ from functools import wraps
 from os import urandom
 from flask_mail import Message
 from sys import argv
+from threading import Thread
 from database_models import *
 
 # Avoid import errors for installation script
@@ -103,6 +104,19 @@ def serialize_grant(grant):
             'funds_dispensed' : grant.is_paid
         }
         
+def serialize_grant_full(grant):
+    """ Serializes every data member in the grant object to a dictionary for multithreading """
+    
+    # create empty dict
+    _grant = {}
+    
+    # Populate with data
+    for c in Grant.__table__.columns:
+        _grant[c.name] = getattr(grant, c.name)
+        
+    # return populated dict
+    return _grant
+        
 def encrypt(password, salt):
     """ Provides a default implementation of the encryption algorithm used by nova """
     return hexlify(pbkdf2_hmac('sha256', str.encode(password), str.encode(salt), 100000)).decode('utf-8')
@@ -144,23 +158,35 @@ def isfloat(value):
     
 def email_application_submitted(grant):
     """ Sends an application submitted confirmation email to the grant applicant """
-        
-    # Create Message
-    msg = Message("Grant Application Submitted", recipients=[grant.contact_email])
     
-    # Define attached image
-    image = "submitted.gif"
+    _grant = serialize_grant_full(grant)
     
-    # Attach HTML Body
-    html = render_template("email/grant_submit.html", grant=grant, image=image)
-    msg.html = html
+    # Define Worker
+    def _email_application_submitted(_grant):
     
-    # Attach Image
-    with application.app.open_resource("templates/email/images/%s" % image) as fp:
-        msg.attach(image, "image/gif", fp.read(), headers=[['Content-ID', '<%s>' % image],])
-        
-    # Send Email
-    application.mail.send(msg)
+        # Retrieve app context in separate thread
+        with application.app.app_context():
+            
+            # Create Message
+            msg = Message("Grant Application Submitted", recipients=[_grant['contact_email']])
+            
+            # Define attached image
+            image = "submitted.gif"
+            
+            # Attach HTML Body
+            html = render_template("email/grant_submit.html", grant=_grant, image=image)
+            msg.html = html
+            
+            # Attach Image
+            with application.app.open_resource("templates/email/images/%s" % image) as fp:
+                msg.attach(image, "image/gif", fp.read(), headers=[['Content-ID', '<%s>' % image],])
+                
+            # Send Email
+            application.mail.send(msg)
+    
+    # Spawn thread
+    worker = Thread(target=_email_application_submitted, args=(_grant,))
+    worker.start()
     
 def email_application_passed(grant):
     """ Sends an email to the grant applicant stating the grant has passed the council
@@ -247,7 +273,7 @@ def email_interview_completed(grant):
     application.mail.send(msg)
     
 def email_direct_deposit(grant):
-    """ Sends an email to the grant applicant stating the the funds have been direct deposited
+    """ Sends an email to the grant applicant stating the funds have been direct deposited
         into their bank account """
         
     # Create Message
@@ -279,6 +305,97 @@ def email_receipts_submitted(grant):
     
     # Attach HTML Body
     html = render_template("email/receipts_submitted.html", grant=grant, image=image)
+    msg.html = html
+    
+    # Attach Image
+    with application.app.open_resource("templates/email/images/%s" % image) as fp:
+        msg.attach(image, "image/gif", fp.read(), headers=[['Content-ID', '<%s>' % image],])
+        
+    # Send Email
+    application.mail.send(msg)
+    
+def email_check(grant):
+    """ Sends an email to the grant applicant stating the a check is ready to be picked
+        up for their grant """
+        
+    # Create Message
+    msg = Message("Grant Check Ready", recipients=[grant.contact_email])
+    
+    # Define attached image
+    image = "check.gif"
+    
+    # Attach HTML Body
+    html = render_template("email/check.html", grant=grant, image=image)
+    msg.html = html
+    
+    # Attach Image
+    with application.app.open_resource("templates/email/images/%s" % image) as fp:
+        msg.attach(image, "image/gif", fp.read(), headers=[['Content-ID', '<%s>' % image],])
+        
+    # Send Email
+    application.mail.send(msg)
+    
+def email_receipts_reviewed(grant):
+    """ Sends an email to the grant applicant stating the their receipts have been reviewed
+        and approved/owe money """
+        
+    # Define subject and image
+    if grant.must_reimburse_uc and not grant.reimbursed_uc:
+        subject = "Owed Money on Grant"
+        image = "owe.gif"
+    else:
+        subject = "Grant Receipts Reviewed"
+        image = "done.gif"
+        
+    # Create Message
+    msg = Message(subject, recipients=[grant.contact_email])
+    
+    # Attach HTML Body
+    html = render_template("email/receipts_reviewed.html", grant=grant, image=image)
+    msg.html = html
+    
+    # Attach Image
+    with application.app.open_resource("templates/email/images/%s" % image) as fp:
+        msg.attach(image, "image/gif", fp.read(), headers=[['Content-ID', '<%s>' % image],])
+        
+    # Send Email
+    application.mail.send(msg)
+    
+def email_submit_receipts(grant):
+    """ Sends a reminder email to the grant applicant to submit receipts """
+        
+    # Create Message
+    msg = Message("Submit Receipts", recipients=[grant.contact_email])
+    
+    # Define attached image
+    image = "receipts.gif"
+    
+    # Attach HTML Body
+    html = render_template("email/submit_receipts.html", grant=grant, image=image)
+    msg.html = html
+    
+    # Attach Image
+    with application.app.open_resource("templates/email/images/%s" % image) as fp:
+        msg.attach(image, "image/gif", fp.read(), headers=[['Content-ID', '<%s>' % image],])
+        
+    # Send Email
+    application.mail.send(msg)
+    
+def email_receipts_not_submitted(grant):
+    """ Sends an email to the grant applicant letting them know that they did not submit receipts
+        before the deadline """
+        
+    # Create Message
+    msg = Message("Receipts Deadline Passed", recipients=[grant.contact_email])
+    
+    # Define attached image
+    if grant.is_upfront:
+        image = "owe.gif"
+    else:
+        image = "denied.gif"
+    
+    # Attach HTML Body
+    html = render_template("email/submit_receipts.html", grant=grant, image=image)
     msg.html = html
     
     # Attach Image

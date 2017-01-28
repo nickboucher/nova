@@ -90,6 +90,7 @@ def install_wizard():
         exit("Input Error")
         
     # Prompt user for email account username
+    print("Note: Application assumes Google as email account host server")
     email_username = input("Treasurer Email Account Username: ")
     if not email_username:
         print('Error: Must enter an email username.\nNo changes were made. Exiting.')
@@ -99,6 +100,12 @@ def install_wizard():
     email_password = getpass("Treasurer Email Account Password: ")
     if not email_password:
         print('Error: Must enter an email password.\nNo changes were made. Exiting.')
+        exit("Input Error")
+        
+    # Prompt user for email account password
+    server_name = input("Server Name (for building URLs): ")
+    if not server_name:
+        print('Error: Must enter a server name.\nNo changes were made. Exiting.')
         exit("Input Error")
     
     # Set application context for SQLAlchemy
@@ -131,6 +138,10 @@ def install_wizard():
     # Add Email Account Password
     email_password_db = Config('email_password', email_password)
     db.session.add(email_password_db)
+    
+    # Add Server Name
+    server_name_db = Config('server_name', server_name)
+    db.session.add(server_name_db)
     
     # Add empty number of Grants for current week
     grants_week = Grants_Week(council + semester + '-' + week)

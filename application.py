@@ -58,6 +58,7 @@ with app.app_context():
     # Enable email system
     email_username = Config.query.filter_by(key="email_username").first().value
     email_password = Config.query.filter_by(key="email_password").first().value
+    server_name = Config.query.filter_by(key="server_name").first().value
     # Change the first argument below to configure the sender name on all emails
     app.config['MAIL_DEFAULT_SENDER'] = ('UC Treasurer', email_username)
     # Let's assume we are using gmail configuration options
@@ -66,21 +67,14 @@ with app.app_context():
     app.config['MAIL_USE_TLS'] = True
     app.config['MAIL_USERNAME'] = email_username
     app.config['MAIL_PASSWORD'] = email_password
+    # Set server name for email URLs without app context
+    app.config['SERVER_NAME'] = server_name
 mail = Mail(app)
 
 # Define authentication function to lookup users
 @login_manager.user_loader
 def user_loader(email):
     return User.query.get(email)
-        
-        
-@app.route('/email')
-def email_test():
-
-    grant = Grant.query.first()
-    email_receipts_submitted(grant)
-    return "Sent"
-    
     
 @app.route('/')
 @login_required
@@ -275,6 +269,9 @@ def new_grant():
         db.session.commit()
     except IntegrityError:
         return "Error: Grant already exists"
+        
+    # Send Confirmation Email
+    email_application_submitted(grant)
     
     return "Inserted"
     
@@ -1106,6 +1103,7 @@ def review_grant_receipts(grant_id):
     else:
         # Updates grant information
         grant.is_paid = True
+        grant.receipts_reviewed = True
         grant.pay_date = datetime.now(utc)
         grant.receipts_reviewer = current_user.first_name + " " + current_user.last_name
         if request.form.get('is_check'):

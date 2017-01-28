@@ -7,6 +7,12 @@
     <p>Dear {{ grant.contact_first_name }} {{ grant.contact_last_name }},</p>
     <p>Congratulations! Your grant application for <i>{{ grant.project }}</i> has been approved for funding by majority vote of the Undergraduate Council.
         You have been awarded <b>${{ grant.amount_allocated }}</b>.
+        
+    {% if grant.is_upfront %}
+        <p>Since you applied for an upfront grant, these funds will automatically be deposited into your Harvard Credit Union account or otherwise
+        dispensed by check within the next week. You will receive an email when this occurs.</p>
+    {% endif %}
+    
     <p>Please submit your receipts as soon as possible. You view what you were allocated funds for and submit your receipts via your <a href="{{ url_for('grant', grant_id=grant.grant_id, _external=True)}}">grant status page</a>.</p>
     <p>Best,
     <br>Nicholas Boucher

@@ -359,6 +359,9 @@ def receipts(overwrite = False):
     grant.receipts_submit_date = datetime.now(utc)
     grant.receipts_submitted = True
     
+    # Send notification email to user that the receipts were received
+    email_receipts_submitted(grant)
+    
     # Commit database changes
     db.session.commit()
     return "Record Updated"
@@ -553,8 +556,11 @@ def grant_interview(grant_id):
         # Add interviewer information for grant record
         grant.interviewer = current_user.first_name + " " + current_user.last_name
         
-        # Commit Changes to Databse
+        # Commit Changes to Database
         db.session.commit()
+        
+        # Send notification email to user
+        email_interview_completed(grant)
         
         # Generate Flashed Success Message
         flash('\'' + grant.organization + '\' Interview Submitted Successfully', 'success')
@@ -924,9 +930,15 @@ def grants_pack_council_approve(grants_pack):
         # Query for each grant in the grants pack
         grants = Grant.query.filter_by(grants_pack=grants_pack).all()
         
-        # Update each grant to council approved
+        # Update each grant to council approved & send email
         for grant in grants:
             grant.council_approved = True
+            if grant.amount_allocated == 0:
+                # Send "denied" notification email to user
+                email_application_denied(grant)
+            else:
+                # Send "passed" notification email to user
+                email_application_passed(grant)
         
         # Update database to approve grants pack
         grants_pack_db.grants_pack_finalized = True
@@ -1111,13 +1123,20 @@ def review_grant_receipts(grant_id):
         grant.receipts_reviewed = True
         grant.pay_date = datetime.now(utc)
         grant.receipts_reviewer = current_user.first_name + " " + current_user.last_name
+        grant.amount_dispensed = float(request.form.get('amount'))
+        grant.treasurer_notes = request.form.get('treasurer_notes')
         if request.form.get('is_check'):
             grant.is_direct_deposit = False
             grant.check_number = request.form.get('check_number')
+            
+            # Send notification email to user to pickup check
+            email_check(grant)
+            
         else:
             grant.is_direct_deposit = True
-        grant.amount_dispensed = request.form.get('amount')
-        grant.treasurer_notes = request.form.get('treasurer_notes')
+            
+            # Send notification email to user that direct deposit occurred
+            email_direct_deposit(grant)
         
         # Commit all changes to database
         db.session.commit()

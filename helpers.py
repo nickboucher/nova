@@ -18,6 +18,7 @@ from os import urandom
 from flask_mail import Message
 from sys import argv
 from threading import Thread
+from collections import namedtuple
 from database_models import *
 
 # Avoid import errors for installation script
@@ -156,38 +157,47 @@ def isfloat(value):
         return False
     return True
     
+class DictObj(object):
+    """ Simple class which will let us create object from dict """
+    def __init__(self, d):
+        self.__dict__ = d
+    
+def async_grant(func):
+    """ Runs function on separate thread with a dictionary-serialized-object version
+        of the grant argument to eliminate SQL-Alchemy multithreading issues.
+        Should wrap like: @async_grants """
+    def inner_wrapper(_grant):
+        # Retrieve app context in separate thread
+        with application.app.app_context():
+            func(_grant)
+    def wrapper(grant):
+        _grant = DictObj(serialize_grant_full(grant))
+        worker = Thread(target=inner_wrapper, args=(_grant,))
+        worker.start()
+    return wrapper
+    
+@async_grant
 def email_application_submitted(grant):
     """ Sends an application submitted confirmation email to the grant applicant """
     
-    _grant = serialize_grant_full(grant)
+    # Create Message
+    msg = Message("Grant Application Submitted", recipients=[grant.contact_email])
     
-    # Define Worker
-    def _email_application_submitted(_grant):
+    # Define attached image
+    image = "submitted.gif"
     
-        # Retrieve app context in separate thread
-        with application.app.app_context():
-            
-            # Create Message
-            msg = Message("Grant Application Submitted", recipients=[_grant['contact_email']])
-            
-            # Define attached image
-            image = "submitted.gif"
-            
-            # Attach HTML Body
-            html = render_template("email/grant_submit.html", grant=_grant, image=image)
-            msg.html = html
-            
-            # Attach Image
-            with application.app.open_resource("templates/email/images/%s" % image) as fp:
-                msg.attach(image, "image/gif", fp.read(), headers=[['Content-ID', '<%s>' % image],])
-                
-            # Send Email
-            application.mail.send(msg)
+    # Attach HTML Body
+    html = render_template("email/grant_submit.html", grant=grant, image=image)
+    msg.html = html
     
-    # Spawn thread
-    worker = Thread(target=_email_application_submitted, args=(_grant,))
-    worker.start()
+    # Attach Image
+    with application.app.open_resource("templates/email/images/%s" % image) as fp:
+        msg.attach(image, "image/gif", fp.read(), headers=[['Content-ID', '<%s>' % image],])
+        
+    # Send Email
+    application.mail.send(msg)
     
+@async_grant
 def email_application_passed(grant):
     """ Sends an email to the grant applicant stating the grant has passed the council
         and requesting receipts """
@@ -208,7 +218,8 @@ def email_application_passed(grant):
         
     # Send Email
     application.mail.send(msg)
-    
+
+@async_grant
 def email_application_denied(grant):
     """ Sends an email to the grant applicant stating the grant has been denied
         by the council """
@@ -230,6 +241,7 @@ def email_application_denied(grant):
     # Send Email
     application.mail.send(msg)
     
+@async_grant
 def email_interview_scheduled(grant):
     """ Sends an email to the grant applicant stating the interview for the grant
         has been scheduled """
@@ -250,7 +262,8 @@ def email_interview_scheduled(grant):
         
     # Send Email
     application.mail.send(msg)
-    
+   
+@async_grant 
 def email_interview_completed(grant):
     """ Sends an email to the grant applicant stating the interview for the grant
         has been completed """
@@ -272,6 +285,7 @@ def email_interview_completed(grant):
     # Send Email
     application.mail.send(msg)
     
+@async_grant    
 def email_direct_deposit(grant):
     """ Sends an email to the grant applicant stating the funds have been direct deposited
         into their bank account """
@@ -292,7 +306,8 @@ def email_direct_deposit(grant):
         
     # Send Email
     application.mail.send(msg)
-    
+
+@async_grant    
 def email_receipts_submitted(grant):
     """ Sends an email to the grant applicant stating the the receipts have been
         submitted """
@@ -313,7 +328,8 @@ def email_receipts_submitted(grant):
         
     # Send Email
     application.mail.send(msg)
-    
+
+@async_grant    
 def email_check(grant):
     """ Sends an email to the grant applicant stating the a check is ready to be picked
         up for their grant """
@@ -334,7 +350,8 @@ def email_check(grant):
         
     # Send Email
     application.mail.send(msg)
-    
+
+@async_grant    
 def email_receipts_reviewed(grant):
     """ Sends an email to the grant applicant stating the their receipts have been reviewed
         and approved/owe money """
@@ -360,7 +377,8 @@ def email_receipts_reviewed(grant):
         
     # Send Email
     application.mail.send(msg)
-    
+
+@async_grant    
 def email_submit_receipts(grant):
     """ Sends a reminder email to the grant applicant to submit receipts """
         
@@ -380,7 +398,8 @@ def email_submit_receipts(grant):
         
     # Send Email
     application.mail.send(msg)
-    
+
+@async_grant    
 def email_receipts_not_submitted(grant):
     """ Sends an email to the grant applicant letting them know that they did not submit receipts
         before the deadline """

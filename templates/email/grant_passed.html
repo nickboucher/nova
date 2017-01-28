@@ -6,7 +6,7 @@
 <div style="text-align:left;">
     <p>Dear {{ grant.contact_first_name }} {{ grant.contact_last_name }},</p>
     <p>Congratulations! Your grant application for <i>{{ grant.project }}</i> has been approved for funding by majority vote of the Undergraduate Council.
-        You have been awarded <b>${{ grant.amount_allocated }}</b>.
+        You have been awarded <b>{{ grant.amount_allocated | usd }}</b>.
         
     {% if grant.is_upfront %}
         <p>Since you applied for an upfront grant, these funds will automatically be deposited into your Harvard Credit Union account or otherwise

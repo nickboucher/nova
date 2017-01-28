@@ -227,7 +227,7 @@
                 </div>
                 <form action="{{ url_for('review_grant_receipts', grant_id=grant.grant_id) }}" method="post">
                     <div class="row">
-                        <input type="hidden" name="amount" value="{{ grant.amount_allocated | usd }}">
+                        <input type="hidden" name="amount" value="{{ grant.amount_allocated | two_decimals }}">
                         <div class="col-md-12">
                             <div class="form-group">
                                 <label for="treasurer_notes">Treasurer Notes<br><span class="regular"><i>will be sent to grant applicant</i></span></label>

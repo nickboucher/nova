@@ -103,7 +103,7 @@ def install_wizard():
         exit("Input Error")
         
     # Prompt user for email account password
-    server_name = input("Server Name (for building URLs): ")
+    server_name = input("Server Name for building URLs (exclude 'http://' and '/'): ")
     if not server_name:
         print('Error: Must enter a server name.\nNo changes were made. Exiting.')
         exit("Input Error")

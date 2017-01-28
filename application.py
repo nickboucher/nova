@@ -13,6 +13,7 @@ from sqlalchemy.sql.expression import or_ as OR, and_ as AND
 from flask_login import login_required, fresh_login_required, login_user, logout_user, current_user
 from re import match
 from flask_mail import Mail, Message
+from sys import argv
 from database_models import *
 from helpers import *
 
@@ -53,23 +54,27 @@ login_manager.init_app(app)
 login_manager.login_view = "login"
 login_manager.login_message_category = "message"
 
-# Must manually use app context to access database since not handling request
-with app.app_context():
-    # Enable email system
-    email_username = Config.query.filter_by(key="email_username").first().value
-    email_password = Config.query.filter_by(key="email_password").first().value
-    server_name = Config.query.filter_by(key="server_name").first().value
-    # Change the first argument below to configure the sender name on all emails
-    app.config['MAIL_DEFAULT_SENDER'] = ('UC Treasurer', email_username)
-    # Let's assume we are using gmail configuration options
-    app.config['MAIL_SERVER'] = "smtp.gmail.com"
-    app.config['MAIL_PORT'] = 587
-    app.config['MAIL_USE_TLS'] = True
-    app.config['MAIL_USERNAME'] = email_username
-    app.config['MAIL_PASSWORD'] = email_password
-    # Set server name for email URLs without app context
-    app.config['SERVER_NAME'] = server_name
-mail = Mail(app)
+# Enable email system
+if "installation" not in argv[0]:
+    # Must manually use app context to access database since not handling request
+    with app.app_context():
+        
+        email_username = Config.query.filter_by(key="email_username").first().value
+        email_password = Config.query.filter_by(key="email_password").first().value
+        server_name = Config.query.filter_by(key="server_name").first().value
+    
+        # Change the first argument below to configure the sender name on all emails
+        app.config['MAIL_DEFAULT_SENDER'] = ('UC Treasurer', email_username)
+        # Let's assume we are using gmail configuration options
+        app.config['MAIL_SERVER'] = "smtp.gmail.com"
+        app.config['MAIL_PORT'] = 587
+        app.config['MAIL_USE_TLS'] = True
+        app.config['MAIL_USERNAME'] = email_username
+        app.config['MAIL_PASSWORD'] = email_password
+        # Set server name for email URLs without app context
+        app.config['SERVER_NAME'] = server_name
+        
+    mail = Mail(app)
 
 # Define authentication function to lookup users
 @login_manager.user_loader

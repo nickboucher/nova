@@ -1064,10 +1064,12 @@ def review_receipts():
     """ Displays a page to the user of grants that are ready to have receipts verified """
     
     # Query for relevant grants
-    grants = Grant.query.filter_by(council_approved=True,receipts_submitted=True,is_paid=False).all()
+    retroactive_grants = Grant.query.filter_by(council_approved=True,is_upfront=False,receipts_submitted=True,is_paid=False).all()
+    upfront_grants = Grant.query.filter_by(council_approved=True,is_upfront=True,is_paid=False).all()
+    upfront_receipts = Grant.query.filter_by(council_approved=True,is_upfront=True,is_paid=True,receipts_submitted=False).all()
     
     # Render grants page to the user
-    return render_template('review_receipts.html', grants=grants)
+    return render_template('review_receipts.html', retroactive_grants=retroactive_grants,upfront_grants=upfront_grants,upfront_receipts=upfront_receipts)
     
 @app.route('/treasurer/<grant_id>', methods=['GET','POST'])
 @login_required

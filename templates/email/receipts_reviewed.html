@@ -1,0 +1,31 @@
+
+<div style="text-align:center;">
+    <img src="cid:{{ image }}" style="max-height:200px;">
+</div>
+
+<div style="text-align:left;">
+    <p>Dear {{ grant.contact_first_name }} {{ grant.contact_last_name }},</p>
+    
+    {% if grant.must_reimburse_uc and not grant.reimbursed_uc %}
+    
+        <p>We have reviewed your receipts, and it looks like you didn't spend the full amount that you were granted on items
+            for which you were granted funds for <i>{{ grant.project }}</i>. As such, we are asking that you reimburse the UC
+            <b>{{ grant.reimburse_uc_amount | usd }}</b>.</p>
+        <p>If you choose not reimburse the UC this amount, then you will go into bad standing with the UC which will make you
+            ineligible for future grants. If you feel that our evalutaion of your spending is not right, you are welcome to
+            appear before the UC Financial Hearing Committee.</p>
+        <p>Please repspond to this email to coordinate your reimbursement with the UC Treasurer or to setup a time for a hearing.
+            In order to avoid going into bad standing with the UC, your reimbursement will be due two weeks from today.</p>
+    
+    {% else %}
+    
+        <p>Congratulations! Your receipts have been approved by the undergraduate council, which means that you have completed the full grant process
+            for <i>{{ grant.project }}</i>.</p>
+        <p>Thank you for applying for a UC Grant, and we hope to see you again soon!</p>
+            
+    {% endif %}
+    
+    <p>Best,
+    <br>Nicholas Boucher
+    <br><i>Treasurer, Undergraduate Council</i></p>
+</div>

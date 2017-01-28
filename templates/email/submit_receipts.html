@@ -1,0 +1,15 @@
+
+<div style="text-align:center;">
+    <img src="cid:{{ image }}" style="max-height:200px;">
+</div>
+
+<div style="text-align:left;">
+    <p>Dear {{ grant.contact_first_name }} {{ grant.contact_last_name }},</p>
+    <p>This is a reminder to submit receipts for your grant <i>{{ grant.project }}</i>. You can submit receipts and review the items for
+        which you were granted funds on your <a href="{{ url_for('grant', grant_id=grant.grant_id, _external=True)}}">grant status page</a>.</p>
+    <p>Your receipts are due on <b>{{ grant.receipts_due_date | date }} at 11:59 pm</b>. Failure to submit receipts at that time
+        could make you ineligible for future grants.</p>
+    <p>Best,
+    <br>Nicholas Boucher
+    <br><i>Treasurer, Undergraduate Council</i></p>
+</div>

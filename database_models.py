@@ -214,6 +214,7 @@ class Organization(db.Model):
     """ Contains information about student organizations on campus """
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Text, unique=True)
+    bank_name = db.Column(db.Text)
 
     def __init__(self, name):
         self.name = name

@@ -45,7 +45,7 @@
                     <tbody>
                         {% for grant in grants %}
                             <tr>
-                                <td>{{ grant.grant_id }}</td>
+                                <td class="text-nowrap">{{ grant.grant_id }}</td>
                                 <td>{{ grant.organization }}</td>
                                 <td>{{ grant.project }}</td>
                                 <td class="center">
@@ -54,7 +54,7 @@
                                     {% endif %}
                                 </td>
                                 <td>$<span class="amount_allocated">{{ grant.amount_allocated | two_decimals }}</span></td>
-                                <td><input type="number" step=".01" class="cut" name="{{ grant.grant_id }}" value="{{ grant.percentage_cut | percentage }}">%</td>
+                                <td class="text-nowrap"><input type="number" step=".01" class="cut" name="{{ grant.grant_id }}" value="{{ grant.percentage_cut | percentage }}">%</td>
                                 <td>$<span class="grant_amount">{{ (grant.amount_allocated * cut_multiplier) | two_decimals }}</span></td>
                             </tr>
                         {% endfor %}

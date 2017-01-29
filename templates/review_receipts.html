@@ -24,16 +24,38 @@
                         <th>Organization</th>
                         <th>Project</th>
                         <th>Amount</th>
+                        <th>Type</th>
                         <th>Receipts Submitted</th>
                     </tr>
                 </thead>
                 <tbody>
-                    {% for grant in grants %}
+                    {% for grant in retroactive_grants %}
                         <tr class="clickable-row" data-href="{{ url_for('review_grant_receipts', grant_id=grant.grant_id) }}">
                             <td>{{ grant.grant_id }}</td>
                             <td>{{ grant.organization }}</td>
                             <td>{{ grant.project }}</td>
                             <td>{{ grant.amount_allocated | usd }}</td>
+                            <td>Retroactive</td>
+                            <td>{{ grant.receipts_submit_date | date }}</td>
+                        </tr>
+                    {% endfor %}
+                    {% for grant in upfront_grants %}
+                        <tr class="clickable-row" data-href="{{ url_for('upfront_payment', grant_id=grant.grant_id) }}">
+                            <td>{{ grant.grant_id }}</td>
+                            <td>{{ grant.organization }}</td>
+                            <td>{{ grant.project }}</td>
+                            <td>{{ grant.amount_allocated | usd }}</td>
+                            <td>Upfront Payment</td>
+                            <td></td>
+                        </tr>
+                    {% endfor %}
+                    {% for grant in upfront_receipts %}
+                        <tr class="clickable-row" data-href="{{ url_for('review_grant_receipts', grant_id=grant.grant_id) }}">
+                            <td>{{ grant.grant_id }}</td>
+                            <td>{{ grant.organization }}</td>
+                            <td>{{ grant.project }}</td>
+                            <td>{{ grant.amount_allocated | usd }}</td>
+                            <td>Upfront Receipts</td>
                             <td>{{ grant.receipts_submit_date | date }}</td>
                         </tr>
                     {% endfor %}

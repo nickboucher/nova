@@ -1066,7 +1066,7 @@ def review_receipts():
     # Query for relevant grants
     retroactive_grants = Grant.query.filter_by(council_approved=True,is_upfront=False,receipts_submitted=True,is_paid=False).all()
     upfront_grants = Grant.query.filter_by(council_approved=True,is_upfront=True,is_paid=False).all()
-    upfront_receipts = Grant.query.filter_by(council_approved=True,is_upfront=True,is_paid=True,receipts_submitted=False).all()
+    upfront_receipts = Grant.query.filter_by(council_approved=True,is_upfront=True,is_paid=True,receipts_submitted=True).all()
     
     # Render grants page to the user
     return render_template('review_receipts.html', retroactive_grants=retroactive_grants,upfront_grants=upfront_grants,upfront_receipts=upfront_receipts)
@@ -1491,3 +1491,68 @@ def edit_council_semester():
     # Display message to user and send to settings page
     flash("Council Semester has been updated successfully. A new grants pack was created.")
     return redirect(url_for('settings'))
+    
+@app.route('/treasurer/upfront/<grant_id>', methods=['GET','POST'])
+@login_required
+@admin_required
+def upfront_payment(grant_id):
+    """ A page for the treasurer to issue upfront payments to approved grants """
+    
+    # Validate Grant ID
+    if not grant_id:
+        return "Error: No Grant ID"
+    # Query for the relevant grant
+    grant = Grant.query.filter_by(grant_id=grant_id).first()
+    # Return error without updating data if grant does not exist
+    if grant == None:
+        return "Invalid Grant ID"
+        
+    # Query for the organization information and validate
+    organization = Organization.query.filter_by(name=grant.organization).first()
+    if not organization:
+        return "Internal Error: Organization not listed in database"
+        
+    # User is requesting page
+    if request.method == 'GET':
+        return render_template("upfront_payment.html", grant=grant, organization=organization)
+        
+    # User is submitting form data
+    else:
+        # Verify the request is comming from the form
+        if not request.form.get('paid') == "True":
+            return "Page must be accessed via form."
+            
+        # Get and verify the amount
+        amount = request.form.get('amount')
+        if not amount:
+            return "Amount Not Specified"
+            
+        # Update bank name if supplied
+        if request.form.get('bank_name'):
+            organization.bank_name = request.form.get('bank_name')
+            
+        # Update grant record with payment
+        grant.is_paid = True
+        grant.pay_date = datetime.now(utc)
+        grant.amount_dispensed = float(amount)
+        
+        # Get check vs direct deposit info
+        if request.form.get('is_check'):
+            grant.is_direct_deposit = False
+            grant.check_number = request.form.get('check_number')
+            
+            # Send notification email to user to pickup check
+            email_check(grant)
+            
+        else:
+            grant.is_direct_deposit = True
+            
+            # Send notification email to user that direct deposit occurred
+            email_direct_deposit(grant)
+            
+        db.session.commit()
+        
+        # Generate Flashed Success Message
+        flash('\'' + grant.project + '\' Funds Dispensed Successfully', 'success')
+        
+        return redirect(url_for('review_receipts'))

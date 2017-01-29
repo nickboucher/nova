@@ -1,0 +1,186 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    {{ grant.grant_id }} Payment
+{% endblock %}
+
+{% block main %}
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="center">
+                <h1>"{{ grant.project }}" Upfront Payment</h1>
+                <h3>{{ grant.organization }}, Grant: {{ grant.grant_id }}</h3>
+            </div>
+        </div>
+    </div>
+    
+    <div class="row">
+        <div class="col-md-12">
+            <table class="table table-striped table-hover table-responsive">
+                    <thead>
+                        <tr>
+                            <th>Type</th>
+                            <th>Comment</th>
+                            <th>Amount</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% if grant.food_allocated %}
+                            <tr>
+                                <td>Food</td>
+                                <td>{{ grant.food_allocated_notes | suppress_none }}</td>
+                                <td><input type="number" class="funding" id="food_funding" step=".01" value="{{ grant.food_allocated | two_decimals }}" disabled></td>
+                            </tr>
+                        {% endif %}
+                        {% if grant.travel_allocated %}
+                            <tr>
+                                <td>Travel</td>
+                                <td>{{ grant.travel_allocated_notes | suppress_none }}</td>
+                                <td><input type="number" class="funding" id="travel_funding" step=".01" value="{{ grant.travel_allocated | two_decimals }}" disabled></td>
+                            </tr>
+                        {% endif %}
+                        {% if grant.publicity_allocated %}
+                            <tr>
+                                <td>Publicity</td>
+                                <td>{{ grant.publicity_allocated_notes | suppress_none }}</td>
+                                <td><input type="number" class="funding" id="publicity_funding" step=".01" value="{{ grant.publicity_allocated | two_decimals }}" disabled></td>
+                            </tr>
+                        {% endif %}
+                        {% if grant.materials_allocated %}
+                            <tr>
+                                <td>Materials & Supplies</td>
+                                <td>{{ grant.materials_allocated_notes | suppress_none }}</td>
+                                <td><input type="number" class="funding" id="materials_funding" step=".01" value="{{ grant.materials_allocated | two_decimals }}" disabled></td>
+                            </tr>
+                        {% endif %}
+                        {% if grant.venue_allocated %}
+                            <tr>
+                                <td>Venue</td>
+                                <td>{{ grant.venue_allocated_notes | suppress_none }}</td>
+                                <td><input type="number" class="funding" id="venue_funding" step=".01" value="{{ grant.venue_allocated | two_decimals }}" disabled></td>
+                            </tr>
+                        {% endif %}
+                        {% if grant.decorations_allocated %}
+                            <tr>
+                                <td>Decorations</td>
+                                <td>{{ grant.decorations_allocated_notes | suppress_none }}</td>
+                                <td><input type="number" class="funding" id="decorations_funding" step=".01" value="{{ grant.decorations_allocated | two_decimals }}" disabled></td>
+                            </tr>
+                        {% endif %}
+                        {% if grant.media_allocated %}
+                            <tr>
+                                <td>AV/Media</td>
+                                <td>{{ grant.media_allocated_notes | suppress_none }}</td>
+                                <td><input type="number" class="funding" id="media_funding" step=".01" value="{{ grant.media_allocated | two_decimals }}" disabled></td>
+                            </tr>
+                        {% endif %}
+                        {% if grant.admissions_allocated %}
+                            <tr>
+                                <td>Admissions</td>
+                                <td>{{ grant.admissions_allocated_notes | suppress_none }}</td>
+                                <td><input type="number" class="funding" id="admissions_funding" step=".01" value="{{ grant.admissions_allocated | two_decimals }}" disabled></td>
+                            </tr>
+                        {% endif %}
+                        {% if grant.hupd_allocated %}
+                            <tr>
+                                <td>HUPD/BAT/DJ</td>
+                                <td>{{ grant.hupd_allocated_notes | suppress_none }}</td>
+                                <td><input type="number" class="funding" id="hupd_funding" step=".01" value="{{ grant.hupd_allocated | two_decimals }}" disabled></td>
+                            </tr>
+                        {% endif %}
+                        {% if grant.personnel_allocated %}
+                            <tr>
+                                <td>Personnel</td>
+                                <td>{{ grant.personnel_allocated_notes | suppress_none }}</td>
+                                <td><input type="number" class="funding" id="personnel_funding" step=".01" value="{{ grant.personnel_allocated | two_decimals }}" disabled></td>
+                            </tr>
+                        {% endif %}
+                        {% if grant.other_allocated %}
+                            <tr>
+                                <td>Other</td>
+                                <td>{{ grant.other_allocated_notes | suppress_none }}</td>
+                                <td><input type="number" class="funding" id="other_funding" step=".01" value="{{ grant.other_allocated | two_decimals }}" disabled></td>
+                            </tr>
+                        {% endif %}
+                    </tbody>
+                </table>
+                
+                <div class="center">
+                    <p>{{ grant.interviewer_notes | suppress_none }}</p>
+                    
+                </div>
+                
+                <hr />
+                
+                <div class="jumbotron">
+                    <div class="center">
+                        <p id="total" style="font-size:1.5em;">
+                            <span><b>{{ grant.amount_allocated | usd }}</b></span><br>
+                            {% if organization.bank_name %}
+                                <span><b>{{ organization.bank_name }}</b></span>
+                            {% else %}
+                                <span><b>{{ organization.name }}</b></span>
+                            {% endif %}
+                        </p>
+                    </div>
+                    
+                    <form action="{{ url_for('upfront_payment', grant_id=grant.grant_id) }}" method="post">
+                        {% if not organization.bank_name %}
+                            <div class="form-group">
+                                <label for="bank_bame">Bank Name:</label>
+                                <input type="text" name="bank_name" class="form-control" value="{{ organization.bank_name | suppress_none }}" placeholder="Enter Bank Name from HUECU Website">
+                            </div>
+                        {% endif %}
+                        <input type="hidden" name="paid" value="True">
+                        <div class="form-group">
+                            <label for="amount">Amount:</label>
+                            <input type="number" name="amount" step=".01" class="form-control" value="{{ grant.amount_allocated | two_decimals }}">
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4">
+                                <div class="form-group">
+                                    <label for="is_check">Issuing Check</label>
+                                    <input type="checkbox" name="is_check" id="is_check" value="check">
+                                </div>
+                            </div>
+                            <div class="col-md-8">
+                                <div id="check_number" class="form-group">
+                                    <label for="is_check">Check Number</label>
+                                    <input type="text" name="check_number">
+                                </div>
+                            </div>
+                        </div>
+                        <div class="center">
+                            <a href="https://www.huecu.org/uc-transfer-request/" target="_blank" class="btn btn-default">HUECU</a>
+                            <button type="submit" class="btn btn-danger">Funds Transferred</button>
+                        </div>
+                    </form>
+                </div>
+                
+                
+                    
+        </div>
+    </div>
+
+
+{% endblock %}
+
+{% block scripts %}
+
+    <script type="text/javascript">
+    
+        /* Hide/show check number textbox */
+        function ShowHideCheck() {
+            if ($(this).prop('checked')) $("#check_number").show();
+            else $("#check_number").hide();
+        }
+        
+        // Handle checkbox click
+        $("#is_check").click(ShowHideCheck);
+        // Run on page load
+        ShowHideCheck();
+        
+    </script>
+
+{% endblock %}

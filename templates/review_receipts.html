@@ -50,7 +50,7 @@
                         </tr>
                     {% endfor %}
                     {% for grant in upfront_receipts %}
-                        <tr class="clickable-row" data-href="{{ url_for('review_grant_receipts', grant_id=grant.grant_id) }}">
+                        <tr class="clickable-row" data-href="{{ url_for('upfront_review', grant_id=grant.grant_id) }}">
                             <td>{{ grant.grant_id }}</td>
                             <td>{{ grant.organization }}</td>
                             <td>{{ grant.project }}</td>

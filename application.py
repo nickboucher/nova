@@ -1066,7 +1066,7 @@ def review_receipts():
     # Query for relevant grants
     retroactive_grants = Grant.query.filter_by(council_approved=True,is_upfront=False,receipts_submitted=True,is_paid=False).all()
     upfront_grants = Grant.query.filter_by(council_approved=True,is_upfront=True,is_paid=False).all()
-    upfront_receipts = Grant.query.filter_by(council_approved=True,is_upfront=True,is_paid=True,receipts_submitted=True).all()
+    upfront_receipts = Grant.query.filter_by(council_approved=True,is_upfront=True,is_paid=True,receipts_submitted=True,receipts_reviewed=False).all()
     
     # Render grants page to the user
     return render_template('review_receipts.html', retroactive_grants=retroactive_grants,upfront_grants=upfront_grants,upfront_receipts=upfront_receipts)
@@ -1125,7 +1125,7 @@ def review_grant_receipts(grant_id):
         grant.receipts_reviewed = True
         grant.pay_date = datetime.now(utc)
         grant.receipts_reviewer = current_user.first_name + " " + current_user.last_name
-        grant.amount_dispensed = float(request.form.get('amount'))
+        grant.amount_dispensed = grant.amount_spent = float(request.form.get('amount'))
         grant.treasurer_notes = request.form.get('treasurer_notes')
         if request.form.get('is_check'):
             grant.is_direct_deposit = False
@@ -1507,6 +1507,9 @@ def upfront_payment(grant_id):
     if grant == None:
         return "Invalid Grant ID"
         
+    if grant.is_paid:
+        return "This grant is not eligible for Treasurer review -- it has already been paid"
+        
     # Query for the organization information and validate
     organization = Organization.query.filter_by(name=grant.organization).first()
     if not organization:
@@ -1534,6 +1537,8 @@ def upfront_payment(grant_id):
         # Update grant record with payment
         grant.is_paid = True
         grant.pay_date = datetime.now(utc)
+        if not isfloat(amount):
+            return "Invalid amount value"
         grant.amount_dispensed = float(amount)
         
         # Get check vs direct deposit info
@@ -1555,4 +1560,62 @@ def upfront_payment(grant_id):
         # Generate Flashed Success Message
         flash('\'' + grant.project + '\' Funds Dispensed Successfully', 'success')
         
+        return redirect(url_for('review_receipts'))
+        
+@app.route('/treasurer/upfront-review/<grant_id>', methods=['GET','POST'])
+@login_required
+@admin_required
+def upfront_review(grant_id):
+    """ A page for the treasurer to verify receipts from upfront grants """
+    
+    # Validate Grant ID
+    if not grant_id:
+        return "Error: No Grant ID"
+    # Query for the relevant grant
+    grant = Grant.query.filter_by(grant_id=grant_id).first()
+    # Return error without updating data if grant does not exist
+    if grant == None:
+        return "Invalid Grant ID"
+        
+    if grant.receipts_reviewed:
+        return "This grant is not eligible to be reviewed by the Treasurer -- it has already been reviewed"
+        
+    # User is requesting page
+    if request.method == 'GET':
+        return render_template('upfront_receipts.html', grant=grant)
+        
+    # User is submitting form data
+    else:
+        
+        # Get and validate amount owed
+        amount_owed = request.form.get("amount_owed")
+        if amount_owed == None:
+            return "Amount Owed not specified"
+        if not isfloat(amount_owed):
+            return "Invalid amount_owed value"
+        amount_owed = float(amount_owed)
+        
+        # Update the grant record
+        grant.receipts_reviewed = True
+        grant.receipts_reviewer = current_user.first_name + " " + current_user.last_name
+        grant.treasurer_notes = request.form.get('treasurer_notes')
+            
+        if amount_owed == 0:
+            grant.amount_spent = grant.amount_dispensed
+            grant.must_reimburse_uc = False
+        else:
+            grant.amount_spent = grant.amount_dispensed - amount_owed
+            grant.must_reimburse_uc = True
+            grant.reimburse_uc_amount = amount_owed
+            
+        # Commit changes to database
+        db.session.commit()
+        
+        # Send an email about the grant status to applicant
+        email_receipts_reviewed(grant)
+        
+        # flash message to user
+        flash("\'" + grant.project + "\' Receipts Successfully Reviewed", 'success')
+        
+        # Return user to treasurer page
         return redirect(url_for('review_receipts'))

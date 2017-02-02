@@ -146,7 +146,7 @@ def new_grant():
         return "Invalid Security Key. You do not have access to this system."
         
     # This system only works for Upfront and Retroactive UC Grants, so filter others out
-    if not args.get('is_upfront') or (args.get('is_upfront')[0] != '0' and args.get('is_upfront')[0] != '1'):
+    if not args.get('is_upfront') or (args.get('is_upfront')[0] != '1' and args.get('is_upfront')[0] != '2'):
         # TODO: Implement a nice confirmation page and send an email for someone to check qualtrics submissions
         return "This system only works for UC Upfront and Retroactive Grants"
     

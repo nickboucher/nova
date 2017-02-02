@@ -278,7 +278,7 @@ def new_grant():
     # Send Confirmation Email
     email_application_submitted(grant)
     
-    return "Inserted"
+    return "Your grant application has been received. You can track your grant application <a href=\"" + url_for("grant", grant_id=grant.grant_id) + "\">here</a>."
     
 @app.route('/receipts')
 def receipts(overwrite = False):

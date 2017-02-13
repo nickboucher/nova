@@ -215,6 +215,8 @@ class Organization(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Text, unique=True)
     bank_name = db.Column(db.Text)
+    training_required = db.Column(db.Boolean, default=False) # Sexual Assault Training
+    training_occurred = db.Column(db.Boolean, default=False) # Sexual Assault Training
 
     def __init__(self, name):
         self.name = name

@@ -90,7 +90,7 @@ def request_new_grant(domain, email, small_grant):
     contact_email = email
     contact_phone = rand_phone()
     contact_role = rand_word()
-    is_upfront = str(randrange(0,2))
+    is_upfront = str(randrange(1,3))
     organization = rand_club()
     tax_id = ""
     if rand_bool():

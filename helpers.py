@@ -49,7 +49,7 @@ def utc_to_east_datetime(utc_dt):
     if utc_dt == None:
         return ""
     eastern = timezone('US/Eastern')
-    return utc_dt.replace(tzinfo=utc).astimezone(tz=eastern).strftime("%B %-d, %Y %-I:%-M %p")
+    return utc_dt.replace(tzinfo=utc).astimezone(tz=eastern).strftime("%B %-d, %Y %-I:%M %p")
     
 def utc_to_east_date(utc_dt):
     """ Formats date in US Eastern timezone """

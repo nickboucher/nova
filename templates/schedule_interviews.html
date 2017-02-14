@@ -10,9 +10,107 @@
         <div class="col-md-12">
             <div class="center">
                 <h1>Schedule Interviews</h1>
-                <h3>Schedule interview times and automatically send notification emails</h3>
             </div>
         </div>
     </div>
+    
+    <div class="row jumbotron center">
+        <div class="col-md-6">
+            <h3>Date</h3>
+            <input type="date" id="date" name="date">
+        </div>
+        <div class="col-md-6">
+            <h3>Time</h3>
+            <span>Start: <input type="time" id="start_time" name="start_time"></span>
+            <span>Duration (minutes): <input type="number" id="duration" name="duration"></span>
+        </div>
+        <button id="calculate" class="btn btn-default margin15">Calculate Times</button>
+    </div>
+    
+    <form action="{{ url_for('schedule_interviews') }}" method="post">   
+        <input type="hidden" id="form_date" name="date" value="">
+        <div class="row">
+            <div class="col-md-12">
+                <table id="grants" class="table table-striped table-hover table-responsive">
+                    <thead>
+                        <tr>
+                            <th><b>Grant ID</b></th>
+                            <th><b>Organization</b></th>
+                            <th><b>Project</b></th>
+                            <th><b>Missed Last Interview</b></th>
+                            <th><b>Interview Time</b></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for grant in grants %}
+                            <tr data-href="{{ url_for('grant_interview', grant_id=grant.grant_id) }}">
+                                <td class="text-nowrap">{{ grant.grant_id }}</td>
+                                <td><b>{{ grant.organization }}</b></td>
+                                <td><b>{{ grant.project }}</b></td>
+                                <td>{% if grant.interview_schedule_date %}<i class="fa fa-check" aria-hidden="true"></i>{% endif %}</td>
+                                <td><input type="time" class="time" name="grant:{{ grant.grant_id }}"></td>
+                            </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+                <div class="center">
+                    <input class="btn btn-danger" id="submit" type="submit" value="Schedule Interviews" disabled="true">
+                </div>
+            </div>
+        </div>
+    </form>
+
+{% endblock %}
+
+{% block scripts %}
+
+<script type="text/javascript">
+
+    // Specify the number of minutes per interview time slot
+    var minutesPerSlot = 10;
+    // Number of grants in total
+    var numGrants = {{ grants | length }};
+    
+    // helper function
+    function pad2(number) {
+        return (number < 10 ? '0' : '') + number
+    }
+
+    /* Handle clicking of calculate button by updating all interview
+        time input values */
+    $("#calculate").click(function(){
+        // Data Validation
+        if (!$("#date").val()) {
+            alert("Must specify Date");
+        } else if (!$("#start_time").val()) {
+            alert("Must Specify Start Time");
+        } else if (!$("#duration").val()) {
+            alert("Must Specify Duration")
+        }
+        // Calulate the times for each grant
+        var slots = Math.ceil($("#duration").val()/minutesPerSlot);
+        var grantsPerSlot = Math.floor(numGrants / slots);
+        var count = 0;
+        var hours = parseInt($("#start_time").val().split(":")[0]);
+        var minutes = parseInt($("#start_time").val().split(":")[1]);
+        console.log("MinutesPerSlot: " + minutesPerSlot);
+        $('#grants > tbody  > tr').each(function(i, row){
+            if (count != 0 && count % grantsPerSlot == 0) {
+                hours += Math.floor((minutes + minutesPerSlot) / 60);
+                minutes = (minutes + minutesPerSlot) % 60;
+            }
+            $(row).find("input.time").val(pad2(hours) + ":" + pad2(minutes));
+            console.log("Hours: " + hours);
+            console.log("Minutes: " + minutes);
+            console.log("Count: " + count);
+            count++;
+        });
+        // Update Hidden Date on form to be submitted to server
+        $("#form_date").val($("#date").val());
+        // Makes submit button enabled
+        $('#submit').attr('disabled', false);
+    });
+    
+</script>
 
 {% endblock %}

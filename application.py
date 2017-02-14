@@ -14,6 +14,7 @@ from flask_login import login_required, fresh_login_required, login_user, logout
 from re import match
 from flask_mail import Mail, Message
 from sys import argv
+from pytz import timezone, utc
 from database_models import *
 from helpers import *
 
@@ -202,8 +203,8 @@ def new_grant():
     if args.get('project_description'): grant.project_description = args.get('project_description')[0]
     if args.get('is_event'): grant.is_event = (True if args.get('is_event')[0] == "Event" else False)
     if args.get('project_location'): grant.project_location = args.get('project_location')[0]
-    if args.get('project_start'): grant.project_start = eastern.localize(datetime.strptime(args.get('project_start')[0], '%m/%d/%Y')).astimezone(pytz.utc)
-    if args.get('project_end'): grant.project_end = eastern.localize(datetime.strptime(args.get('project_end')[0], '%m/%d/%Y')).astimezone(pytz.utc)
+    if args.get('project_start'): grant.project_start = eastern.localize(datetime.strptime(args.get('project_start')[0], '%m/%d/%Y')).astimezone(utc)
+    if args.get('project_end'): grant.project_end = eastern.localize(datetime.strptime(args.get('project_end')[0], '%m/%d/%Y')).astimezone(utc)
     if args.get('college_attendees'): grant.college_attendees = int(args.get('college_attendees')[0])
     if args.get('facebook_link'): grant.facebook_link = args.get('facebook_link')[0]
     if args.get('revenue1_type'): grant.revenue1_type = args.get('revenue1_type')[0]
@@ -417,7 +418,7 @@ def grant(grant_id):
                 progress['message'] = "Grant Completed."
             elif grant.is_direct_deposit:
                 if grant.pay_date:
-                    progress['message'] = "Funds Direct Deposited on " + grant.pay_date.strftime('%b. %d, %Y')
+                    progress['message'] = "Funds Direct Deposited on " + utc_to_east_date(grant.pay_date)
                 else:
                     progress['message'] = "Funds Direct Deposited into Your Account"
         elif grant.receipts_submitted:
@@ -439,7 +440,7 @@ def grant(grant_id):
                 progress['message'] = "Grant Completed."
             elif grant.is_direct_deposit:
                 if grant.pay_date:
-                    progress['message'] = "Funds Direct Deposited on " + grant.pay_date.strftime('%b. %d, %Y')
+                    progress['message'] = "Funds Direct Deposited on " + utc_to_east_date(grant.pay_date)
                 else:
                     progress['message'] = "Funds Direct Deposited into Your Account"
         elif grant.receipts_submitted:
@@ -453,7 +454,7 @@ def grant(grant_id):
             progress['message'] = "Docketed for Council Vote"
         elif grant.interview_schedule_date:
             progress['percentage'] = 0.33
-            progress['message'] = "Interview scheduled for " + grant.interview_schedule_date.strftime('%b. %d, %Y at %I:%M %p')
+            progress['message'] = "Interview scheduled for " + utc_to_east_datetime(grant.interview_schedule_date)
         else:
             progress['percentage'] = 0.17
             progress['message'] = "Interview being scheduled"
@@ -1641,3 +1642,54 @@ def upfront_review(grant_id):
         
         # Return user to treasurer page
         return redirect(url_for('review_receipts'))
+        
+@app.route('/schedule', methods=['GET','POST'])
+@login_required
+@admin_required
+def schedule_interviews():
+    """ A page for the admins to schedule interviews for the coming week """
+    
+    # User is requesting form
+    if request.method == 'GET':
+        
+        # Query for interview-eligible grants
+        grants = Grant.query.filter_by(interview_occurred=False,is_small_grant=False).all()
+        
+        # Render template to user
+        return render_template("schedule_interviews.html", grants=grants)
+        
+    # User is submitting form data
+    else:
+        
+        # Timezones will be converted to UTC
+        eastern = timezone('US/Eastern')
+        date_str = request.form.get('date')
+        print(date_str)
+        if not date_str:
+            return "No Date Specified"
+        date = eastern.localize(datetime.strptime(date_str, '%Y-%m-%d'))
+        # Loop through all arguments looking for intervie times
+        for (name,value) in request.form.items():
+            # If we have found grant info, update interview time
+            if name.startswith("grant:"):
+                grant_id = name.split("grant:")[1]
+                grant = Grant.query.filter_by(grant_id=grant_id).first()
+                if not grant:
+                    return "Invalid Grant_ID Submitted"
+                hours = int(value.split(":")[0])
+                minutes = int(value.split(":")[1])
+                # Save interview history if necessary
+                if grant.interview_schedule_date:
+                    if grant.interview_schedule_history:
+                        grant.interview_schedule_history += ", " + grant.interview_schedule_date.strftime("%d/%m/%Y %H:%M")
+                    else:
+                        grant.interview_schedule_history = grant.interview_schedule_date.strftime("%d/%m/%Y %H:%M")
+                grant.interview_schedule_date = date.replace(hour=hours, minute=minutes).astimezone(utc)
+                # Send email for grant interview time
+                email_interview_scheduled(grant)
+        
+        db.session.commit()
+        
+        flash("Interviews Scheduled Successfully", 'message')
+        
+        return redirect(url_for('interviews'))

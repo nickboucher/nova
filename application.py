@@ -182,6 +182,9 @@ def new_grant():
     # Create New Grant
     grant = Grant(grant_id)
     
+    # Timezones will be converted to UTC
+    eastern = timezone('US/Eastern')
+    
     # Add Grant Values from Parsed Query String
     if args.get('amount_requested'): grant.amount_requested = float(args.get('amount_requested')[0])
     if args.get('is_collaboration'): grant.is_collaboration = (True if args.get('is_collaboration')[0] == "Yes" else False)
@@ -199,8 +202,8 @@ def new_grant():
     if args.get('project_description'): grant.project_description = args.get('project_description')[0]
     if args.get('is_event'): grant.is_event = (True if args.get('is_event')[0] == "Event" else False)
     if args.get('project_location'): grant.project_location = args.get('project_location')[0]
-    if args.get('project_start'): grant.project_start = datetime.strptime(args.get('project_start')[0], '%m/%d/%Y')
-    if args.get('project_end'): grant.project_end = datetime.strptime(args.get('project_end')[0], '%m/%d/%Y')
+    if args.get('project_start'): grant.project_start = eastern.localize(datetime.strptime(args.get('project_start')[0], '%m/%d/%Y')).astimezone(pytz.utc)
+    if args.get('project_end'): grant.project_end = eastern.localize(datetime.strptime(args.get('project_end')[0], '%m/%d/%Y')).astimezone(pytz.utc)
     if args.get('college_attendees'): grant.college_attendees = int(args.get('college_attendees')[0])
     if args.get('facebook_link'): grant.facebook_link = args.get('facebook_link')[0]
     if args.get('revenue1_type'): grant.revenue1_type = args.get('revenue1_type')[0]

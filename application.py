@@ -56,26 +56,45 @@ login_manager.login_message_category = "message"
 
 # Enable email system
 if "installation" not in argv[0]:
+    
+    # Due to Flask-Mail Limitations, We must create a seperate App Context for Treasurer Emails
+    treasurer_app = Flask("treasurer")
+
     # Must manually use app context to access database since not handling request
     with app.app_context():
         
-        email_username = Config.query.filter_by(key="email_username").first().value
-        email_password = Config.query.filter_by(key="email_password").first().value
+        grants_email_username = Config.query.filter_by(key="grants_email_username").first().value
+        grants_email_password = Config.query.filter_by(key="grants_email_password").first().value
+        treasurer_email_username = Config.query.filter_by(key="treasurer_email_username").first().value
+        treasurer_email_password = Config.query.filter_by(key="treasurer_email_password").first().value
         server_name = Config.query.filter_by(key="server_name").first().value
     
         # Change the first argument below to configure the sender name on all emails
-        app.config['MAIL_DEFAULT_SENDER'] = ('UC Treasurer', email_username)
+        app.config['MAIL_DEFAULT_SENDER'] = ('UC Grants', grants_email_username)
         # Let's assume we are using gmail configuration options
         app.config['MAIL_SERVER'] = "smtp.gmail.com"
         app.config['MAIL_PORT'] = 587
         app.config['MAIL_USE_TLS'] = True
-        app.config['MAIL_USERNAME'] = email_username
-        app.config['MAIL_PASSWORD'] = email_password
+        app.config['MAIL_USERNAME'] = grants_email_username
+        app.config['MAIL_PASSWORD'] = grants_email_password
         # Set server name for email URLs without app context
         app.config['SERVER_NAME'] = server_name
         
+    # Setup default Grants Sender Email
     mail = Mail(app)
-
+    
+    # Setup Treasurer Sener Email
+    treasurer_app.config['MAIL_DEFAULT_SENDER'] = ('UC Treasurer', treasurer_email_username)
+    # Let's assume we are using gmail configuration options
+    treasurer_app.config['MAIL_SERVER'] = "smtp.gmail.com"
+    treasurer_app.config['MAIL_PORT'] = 587
+    treasurer_app.config['MAIL_USE_TLS'] = True
+    treasurer_app.config['MAIL_USERNAME'] = treasurer_email_username
+    treasurer_app.config['MAIL_PASSWORD'] = treasurer_email_password
+    # Set server name for email URLs without app context
+    treasurer_app.config['SERVER_NAME'] = server_name
+    treasurer_mail = Mail(treasurer_app)
+    
 # Define authentication function to lookup users
 @login_manager.user_loader
 def user_loader(email):

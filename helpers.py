@@ -176,6 +176,16 @@ def async_grant(func):
         worker.start()
     return wrapper
     
+def if_email(func):
+    """ Simple wrapper to only run function if the email_enabled Config
+        option is set to True """
+    def wrapper(grant):
+        email = Config.query.filter_by(key='enable_email').first()
+        if email.value == '1':
+            func(grant)
+    return wrapper
+    
+@if_email
 @async_grant
 def email_application_submitted(grant):
     """ Sends an application submitted confirmation email to the grant applicant """
@@ -197,6 +207,7 @@ def email_application_submitted(grant):
     # Send Email
     application.mail.send(msg)
     
+@if_email
 @async_grant
 def email_application_passed(grant):
     """ Sends an email to the grant applicant stating the grant has passed the council
@@ -219,6 +230,7 @@ def email_application_passed(grant):
     # Send Email
     application.mail.send(msg)
 
+@if_email
 @async_grant
 def email_application_denied(grant):
     """ Sends an email to the grant applicant stating the grant has been denied
@@ -241,6 +253,7 @@ def email_application_denied(grant):
     # Send Email
     application.mail.send(msg)
     
+@if_email
 @async_grant
 def email_interview_scheduled(grant):
     """ Sends an email to the grant applicant stating the interview for the grant
@@ -263,6 +276,7 @@ def email_interview_scheduled(grant):
     # Send Email
     application.mail.send(msg)
    
+@if_email
 @async_grant 
 def email_interview_completed(grant):
     """ Sends an email to the grant applicant stating the interview for the grant
@@ -284,7 +298,8 @@ def email_interview_completed(grant):
         
     # Send Email
     application.mail.send(msg)
-    
+
+@if_email  
 @async_grant    
 def email_direct_deposit(grant):
     """ Sends an email to the grant applicant stating the funds have been direct deposited
@@ -305,8 +320,9 @@ def email_direct_deposit(grant):
         msg.attach(image, "image/gif", fp.read(), headers=[['Content-ID', '<%s>' % image],])
         
     # Send Email
-    application.mail.send(msg)
+    application.treasurer_mail.send(msg)
 
+@if_email
 @async_grant    
 def email_receipts_submitted(grant):
     """ Sends an email to the grant applicant stating the the receipts have been
@@ -329,6 +345,7 @@ def email_receipts_submitted(grant):
     # Send Email
     application.mail.send(msg)
 
+@if_email
 @async_grant    
 def email_check(grant):
     """ Sends an email to the grant applicant stating the a check is ready to be picked
@@ -349,8 +366,9 @@ def email_check(grant):
         msg.attach(image, "image/gif", fp.read(), headers=[['Content-ID', '<%s>' % image],])
         
     # Send Email
-    application.mail.send(msg)
+    application.treasurer_mail.send(msg)
 
+@if_email
 @async_grant    
 def email_receipts_reviewed(grant):
     """ Sends an email to the grant applicant stating the their receipts have been reviewed
@@ -376,8 +394,9 @@ def email_receipts_reviewed(grant):
         msg.attach(image, "image/gif", fp.read(), headers=[['Content-ID', '<%s>' % image],])
         
     # Send Email
-    application.mail.send(msg)
+    application.treasurer_mail.send(msg)
 
+@if_email
 @async_grant    
 def email_submit_receipts(grant):
     """ Sends a reminder email to the grant applicant to submit receipts """
@@ -399,6 +418,7 @@ def email_submit_receipts(grant):
     # Send Email
     application.mail.send(msg)
 
+@if_email
 @async_grant    
 def email_receipts_not_submitted(grant):
     """ Sends an email to the grant applicant letting them know that they did not submit receipts

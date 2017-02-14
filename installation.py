@@ -91,14 +91,27 @@ def install_wizard():
         
     # Prompt user for email account username
     print("Note: Application assumes Google as email account host server")
-    email_username = input("Treasurer Email Account Username: ")
-    if not email_username:
+    grants_email_username = input("Grants Email Account Username: ")
+    if not grants_email_username:
         print('Error: Must enter an email username.\nNo changes were made. Exiting.')
         exit("Input Error")
         
     # Prompt user for email account password
-    email_password = getpass("Treasurer Email Account Password: ")
-    if not email_password:
+    grants_email_password = getpass("Grants Email Account Password: ")
+    if not grants_email_password:
+        print('Error: Must enter an email password.\nNo changes were made. Exiting.')
+        exit("Input Error")
+        
+    # Prompt user for email account username
+    print("Note: Application assumes Google as email account host server")
+    treasurer_email_username = input("Treasurer Email Account Username: ")
+    if not treasurer_email_username:
+        print('Error: Must enter an email username.\nNo changes were made. Exiting.')
+        exit("Input Error")
+        
+    # Prompt user for email account password
+    treasurer_email_password = getpass("Treasurer Email Account Password: ")
+    if not treasurer_email_password:
         print('Error: Must enter an email password.\nNo changes were made. Exiting.')
         exit("Input Error")
         
@@ -131,17 +144,29 @@ def install_wizard():
     default_budget = Config('default_budget', budget)
     db.session.add(default_budget)
     
-    # Add Email Account Username
-    email_username_db = Config('email_username', email_username)
-    db.session.add(email_username_db)
+    # Add Grants Email Account Username
+    grants_email_username_db = Config('grants_email_username', grants_email_username)
+    db.session.add(grants_email_username_db)
     
-    # Add Email Account Password
-    email_password_db = Config('email_password', email_password)
-    db.session.add(email_password_db)
+    # Add Grants Email Account Password
+    grants_email_password_db = Config('grants_email_password', grants_email_password)
+    db.session.add(grants_email_password_db)
+    
+    # Add Treasurer Email Account Username
+    treasurer_email_username_db = Config('treasurer_email_username', treasurer_email_username)
+    db.session.add(treasurer_email_username_db)
+    
+    # Add Treasurer Email Account Password
+    treasurer_email_password_db = Config('treasurer_email_password', treasurer_email_password)
+    db.session.add(treasurer_email_password_db)
     
     # Add Server Name
     server_name_db = Config('server_name', server_name)
     db.session.add(server_name_db)
+    
+    # Default to enabling email without asking user
+    enable_email = Config('enable_email', '1')
+    db.session.add(enable_email)
     
     # Add empty number of Grants for current week
     grants_week = Grants_Week(council + semester + '-' + week)

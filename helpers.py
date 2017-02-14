@@ -306,7 +306,7 @@ def email_direct_deposit(grant):
         into their bank account """
         
     # Create Message
-    msg = Message("Grant Funds Deposited", recipients=[grant.contact_email])
+    msg = Message("Grant Funds Deposited", recipients=[grant.contact_email], sender=("UC Treasurer", "harvarductreasurer@gmail.com"))
     
     # Define attached image
     image = "deposited.gif"
@@ -352,7 +352,7 @@ def email_check(grant):
         up for their grant """
         
     # Create Message
-    msg = Message("Grant Check Ready", recipients=[grant.contact_email])
+    msg = Message("Grant Check Ready", recipients=[grant.contact_email], sender=("UC Treasurer", "harvarductreasurer@gmail.com"))
     
     # Define attached image
     image = "check.gif"
@@ -383,7 +383,7 @@ def email_receipts_reviewed(grant):
         image = "done.gif"
         
     # Create Message
-    msg = Message(subject, recipients=[grant.contact_email])
+    msg = Message(subject, recipients=[grant.contact_email], sender=("UC Treasurer", "harvarductreasurer@gmail.com"))
     
     # Attach HTML Body
     html = render_template("email/receipts_reviewed.html", grant=grant, image=image)

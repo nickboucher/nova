@@ -67,7 +67,7 @@
                     <a href="{{ url_for('grant_application', grant_id=grant.grant_id) }}" role="button" class="btn btn-default" aria-label="Left Align">Review Application</a><br>
                     {% if grant.council_approved %}
                         <a href="{{ url_for('grant_allocations', grant_id=grant.grant_id) }}" role="button" class="btn btn-default margin15" aria-label="Left Align">What You Were Granted</a><br>
-                        <a href="https://harvard.az1.qualtrics.com/SE/?SID=SV_3mA2HIDqUTZHT0h&grant_id={{ grant.grant_id }}" role="button" class="btn btn-default margin15 {{ "disabled" if grant.receipts_reviewed }}" aria-label="Left Align">{{ "Resubmit" if grant.receipts_submitted else "Submit" }} Receipts</a>
+                        <a href="https://harvard.az1.qualtrics.com/SE/?SID=SV_8zU7rFYRKZb9k5D&grant_id={{ grant.grant_id }}" role="button" class="btn btn-default margin15 {{ "disabled" if grant.receipts_reviewed }}" aria-label="Left Align">{{ "Resubmit" if grant.receipts_submitted else "Submit" }} Receipts</a>
                     {% endif %}
                 </div>
             </div>

@@ -387,7 +387,7 @@ def receipts(overwrite = False):
     
     # Commit database changes
     db.session.commit()
-    return "Record Updated"
+    return 'Your receipts have been received. As always, you can check the status of your grant application <a href="' + url_for("grant", grant_id=grant.grant_id) + '">here</a>.'
     
 @app.route('/resubmit-receipts')
 def resubmit_receipts():

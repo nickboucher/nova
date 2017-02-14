@@ -80,6 +80,8 @@ if "installation" not in argv[0]:
         app.config['MAIL_PASSWORD'] = grants_email_password
         # Set server name for email URLs without app context
         app.config['SERVER_NAME'] = server_name
+        # Should help with request file size limits
+        app.config['MAIL_MAX_EMAILS'] = 5
         
     # Setup default Grants Sender Email
     mail = Mail(app)
@@ -94,6 +96,8 @@ if "installation" not in argv[0]:
     treasurer_app.config['MAIL_PASSWORD'] = treasurer_email_password
     # Set server name for email URLs without app context
     treasurer_app.config['SERVER_NAME'] = server_name
+    # Should help with request file size limits
+    treasurer_app.config['MAIL_MAX_EMAILS'] = 5
     treasurer_mail = Mail(treasurer_app)
     
 # Define authentication function to lookup users

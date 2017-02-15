@@ -7,7 +7,8 @@
     <p>Dear {{ grant.contact_first_name }} {{ grant.contact_last_name }},</p>
     <p>An interview has been scheduled for your grant application <i>{{ grant.project }}</i>. The interview is schuled for:</p>
     <div style="text-align:center;margin:15px;font-size:1.5em;"><b>{{ grant.interview_schedule_date | datetime }}</b></div>
-    <p>Please send a representative from your organization to attend the interview (it does not have to be you).
+    <p>The interview will occur in the basement of Memerial Hall in the classrooms just beyond "FlyBy." Please send a representative
+        from your organization to attend the interview (it does not have to be you).
         In order for your grant application to receive any funding, someone from {{ grant.organization }} must attend the interview.
         {%- if grant.is_collaboration %}
             Since you indicated that your project is a collaboration between multiple student organizations on your application, 

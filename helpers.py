@@ -19,6 +19,7 @@ from flask_mail import Message
 from sys import argv
 from threading import Thread
 from collections import namedtuple
+from queue import Queue
 from database_models import *
 
 # Avoid import errors for installation script
@@ -161,6 +162,19 @@ class DictObj(object):
     """ Simple class which will let us create object from dict """
     def __init__(self, d):
         self.__dict__ = d
+
+# We want to send email in the background, but sending multiple
+# simultaneously causes problems with Google's SMPTP server. 
+# As such, we will use a single background worker thread with
+# a thread-safe queue to handle sneding emails.
+q = Queue()
+def worker():
+    while True:
+        (func,grant) = q.get()
+        func(grant)
+        q.task_done()
+thr = Thread(target=worker)
+thr.start()
     
 def async_grant(func):
     """ Runs function on separate thread with a dictionary-serialized-object version
@@ -172,8 +186,7 @@ def async_grant(func):
             func(_grant)
     def wrapper(grant):
         _grant = DictObj(serialize_grant_full(grant))
-        worker = Thread(target=inner_wrapper, args=(_grant,))
-        worker.start()
+        q.put((inner_wrapper,_grant))
     return wrapper
     
 def if_email(func):

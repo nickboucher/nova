@@ -172,7 +172,7 @@ def new_grant():
     # This system only works for Upfront and Retroactive UC Grants, so filter others out
     if not args.get('is_upfront') or (args.get('is_upfront')[0] != '1' and args.get('is_upfront')[0] != '2'):
         # TODO: Implement a nice confirmation page and send an email for someone to check qualtrics submissions
-        return "This system only works for UC Upfront and Retroactive Grants"
+        return "Thank you for submitting your grant! The UC will review your application and be in contact soon."
     
     # Get Next Grant ID
     council_semester = Config.query.filter_by(key='council_semester').first()

@@ -55,7 +55,7 @@
                                 </td>
                                 <td>$<span class="amount_allocated">{{ grant.amount_allocated | two_decimals }}</span></td>
                                 <td class="text-nowrap"><input type="number" step=".01" class="cut" name="{{ grant.grant_id }}" value="{{ grant.percentage_cut | percentage }}">%</td>
-                                <td>$<span class="grant_amount">{{ (grant.amount_allocated * cut_multiplier) | two_decimals }}</span></td>
+                                <td>$<span class="grant_amount">{{ (grant.amount_allocated if grant.is_collaboration_confirmed else (grant.amount_allocated * cut_multiplier)) | two_decimals }}</span></td>
                             </tr>
                         {% endfor %}
                     </tbody>
@@ -89,7 +89,9 @@
         function updateTotal() {
             var total = 0.0;
             $("span.grant_amount").each(function() {
-                total += parseFloatIgnoreCommas($(this).text());
+                var temp= parseFloatIgnoreCommas($(this).text());
+                console.log(temp);
+                total += temp;
             });
             $("#total").text("$" + dollar(total));
         }

@@ -1093,7 +1093,7 @@ def review_receipts():
     
     # Query for relevant grants
     retroactive_grants = Grant.query.filter_by(council_approved=True,is_upfront=False,receipts_submitted=True,is_paid=False).all()
-    upfront_grants = Grant.query.filter_by(council_approved=True,is_upfront=True,is_paid=False).all()
+    upfront_grants = Grant.query.filter(AND(AND(Grant.council_approved==True,Grant.is_upfront==True),AND(Grant.is_paid==False,Grant.amount_allocated!=0))).all()
     upfront_receipts = Grant.query.filter_by(council_approved=True,is_upfront=True,is_paid=True,receipts_submitted=True,receipts_reviewed=False).all()
     
     # Render grants page to the user

@@ -38,6 +38,12 @@ def two_decimals(value):
         return ""
     return "{:,.2f}".format(value)
     
+def number(value):
+    """ Formats float to 2 decimal string with no commas """
+    if value == None:
+        return ""
+    return "{:.2f}".format(value)
+    
 def suppress_none(value):
     """ Returns value or empty string if None """
     

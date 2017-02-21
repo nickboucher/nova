@@ -33,6 +33,7 @@ if app.config["DEBUG"]:
 # custom filters
 app.jinja_env.filters["usd"] = usd
 app.jinja_env.filters["two_decimals"] = two_decimals
+app.jinja_env.filters["number"] = number
 app.jinja_env.filters["suppress_none"] = suppress_none
 app.jinja_env.filters["datetime"] = utc_to_east_datetime
 app.jinja_env.filters["date"] = utc_to_east_date

@@ -1610,7 +1610,8 @@ def upfront_review(grant_id):
         
     # User is requesting page
     if request.method == 'GET':
-        return render_template('upfront_receipts.html', grant=grant)
+        receipts = grant.receipt_images.split(", ")
+        return render_template('upfront_receipts.html', grant=grant, receipts=receipts)
         
     # User is submitting form data
     else:

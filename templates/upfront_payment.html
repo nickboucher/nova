@@ -135,7 +135,7 @@
                         <input type="hidden" name="paid" value="True">
                         <div class="form-group">
                             <label for="amount">Amount:</label>
-                            <input type="number" name="amount" step=".01" class="form-control" value="{{ grant.amount_allocated | two_decimals }}">
+                            <input type="number" name="amount" step=".01" class="form-control" value="{{ grant.amount_allocated | number }}">
                         </div>
                         <div class="row">
                             <div class="col-md-4">

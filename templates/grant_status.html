@@ -55,10 +55,10 @@
                     {% if grant.is_upfront %}
                         <i class="fa fa-{{ 'check-' if grant.is_paid }}square-o" aria-hidden="true"></i> Funds Dispensed<br>
                         <i class="fa fa-{{ 'check-' if grant.receipts_submitted }}square-o" aria-hidden="true"></i> Submit Receipts<br>
-                        <i class="fa fa-{{ 'check-' if grant.is_paid }}square-o" aria-hidden="true"></i> Receipts Reviewed
+                        <i class="fa fa-{{ 'check-' if grant.receipts_reviewed }}square-o" aria-hidden="true"></i> Receipts Reviewed
                     {% else %}
                         <i class="fa fa-{{ 'check-' if grant.receipts_submitted }}square-o" aria-hidden="true"></i> Submit Receipts<br>
-                        <i class="fa fa-{{ 'check-' if grant.is_paid }}square-o" aria-hidden="true"></i> Receipts Reviewed<br>
+                        <i class="fa fa-{{ 'check-' if grant.receipts_reviewed }}square-o" aria-hidden="true"></i> Receipts Reviewed<br>
                         <i class="fa fa-{{ 'check-' if grant.is_paid }}square-o" aria-hidden="true"></i> Funds Dispensed
                     {% endif %}
                 </div>

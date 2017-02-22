@@ -109,6 +109,13 @@
             </table>
             <div class="center">
                 <p>The UC will fund up to these amounts in each category.</p>
+                <h2>Total Grant Amount: {{ grant.amount_allocated | usd }}</h2>
+                {% if grant.percentage_cut %}
+                    <p style="margin-top:25px;">Sometimes, our budget requires that we make across the board cuts to all grants. If that is the case, then the total grant amount
+                    may be less than the summation of the maximum amount that we will fund in each funding category. The percentage cut for the
+                    week of your grant was {{ grant.percentage_cut }}%. The above amount represents the total amount of funding your grant is eligible to receive,
+                    contingent upon providing receipts that correspond with at least the above amounts in each funding category.</p>
+                {% endif %}
             </div>
         </div>
     </div>

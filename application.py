@@ -416,54 +416,122 @@ def grant(grant_id):
     
     # Calculate Progress through grant process for template progress bar
     progress = {'percentage': 0, 'message': ""}
-    if grant.is_small_grant:
-        if grant.is_paid:
-            progress['percentage'] = 1.0
-            if grant.is_direct_deposit == None:
-                progress['message'] = "Grant Completed."
-            elif grant.is_direct_deposit:
-                if grant.pay_date:
-                    progress['message'] = "Funds Direct Deposited on " + utc_to_east_date(grant.pay_date)
+    # Upfront Grants
+    if grant.is_upfront:
+        # Upfront small grant
+        if grant.is_small_grant:
+            if grant.receipts_reviewed:
+                progress['percentage'] = 1.0
+                progress['message'] = "Receipts Reviewed. Grant Complete."
+            elif grant.receipts_submitted:
+                progress['percentage'] = 0.85
+                progress['message'] = "Receipts Processing"
+            elif grant.is_paid:
+                progress['percentage'] = 0.68
+                if grant.is_direct_deposit == None:
+                    progress['message'] = "Submit Receipts"
+                elif grant.is_direct_deposit:
+                    if grant.pay_date:
+                        progress['message'] = "Funds Direct Deposited on " + utc_to_east_date(grant.pay_date) +". Submit Receipts."
+                    else:
+                        progress['message'] = "Funds Direct Deposited. Submit Receipts."
                 else:
-                    progress['message'] = "Funds Direct Deposited into Your Account"
-        elif grant.receipts_submitted:
-            progress['percentage'] = 0.8
-            progress['message'] = "Receipts Processing"
-        elif grant.council_approved:
-            progress['percentage'] = 0.6
-            progress['message'] = "Submit Receipts"
-        elif grant.small_grant_is_reviewed:
-            progress['percentage'] = 0.4
-            progress['message'] = "Docketed for Council Vote"
+                    progress['message'] = "Check Written. Submit Receipts."
+            elif grant.council_approved:
+                progress['percentage'] = 0.51
+                progress['message'] = "Funds Processing"
+            elif grant.small_grant_is_reviewed:
+                progress['percentage'] = 0.34
+                progress['message'] = "Docketed for Council Vote"
+            else:
+                progress['percentage'] = 0.17
+                progress['message'] = "Application Being Reviewed"
+        # Upfront non-small grant
         else:
-            progress['percentage'] = 0.2
-            progress['message'] = "Application Being Reviewed"
+            if grant.receipts_reviewed:
+                progress['percentage'] = 1.0
+                progress['message'] = "Receipts Reviewed. Grant Complete."
+            elif grant.receipts_submitted:
+                progress['percentage'] = 0.84
+                progress['message'] = "Receipts Processing"
+            elif grant.is_paid:
+                progress['percentage'] = 0.70
+                if grant.is_direct_deposit == None:
+                    progress['message'] = "Submit Receipts"
+                elif grant.is_direct_deposit:
+                    if grant.pay_date:
+                        progress['message'] = "Funds Direct Deposited on " + utc_to_east_date(grant.pay_date) +". Submit Receipts."
+                    else:
+                        progress['message'] = "Funds Direct Deposited. Submit Receipts."
+                else:
+                    progress['message'] = "Check Written. Submit Receipts."
+            elif grant.council_approved:
+                progress['percentage'] = 0.56
+                progress['message'] = "Funds Processing"
+            elif grant.interview_occurred:
+                progress['percentage'] = 0.42
+                progress['message'] = "Docketed for Council Vote"
+            elif grant.interview_schedule_date:
+                progress['percentage'] = 0.28
+                progress['message'] = "Interview scheduled for " + utc_to_east_datetime(grant.interview_schedule_date)
+            else:
+                progress['percentage'] = 0.14
+                progress['message'] = "Interview being scheduled"
+    # Retroactive Grants
     else:
-        if grant.is_paid:
-            progress['percentage'] = 1.0
-            if grant.is_direct_deposit == None:
-                progress['message'] = "Grant Completed."
-            elif grant.is_direct_deposit:
-                if grant.pay_date:
-                    progress['message'] = "Funds Direct Deposited on " + utc_to_east_date(grant.pay_date)
+        # Retroactive small grant
+        if grant.is_small_grant:
+            if grant.is_paid:
+                progress['percentage'] = 1.0
+                if grant.is_direct_deposit == None:
+                    progress['message'] = "Grant Completed."
+                elif grant.is_direct_deposit:
+                    if grant.pay_date:
+                        progress['message'] = "Funds Direct Deposited on " + utc_to_east_date(grant.pay_date)
+                    else:
+                        progress['message'] = "Funds Direct Deposited into Your Account"
                 else:
-                    progress['message'] = "Funds Direct Deposited into Your Account"
-        elif grant.receipts_submitted:
-            progress['percentage'] = 0.81
-            progress['message'] = "Receipts Processing"
-        elif grant.council_approved:
-            progress['percentage'] = 0.65
-            progress['message'] = "Submit Receipts"
-        elif grant.interview_occurred:
-            progress['percentage'] = 0.49
-            progress['message'] = "Docketed for Council Vote"
-        elif grant.interview_schedule_date:
-            progress['percentage'] = 0.33
-            progress['message'] = "Interview scheduled for " + utc_to_east_datetime(grant.interview_schedule_date)
+                    progress['message'] = "Check Written"
+            elif grant.receipts_submitted:
+                progress['percentage'] = 0.8
+                progress['message'] = "Receipts Processing"
+            elif grant.council_approved:
+                progress['percentage'] = 0.6
+                progress['message'] = "Submit Receipts"
+            elif grant.small_grant_is_reviewed:
+                progress['percentage'] = 0.4
+                progress['message'] = "Docketed for Council Vote"
+            else:
+                progress['percentage'] = 0.2
+                progress['message'] = "Application Being Reviewed"
+        # Retroactive non-small grant
         else:
-            progress['percentage'] = 0.17
-            progress['message'] = "Interview being scheduled"
-            
+            if grant.is_paid:
+                progress['percentage'] = 1.0
+                if grant.is_direct_deposit == None:
+                    progress['message'] = "Grant Completed."
+                elif grant.is_direct_deposit:
+                    if grant.pay_date:
+                        progress['message'] = "Funds Direct Deposited on " + utc_to_east_date(grant.pay_date)
+                    else:
+                        progress['message'] = "Funds Direct Deposited into Your Account"
+                else:
+                    progress['message'] = "Check Written"
+            elif grant.receipts_submitted:
+                progress['percentage'] = 0.81
+                progress['message'] = "Receipts Processing"
+            elif grant.council_approved:
+                progress['percentage'] = 0.65
+                progress['message'] = "Submit Receipts"
+            elif grant.interview_occurred:
+                progress['percentage'] = 0.49
+                progress['message'] = "Docketed for Council Vote"
+            elif grant.interview_schedule_date:
+                progress['percentage'] = 0.33
+                progress['message'] = "Interview scheduled for " + utc_to_east_datetime(grant.interview_schedule_date)
+            else:
+                progress['percentage'] = 0.17
+                progress['message'] = "Interview being scheduled"
     
     # Render grant status page to user
     return render_template("grant_status.html", grant=grant, progress=progress)

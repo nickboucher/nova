@@ -1460,7 +1460,6 @@ def default_budget():
     return redirect(url_for('settings'))
     
 @app.route('/change-password', methods=['GET','POST'])
-@fresh_login_required
 def change_password():
     """ Allows any given user to change their password """
     

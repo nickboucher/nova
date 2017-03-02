@@ -1766,3 +1766,7 @@ def schedule_interviews():
         flash("Interviews Scheduled Successfully", 'message')
         
         return redirect(url_for('interviews'))
+        
+@app.route('/apply')
+def apply():
+    return redirect('https://harvard.az1.qualtrics.com/jfe1/form/SV_bQlbCpGGFSulLVP')

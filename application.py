@@ -1737,14 +1737,13 @@ def schedule_interviews():
         # Timezones will be converted to UTC
         eastern = timezone('US/Eastern')
         date_str = request.form.get('date')
-        print(date_str)
         if not date_str:
             return "No Date Specified"
         date = eastern.localize(datetime.strptime(date_str, '%Y-%m-%d'))
         # Loop through all arguments looking for intervie times
         for (name,value) in request.form.items():
             # If we have found grant info, update interview time
-            if name.startswith("grant:"):
+            if name.startswith("grant:") and value:
                 grant_id = name.split("grant:")[1]
                 grant = Grant.query.filter_by(grant_id=grant_id).first()
                 if not grant:

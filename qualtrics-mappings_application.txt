@@ -1,6 +1,6 @@
 amount_requested=${q://QID43/ChoiceTextEntryValue}&
 is_collaboration=${q://QID29/ChoiceGroup/SelectedChoices}&
-collaborators=${q://QID37/ChoiceGroup/SelectedChoices}&
+collaborators=${q://QID65/ChoiceGroup/SelectedChoices}&
 collaboration_explanation=${q://QID31/ChoiceTextEntryValue}&
 contact_first_name=${q://QID3/ChoiceTextEntryValue}&
 contact_last_name=${q://QID21/ChoiceTextEntryValue}&

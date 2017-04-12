@@ -10,6 +10,8 @@
     
     <p>The funds for your upfront grant <i>{{ grant.project }}</i> are now available. <b>{{ grant.amount_dispensed | usd }}</b> has been directly
             deposited into {{ grant.organization }}'s University Credit Union account.</p>
+    <p>Please submit receipts within two weeks after your event occurs. Receipts will not be accepted after the end of the semester. You can submit
+        receipts through your <a href="{{ url_for('grant', grant_id=grant.grant_id, _external=True) }}">grant status portal</a>.</p>
     
     {% else %}
     

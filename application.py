@@ -1217,7 +1217,7 @@ def review_grant_receipts(grant_id):
         receipts = grant.receipt_images.split(", ")
             
         # Render the template to the user
-        return render_template('review_grant_receipts.html', grant=grant, receipts=receipts, organization=arganization)
+        return render_template('review_grant_receipts.html', grant=grant, receipts=receipts, organization=organization)
         
     # User is submitting form
     else:

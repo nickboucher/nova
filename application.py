@@ -1191,6 +1191,11 @@ def review_grant_receipts(grant_id):
     # User is requesting grant page
     if request.method == 'GET':
         
+        # Query for the organization information and validate
+        organization = Organization.query.filter_by(name=grant.organization).first()
+        if not organization:
+            return "Internal Error: Organization not listed in database"
+        
         # Ensure that the percentage cut was specified
         if grant.percentage_cut == None:
             return "Error: No percentage cut associated with grant."
@@ -1212,7 +1217,7 @@ def review_grant_receipts(grant_id):
         receipts = grant.receipt_images.split(", ")
             
         # Render the template to the user
-        return render_template('review_grant_receipts.html', grant=grant, receipts=receipts)
+        return render_template('review_grant_receipts.html', grant=grant, receipts=receipts, organization=arganization)
         
     # User is submitting form
     else:

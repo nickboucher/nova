@@ -1774,3 +1774,17 @@ def schedule_interviews():
 @app.route('/apply')
 def apply():
     return redirect('https://harvard.az1.qualtrics.com/jfe1/form/SV_bQlbCpGGFSulLVP')
+    
+@app.route('/receipts-reminder', methods=['GET','POST'])
+@login_required
+@admin_required
+def receipts_reminder():
+    # User is requesting form
+    if request.method == 'GET':
+        return render_template('receipts_reminder.html')
+    # User is submitting form
+    else:
+        grants = Grant.query.filter(AND(AND(Grant.receipts_submitted==False,Grant.council_approved==True), Grant.amount_allocated>0)).all()
+        for grant in grants:
+            email_submit_receipts(grant)
+        return "Emails sent"

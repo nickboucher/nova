@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Receipts Reminder
+{% endblock %}
+
+{% block main %}
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="center">
+                <h1>Receipts Reminder</h1>
+                <h3>Click the button below to send batch emails reminding eligible grant applicants to submit receipts.</h3>
+                <form action="{{ url_for('receipts_reminder') }}" method="post">
+                    <input type="hidden" name="key" value="ReallySimpleFormKey">
+                    <button type="submit" class="btn btn-primary">Send Emails</button>
+                </form>
+            </div>
+        </div>
+    </div>
+    
+{% endblock %}

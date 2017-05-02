@@ -142,77 +142,77 @@
                             <tr>
                                 <td>Food</td>
                                 <td>{{ grant.food_allocated_notes | suppress_none }}</td>
-                                <td><input type="number" class="funding" id="food_funding" step=".01" value="{{ grant.food_allocated * cut | two_decimals }}"></td>
+                                <td><input type="number" class="funding" id="food_funding" step=".01" value="{{ ((grant.funding_allocated | float) * cut) | two_decimals }}"></td>
                             </tr>
                         {% endif %}
                         {% if grant.travel_allocated %}
                             <tr>
                                 <td>Travel</td>
                                 <td>{{ grant.travel_allocated_notes | suppress_none }}</td>
-                                <td><input type="number" class="funding" id="travel_funding" step=".01" value="{{ grant.travel_allocated * cut | two_decimals }}"></td>
+                                <td><input type="number" class="funding" id="travel_funding" step=".01" value="{{ ((grant.travel_allocated | float) * cut) | two_decimals }}"></td>
                             </tr>
                         {% endif %}
                         {% if grant.publicity_allocated %}
                             <tr>
                                 <td>Publicity</td>
                                 <td>{{ grant.publicity_allocated_notes | suppress_none }}</td>
-                                <td><input type="number" class="funding" id="publicity_funding" step=".01" value="{{ grant.publicity_allocated * cut | two_decimals }}"></td>
+                                <td><input type="number" class="funding" id="publicity_funding" step=".01" value="{{ ((grant.publicity_allocated | float) * cut) | two_decimals }}"></td>
                             </tr>
                         {% endif %}
                         {% if grant.materials_allocated %}
                             <tr>
                                 <td>Materials & Supplies</td>
                                 <td>{{ grant.materials_allocated_notes | suppress_none }}</td>
-                                <td><input type="number" class="funding" id="materials_funding" step=".01" value="{{ grant.materials_allocated * cut | two_decimals }}"></td>
+                                <td><input type="number" class="funding" id="materials_funding" step=".01" value="{{ ((grant.materials_allocated | float) * cut) | two_decimals }}"></td>
                             </tr>
                         {% endif %}
                         {% if grant.venue_allocated %}
                             <tr>
                                 <td>Venue</td>
                                 <td>{{ grant.venue_allocated_notes | suppress_none }}</td>
-                                <td><input type="number" class="funding" id="venue_funding" step=".01" value="{{ grant.venue_allocated * cut | two_decimals }}"></td>
+                                <td><input type="number" class="funding" id="venue_funding" step=".01" value="{{ ((grant.venue_allocated | float) * cut) | two_decimals }}"></td>
                             </tr>
                         {% endif %}
                         {% if grant.decorations_allocated %}
                             <tr>
                                 <td>Decorations</td>
                                 <td>{{ grant.decorations_allocated_notes | suppress_none }}</td>
-                                <td><input type="number" class="funding" id="decorations_funding" step=".01" value="{{ grant.decorations_allocated * cut | two_decimals }}"></td>
+                                <td><input type="number" class="funding" id="decorations_funding" step=".01" value="{{ ((grant.decorations_allocated | float) * cut) | two_decimals }}"></td>
                             </tr>
                         {% endif %}
                         {% if grant.media_allocated %}
                             <tr>
                                 <td>AV/Media</td>
                                 <td>{{ grant.media_allocated_notes | suppress_none }}</td>
-                                <td><input type="number" class="funding" id="media_funding" step=".01" value="{{ grant.media_allocated * cut | two_decimals }}"></td>
+                                <td><input type="number" class="funding" id="media_funding" step=".01" value="{{ ((grant.media_allocated | float) * cut) | two_decimals }}"></td>
                             </tr>
                         {% endif %}
                         {% if grant.admissions_allocated %}
                             <tr>
                                 <td>Admissions</td>
                                 <td>{{ grant.admissions_allocated_notes | suppress_none }}</td>
-                                <td><input type="number" class="funding" id="admissions_funding" step=".01" value="{{ grant.admissions_allocated * cut | two_decimals }}"></td>
+                                <td><input type="number" class="funding" id="admissions_funding" step=".01" value="{{ ((grant.admissions_allocated | float) * cut) | two_decimals }}"></td>
                             </tr>
                         {% endif %}
                         {% if grant.hupd_allocated %}
                             <tr>
                                 <td>HUPD/BAT/DJ</td>
                                 <td>{{ grant.hupd_allocated_notes | suppress_none }}</td>
-                                <td><input type="number" class="funding" id="hupd_funding" step=".01" value="{{ grant.hupd_allocated * cut | two_decimals }}"></td>
+                                <td><input type="number" class="funding" id="hupd_funding" step=".01" value="{{ ((grant.hupd_allocated | float) * cut) | two_decimals }}"></td>
                             </tr>
                         {% endif %}
                         {% if grant.personnel_allocated %}
                             <tr>
                                 <td>Personnel</td>
                                 <td>{{ grant.personnel_allocated_notes | suppress_none }}</td>
-                                <td><input type="number" class="funding" id="personnel_funding" step=".01" value="{{ grant.personnel_allocated * cut | two_decimals }}"></td>
+                                <td><input type="number" class="funding" id="personnel_funding" step=".01" value="{{ ((grant.personnel_allocated | float) * cut) | two_decimals }}"></td>
                             </tr>
                         {% endif %}
                         {% if grant.other_allocated %}
                             <tr>
                                 <td>Other</td>
                                 <td>{{ grant.other_allocated_notes | suppress_none }}</td>
-                                <td><input type="number" class="funding" id="other_funding" step=".01" value="{{ grant.other_allocated * cut | two_decimals }}"></td>
+                                <td><input type="number" class="funding" id="other_funding" step=".01" value="{{ ((grant.other_allocated | float) * cut) | two_decimals }}"></td>
                             </tr>
                         {% endif %}
                     </tbody>

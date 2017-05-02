@@ -142,7 +142,7 @@
                             <tr>
                                 <td>Food</td>
                                 <td>{{ grant.food_allocated_notes | suppress_none }}</td>
-                                <td><input type="number" class="funding" id="food_funding" step=".01" value="{{ ((grant.funding_allocated | float) * cut) | two_decimals }}"></td>
+                                <td><input type="number" class="funding" id="food_funding" step=".01" value="{{ ((grant.food_allocated | float) * cut) | two_decimals }}"></td>
                             </tr>
                         {% endif %}
                         {% if grant.travel_allocated %}

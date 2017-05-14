@@ -421,7 +421,7 @@ def email_submit_receipts(grant):
     """ Sends a reminder email to the grant applicant to submit receipts """
         
     # Create Message
-    msg = Message("REQUIRED DUE TONIGHT: Submit Receipts", recipients=[grant.contact_email])
+    msg = Message("Submit Receipts", recipients=[grant.contact_email])
     
     # Define attached image
     image = "receipts.gif"

@@ -24,7 +24,7 @@
                 </div>
                 
                 {% for receipt in receipts %}
-                    <img src="{{ receipt }}" class="fullwidth">
+                    <img src="{{ receipt }}" class="fullwidth rotatable">
                 {% endfor %}
             
             </div>
@@ -272,6 +272,16 @@
         
         // Update total on change
         $(".funding").change(UpdateTotal);
+        
+        // Allow rotation of images on click
+        $(".rotatable").rotate({bind:{
+          click: function(){
+            $(this).rotate({
+              angle: parseInt($(this).getRotateAngle()) + 90
+              });
+            }
+          }
+        });
         
     </script>
 

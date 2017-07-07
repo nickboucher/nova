@@ -24,7 +24,7 @@
                 </div>
                 
                 {% for receipt in receipts %}
-                    <img src="{{ receipt }}" class="fullwidth">
+                    <img src="{{ receipt }}" class="fullwidth rotatable">
                 {% endfor %}
             
             </div>
@@ -294,6 +294,16 @@
         $("#is_check").click(ShowHideCheck);
         // Run on page load
         ShowHideCheck();
+        
+        // Allow rotation of images on click
+        $(".rotatable").rotate({bind:{
+          click: function(){
+            $(this).rotate({
+              angle: parseInt($(this).getRotateAngle()) + 90
+              });
+            }
+          }
+        });
         
     </script>
 

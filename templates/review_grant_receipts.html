@@ -24,7 +24,7 @@
                 </div>
 
                 {% for receipt in receipts %}
-                    <img src="{{ receipt }}" class="fullwidth rotatable" alt="Couldn't display image: {{ receipt }}">
+                    <img src="{{ receipt }}" class="fullwidth rotatable" alt="Couldn't display image" data-url="{{ receipt }}">
                 {% endfor %}
 
             </div>
@@ -297,10 +297,17 @@
 
         // Allow rotation of images on click
         $(".rotatable").rotate({bind:{
-          click: function(){
-            $(this).rotate({
-              angle: parseInt($(this).getRotateAngle()) + 90
-              });
+          click: function(e){
+              if (e.shiftKey || e.ctrlKey || e.metaKey) {
+                $(this).rotate({
+                  angle: parseInt($(this).getRotateAngle()) + 90
+                  });
+              } else {
+                  var url = $(this).data("url");
+                  if (url) {
+                      window.open(url,'_blank');
+                  }
+              }
             }
           }
         });

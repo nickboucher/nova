@@ -22,11 +22,11 @@
                     <h3>Receipt Images</h3>
                     <hr />
                 </div>
-                
+
                 {% for receipt in receipts %}
-                    <img src="{{ receipt }}" class="fullwidth rotatable">
+                    <img src="{{ receipt }}" class="fullwidth rotatable" alt="Couldn't display image: {{ receipt }}">
                 {% endfor %}
-            
+
             </div>
             <div class="right">
                 <div class="center" style="margin-top: -20px;">
@@ -34,7 +34,7 @@
                     <h3>Completed Project</h3>
                     <hr />
                 </div>
-                
+
                 <table class="table table-striped table-hover table-responsive">
                     <thead>
                         <tr>
@@ -117,18 +117,18 @@
                         {% endif %}
                     </tbody>
                 </table>
-                
+
                 <div class="center">
                     <p>{{ grant.completed_proj_comments }}</p>
                 </div>
-                
-                
+
+
                 <div class="center">
                     <hr />
                     <h3>Dispense Funds</h3>
                     <hr />
                 </div>
-                
+
                 <table class="table table-striped table-hover table-responsive">
                     <thead>
                         <tr>
@@ -217,11 +217,11 @@
                         {% endif %}
                     </tbody>
                 </table>
-                
+
                 <div class="center">
                     <p>{{ grant.interviewer_notes | suppress_none }}</p>
                 </div>
-                
+
                 <div class="float-right">
                     <p id="total" class="bold" style="font-size:1.5em;">{{ grant.amount_allocated | usd }}</p>
                 </div>
@@ -264,37 +264,37 @@
 {% block scripts %}
 
     <script type="text/javascript">
-        
+
         /* Updates the total value textbox */
         function UpdateTotal() {
-            
+
             // Sums the total value
             var total = 0.0;
             $(".funding").each(function() {
                 total += parseFloat($(this).val());
             });
-            
+
             // Set the value
             $("#total").text("$" + total.toFixed(2));
-            
+
             // Update hidden form value
             $('input[name="amount"]').val(total.toFixed(2));
         }
-        
+
         // Update total on change
         $(".funding").change(UpdateTotal);
-        
+
         /* Hide/show check number textbox */
         function ShowHideCheck() {
             if ($(this).prop('checked')) $("#check_number").show();
             else $("#check_number").hide();
         }
-        
+
         // Handle checkbox click
         $("#is_check").click(ShowHideCheck);
         // Run on page load
         ShowHideCheck();
-        
+
         // Allow rotation of images on click
         $(".rotatable").rotate({bind:{
           click: function(){
@@ -304,7 +304,7 @@
             }
           }
         });
-        
+
     </script>
 
 {% endblock %}

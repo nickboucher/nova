@@ -1,0 +1,39 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Owed Money
+{% endblock %}
+
+{% block main %}
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="center">
+                <h1>Owed Money</h1>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <h3>No Receipts</h3>
+            <ul>
+                {% for no_receipt in no_receipts %}
+                    <li>{{ no_receipt.project }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12">
+            <h3>Unspent Money</h3>
+            <ul>
+                {% for unspent in unspent_money %}
+                    <li>{{ unspent.project }}</li>
+                {% endfor %}
+            </ul>
+        </div>
+    </div>
+
+    <div class="navbar navbar-fixed-bottom center" style="color:#b1b1b1;"><i>Brought to you by Nicholas Boucher '19</i></div>
+
+{% endblock %}

@@ -201,7 +201,7 @@ class Grant(db.Model):
     must_reimburse_uc = db.Column(db.Boolean, default=False) # If club didn't spend as much as upfront grant gave
     reimburse_uc_amount = db.Column(db.Float) # Amount club owes/owed UC
     reimbursed_uc = db.Column(db.Boolean, default=False) # If club paid us back
-    
+    owed_money_email_date = db.Column(db.DateTime) # Date first email was sent saying money is owed
 
 
     def __init__(self, grant_id):
@@ -223,7 +223,7 @@ class Organization(db.Model):
 
     def __repr__(self):
         return '<Organization %r>' % self.name
-        
+
 class Config(db.Model):
     """ Contains configuration <key,value> pairs used for general application setup """
     key = db.Column(db.Text, primary_key=True)
@@ -235,7 +235,7 @@ class Config(db.Model):
 
     def __repr__(self):
         return '<Config %r>' % self.key
-        
+
 class Grants_Week(db.Model):
     """ Contains the number of grants submitted in each grant week, used to generate new Grant IDs,
         as well as information about the status of the associated grants pack """
@@ -252,17 +252,17 @@ class Grants_Week(db.Model):
 
     def __repr__(self):
         return '<Grants_Week %r>' % self.grant_week
-        
+
 class User(db.Model, FlaskLoginUser):
     """ Implements a User class that can be accessed by flask-login and handled by flask-sqlalchemy """
-    
+
     email = db.Column(db.Text, primary_key=True)
     first_name = db.Column(db.Text)
     last_name = db.Column(db.Text)
     admin = db.Column(db.Boolean, default=False)
     pw_hash = db.Column(db.Text)
     salt = db.Column(db.Text)
-    
+
     def __init__(self, email, first_name, last_name, admin, pw_hash, salt):
         self.email = email
         self.first_name = first_name
@@ -270,9 +270,9 @@ class User(db.Model, FlaskLoginUser):
         self.admin = admin
         self.pw_hash = pw_hash
         self.salt = salt
-        
+
     def get_id(self):
         return self.email
-        
+
     def __repr__(self):
         return '<User %r>' % self.email

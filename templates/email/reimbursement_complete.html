@@ -1,0 +1,18 @@
+
+<div style="text-align:center;">
+    <img src="cid:{{ image }}" style="max-height:200px;">
+</div>
+
+<div style="text-align:left;">
+    <p>Dear {{ grant.contact_first_name }} {{ grant.contact_last_name }},</p>
+    {% if grant.reimbursed_uc %}
+        <p>This email is to notify you that the UC reimbursement has been processed for your grant <i>{{ grant.project }}</i>.
+        The grant process for this grant is now complete.</p>
+    {% else %}
+        <p>This email is to notify you that the grant process for your grant <i>{{ grant.project }}</i> is now complete.</p>
+    {% endif %}
+    <p>We hope to see you again soon with future grants!</p>
+    <p>Best,
+    <br>Nicholas Boucher
+    <br><i>Treasurer, Undergraduate Council</i></p>
+</div>

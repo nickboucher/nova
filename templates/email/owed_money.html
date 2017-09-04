@@ -1,0 +1,14 @@
+
+<div style="text-align:center;">
+    <img src="cid:{{ image }}" style="max-height:200px;">
+</div>
+
+<div style="text-align:left;">
+    <p>Dear {{ grant.contact_first_name }} {{ grant.contact_last_name }},</p>
+    <p>This is a reminder that <b>{{ grant.reimburse_uc_amount | usd }}</b> is owed on your UC grant for <i>{{ grant.project }}</i>.
+        In order to avoid going into bad standing with the UC and losing eligibility for future grants, please respond to
+        this email to coordinate a time to process the reimbursement.</p>
+    <p>Best,
+    <br>Nicholas Boucher
+    <br><i>Treasurer, Undergraduate Council</i></p>
+</div>

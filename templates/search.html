@@ -12,11 +12,11 @@
              -moz-box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
                   box-shadow: inset 0 1px 1px rgba(0, 0, 0, 0.075);
         }
-        
+
         .tt-hint {
           color: #999
         }
-        
+
         .tt-menu {    /* used to be tt-dropdown-menu in older versions */
           width: 422px;
           margin-top: 4px;
@@ -31,28 +31,28 @@
              -moz-box-shadow: 0 5px 10px rgba(0,0,0,.2);
                   box-shadow: 0 5px 10px rgba(0,0,0,.2);
         }
-        
+
         .tt-suggestion {
           padding: 3px 20px;
           line-height: 24px;
         }
-        
+
         .tt-suggestion.tt-cursor,.tt-suggestion:hover {
           color: #fff;
           background-color: #0097cf;
-        
+
         }
-        
+
         .tt-suggestion p {
           margin: 0;
         }
-        
+
         .typeahead-title {
           margin: 0 20px 5px 20px;
           padding: 3px 0;
           border-bottom: 1px solid #ccc;
         }
-        
+
         .typeahead {
             width: 422px;
             height: 45px;
@@ -65,7 +65,7 @@
             border-radius: 8px;
             outline: none;
         }
-        
+
         .tt-selectable {
             cursor: pointer;
         }
@@ -82,11 +82,11 @@
             </div>
         </div>
     </div>
-    
+
     <div class="row">
         <div id="results" class="col-md-12 margin40"></div>
     </div>
-    
+
 {% endblock %}
 
 {% block scripts %}
@@ -94,7 +94,7 @@
     <script src="{{ url_for('static', filename='typeahead.bundle.min.js') }}"></script>
 
     <script type="text/javascript">
-    
+
         /* Create Twitter Bloodhound Search object for organizations */
         var organizations = new Bloodhound({
           datumTokenizer: Bloodhound.tokenizers.whitespace,
@@ -105,7 +105,7 @@
             wildcard: '%QUERY'
           }
         });
-        
+
         /* Create Twitter Bloodhound Search object for projects */
         var projects = new Bloodhound({
           datumTokenizer: Bloodhound.tokenizers.whitespace,
@@ -115,7 +115,7 @@
             wildcard: '%QUERY'
           }
         });
-        
+
         /* Create the Twitter Typeahead */
         $('.typeahead').typeahead({
                 highlight: true
@@ -134,12 +134,16 @@
                     header: '<h3 class="typeahead-title">Projects</h3>'
                 }
             });
-            
+
             /* Handle clicking of typeahead suggestion */
             $('.typeahead').bind('typeahead:select', function(event, suggestion) {
                 console.log(event);
                 $.get("{{ url_for('lookup_grants', k=k) }}", { query : suggestion }).done(function(grants) {
-                    var html = '<table class="table table-striped table-hover table-responsive"><thead><tr><th>Grant ID</th><th>Organization</th><th>Project</th><th>Grants Pack</th><th>Interview/Review Occured</th><th>CPF Submitted</th><th>Funds Dispensed</th><th>Status Page</th></tr></thead>';
+                    var html = '<table class="table table-striped table-hover table-responsive"><thead><tr><th>Grant ID</th><th>Organization</th><th>Project</th><th>Grants Pack</th><th>Interview/Review Occured</th><th>CPF Submitted</th><th>Funds Dispensed</th><th>Status Page</th>';
+                    {% if current_user.admin %}
+                        html += '<th>Raw</th>'
+                    {% endif %}
+                    html +='</tr></thead>';
                     html += '<tbody>';
                     for (i=0; i<grants.length; i++) {
                         console.log(grants[i]);
@@ -152,6 +156,9 @@
                         html += "<td>" + (grants[i].cpf_submitted ? '<i class="fa fa-check" aria-hidden="true"></i>' : "") + "</td>";
                         html += "<td>" + (grants[i].is_paid ? '<i class="fa fa-check" aria-hidden="true"></i>' : "") + "</td>";
                         html += "<td>" + '<a href="/grant/' + grants[i].grant_id + '" class="btn btn-default">Status Page</a>' + "</td>";
+                        {% if current_user.admin %}
+                            html += "<td>" + '<a href="/' + grants[i].grant_id + '/raw" class="btn btn-default">Raw</a>' + "</td>";
+                        {% endif %}
                         html += "</tr>";
                     }
                     html += '</tbody>';
@@ -159,7 +166,7 @@
                     $("#results").html(html);
                 });
             });
-        
+
     </script>
 
 {% endblock %}

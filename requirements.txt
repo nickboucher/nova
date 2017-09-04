@@ -12,3 +12,6 @@ pytz
 flask-login
 Flask-Mail
 Flask-Migrate
+apscheduler
+Flask-WTF
+WTForms-SQLAlchemy

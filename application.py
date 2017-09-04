@@ -6,18 +6,23 @@
 # all URL endpoints to FLASK functions
 #
 
+import atexit
 from flask import Flask, flash, redirect, render_template, request, session, url_for, jsonify
 from sqlalchemy.exc import IntegrityError
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from sqlalchemy.sql.expression import or_ as OR, and_ as AND
 from flask_login import login_required, fresh_login_required, login_user, logout_user, current_user
 from re import match
 from flask_mail import Mail, Message
 from sys import argv
 from pytz import timezone, utc
+from flask_migrate import Migrate
+from apscheduler.schedulers.background import BackgroundScheduler
+from apscheduler.triggers.interval import IntervalTrigger
+from flask_wtf import Form
+from wtforms_sqlalchemy.orm import model_form
 from database_models import *
 from helpers import *
-from flask_migrate import Migrate
 
 # create Flask server
 app = Flask(__name__)
@@ -32,6 +37,21 @@ if app.config["DEBUG"]:
         response.headers["Expires"] = 0
         response.headers["Pragma"] = "no-cache"
         return response
+# Send owed money emails every 2 days if not debug
+else:
+    # TODO: Automatically send bad standing emails
+    """
+    scheduler = BackgroundScheduler()
+    scheduler.start()
+    scheduler.add_job(
+        func=send_owe_money_emails,
+        trigger=IntervalTrigger(days=2),
+        id='send_owed_money_emails_job',
+        name='Sends Owed Money Emails',
+        replace_existing=True)
+    # Shut down the scheduler when exiting the app
+    atexit.register(lambda: scheduler.shutdown())
+    """
 
 # custom filters
 app.jinja_env.filters["usd"] = usd
@@ -616,6 +636,12 @@ def grant_interview(grant_id):
         if grant.is_small_grant:
             return redirect(url_for('small_grant_review', grant_id=grant.grant_id, review=review))
 
+        # Calculate a suggested receipts due date
+        if grant.project_end:
+            grant.receipts_due = grant.project_end + timedelta(weeks=2)
+        else:
+            grant.receipts_due = datetime.now() + timedelta(weeks=2)
+
         # Render page to user
         return render_template('interview_grant.html', grant=grant, review=review)
 
@@ -645,6 +671,7 @@ def grant_interview(grant_id):
         if request.form.get('personnel_allocated'): grant.personnel_allocated = request.form.get('personnel_allocated', type=float)
         if request.form.get('personnel_allocated_notes'): grant.personnel_allocated_notes = request.form.get('personnel_allocated_notes')
         if request.form.get('other_allocated'): grant.other_allocated = request.form.get('other_allocated', type=float)
+        if request.form.get('receipts_due'): grant.receipts_due = datetime.strptime(request.form.get('recepits_due'), '%Y-%m-%d')
         if request.form.get('other_allocated_notes'): grant.other_allocated_notes = request.form.get('other_allocated_notes')
         if request.form.get('is_collaboration_confirmed'): grant.is_collaboration_confirmed = request.form.get('is_collaboration_confirmed')
 
@@ -1798,7 +1825,69 @@ def receipts_reminder():
 @admin_required
 def owed_money():
     # Query for relevant grants
-    no_receipts = Grant.query.filter(AND(AND(AND(Grant.council_approved==True,Grant.amount_allocated>0),Grant.receipts_submitted==False),Grant.amount_dispensed>0)).all()
+    no_receipts = Grant.query.filter(AND(AND(AND(AND(Grant.council_approved==True,Grant.amount_allocated>0),Grant.receipts_submitted==False),Grant.amount_dispensed>0),Grant.reimbursed_uc==False)).all()
     unspent_money = Grant.query.filter(AND(AND(AND(Grant.council_approved==True,Grant.amount_allocated>0),Grant.must_reimburse_uc==True),Grant.reimbursed_uc==False)).all()
+    # Sum owed money
+    total = 0
+    for grant in no_receipts:
+        total += grant.amount_dispensed
+    for grant in unspent_money:
+        total += grant.reimburse_uc_amount
     # Render page to user
-    return render_template('owed_money.html', no_receipts=no_receipts, unspent_money=unspent_money)
+    return render_template('owed_money.html', no_receipts=no_receipts, unspent_money=unspent_money, total=total)
+
+@app.route('/owed-money/<grant_id>', methods=['GET','POST'])
+@login_required
+@admin_required
+def process_owed_money(grant_id):
+    # Query for grant
+    grant = Grant.query.filter_by(grant_id=grant_id).first()
+    if not grant:
+        flash("Grant does not exist", 'error')
+        return redirect(url_for('owed_money'))
+    # User is requesting form
+    if request.method == 'GET':
+        return render_template('process_owed_money.html', grant=grant)
+    # User is submitting form
+    else:
+        # Update DB
+        grant.reimbursed_uc = True
+        if request.form.get("reimbursement_amount"):
+            grant.reimburse_uc_amount = request.form.get("reimbursement_amount")
+        db.session.commit()
+        # Send Email
+        email_reimbursement_complete(grant)
+        # Notify Admin
+        flash("Successfully Processed Owed Money for " + grant.project, 'success')
+        return redirect(url_for('owed_money'))
+
+@app.route('/<grant_id>/raw', methods=['GET','POST'])
+@login_required
+@admin_required
+def raw_grant_edit(grant_id):
+    GrantForm = model_form(Grant, Form)
+    grant = Grant.query.filter_by(grant_id=grant_id).first()
+    if not grant:
+        flash("Grant does not exist", 'error')
+        return redirect(url_for('index'))
+    # User is requesting form
+    if request.method == 'POST':
+        form = GrantForm(request.form)
+        for field in form:
+            print(field.name, field.data)
+            if field.type == "DateTimeField":
+                print(field.name)
+                if request.form.get(field.name) != '' and request.form.get(field.name) != None:
+                    print(datetime.strptime(request.form[field.name], "%Y-%m-%dT%H:%M"))
+                    setattr(grant, field.name, datetime.strptime(request.form[field.name], "%Y-%m-%dT%H:%M"))
+            elif field.data == "":
+                setattr(grant, field.name, None)
+            else:
+                setattr(grant, field.name, field.data)
+        db.session.commit()
+        flash("Grant " + grant.grant_id + " updated successfully.", 'success')
+        return redirect(url_for('raw_grant_edit', grant_id=grant.grant_id))
+    # User is submitting form
+    else:
+        form = GrantForm(obj=grant)
+        return render_template("raw_grant_edit.html", form=form, grant=grant)

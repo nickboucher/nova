@@ -154,7 +154,7 @@ class Grant(db.Model):
     percentage_cut = db.Column(db.Float) # Decimal Number in [0,100] representing percentage deducted due to cuts
     amount_allocated = db.Column(db.Float) # Total Amount allocated with all cuts factored in
     is_collaboration_confirmed = db.Column(db.Boolean)
-    receipts_due_date = db.Column(db.Boolean)
+    receipts_due = db.Column(db.DateTime) # The date receipts are due
     # Completed Project Info
     expense1_description = db.Column(db.Text)
     expense1_amount = db.Column(db.Float)

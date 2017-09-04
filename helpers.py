@@ -21,6 +21,7 @@ from threading import Thread
 from collections import namedtuple
 from queue import Queue
 from datetime import datetime, timedelta
+from sqlalchemy.sql.expression import or_ as OR, and_ as AND
 from database_models import *
 
 # Avoid import errors for installation script
@@ -446,7 +447,7 @@ def email_submit_receipts(grant):
 def email_receipts_not_submitted(grant):
     """ Sends an email to the grant applicant letting them know that they did not submit receipts
         before the deadline """
-
+    print("Not Submitted: " + grant.grant_id)
     # Create Message
     msg = Message("Receipts Deadline Passed", recipients=[grant.contact_email])
 
@@ -471,7 +472,8 @@ def email_receipts_not_submitted(grant):
 @async_grant
 def email_owed_money(grant):
     """ Send an email to the grant applicant reminding them that they owe money """
-
+    print("Owed: " + grant.grant_id)
+    return
     # Create Message
     msg = Message("Owed Money Reminder", recipients=[grant.contact_email], sender=("UC Treasurer", "harvarductreasurer@gmail.com"))
 
@@ -479,7 +481,7 @@ def email_owed_money(grant):
     image = "owe.gif"
 
     # Attach HTML Body
-    html = render_template("email/owed_money.html", grant=grant, image=image)
+    html = render_template("email/owed_money_notice.html", grant=grant, image=image)
     msg.html = html
 
     # Attach Image
@@ -511,24 +513,25 @@ def email_reimbursement_complete(grant):
     # Send Email
     application.treasurer_mail.send(msg)
 
-def send_owe_money_emails(grant):
+def send_owe_money_emails():
     """ Sends emails to all groups that owe money to the UC reminding them to pay """
     # Don't bug people if we bugged them within past 2 days
-    two_days_ago = datetime.now() - timedelta(days=2)
+    now = datetime.now()
+    two_days_ago = now - timedelta(days=2)
     with application.app.app_context():
         # Query for no receipts grants
-        no_receipts = Grant.query.filter(AND(AND(Grant.council_approved==True,Grant.amount_allocated>0),Grant.receipts_submitted==False)).all()
+        no_receipts = Grant.query.filter(AND(AND(AND(Grant.council_approved==True,Grant.amount_allocated>0),Grant.receipts_submitted==False), Grant.receipts_due < now)).all()
         for grant in no_receipts:
             if grant.owed_money_email_date and grant.owed_money_email_date < two_days_ago:
                 email_owed_money(grant)
             elif not grant.owed_money_email_date:
                 email_receipts_not_submitted(grant)
-                grant.owed_money_email_date = datetime.now()
+                grant.owed_money_email_date = now
         # Query for grants that didn't spend all money
         unspent_money = Grant.query.filter(AND(AND(AND(Grant.council_approved==True,Grant.amount_allocated>0),Grant.must_reimburse_uc==True),Grant.reimbursed_uc==False)).all()
         for grant in unspent_money:
             if not grant.owed_money_email_date or grant.owed_money_email_date < two_days_ago:
                 email_owed_money(grant)
                 if not grant.owed_money_email_date:
-                    grant.owed_money_email_date = datetime.now()
-        db.session.commit()
+                    grant.owed_money_email_date = now
+    db.session.commit()

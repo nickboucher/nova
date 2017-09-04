@@ -1902,3 +1902,13 @@ def raw_grant_edit(grant_id):
     else:
         form = GrantForm(obj=grant)
         return render_template("raw_grant_edit.html", form=form, grant=grant)
+
+@app.route('/send-owe-emails')
+@login_required
+@admin_required
+def send_owe():
+    """ A manual way to invoke the every-other day send owed money emails. Does not
+        modify two day timer """
+    send_owe_money_emails()
+    flash("Send Owed Money emails sent.", 'success')
+    return redirect(url_for('index'))

@@ -516,6 +516,7 @@ def email_reimbursement_complete(grant):
 def send_owe_money_emails():
     """ Sends emails to all groups that owe money to the UC reminding them to pay """
     # Don't bug people if we bugged them within past 2 days
+    print("Sending Emails")
     now = datetime.now()
     two_days_ago = now - timedelta(days=2)
     with application.app.app_context():

@@ -536,4 +536,4 @@ def send_owe_money_emails():
                 email_owed_money(grant)
                 if not grant.owed_money_email_date:
                     grant.owed_money_email_date = now
-    #db.session.commit()
+        db.session.commit()

@@ -15,25 +15,43 @@
     </div>
     <div class="row">
         <div class="col-md-12">
-            <h3>No Receipts</h3>
-            <ul>
-                {% for no_receipt in no_receipts %}
-                    <li>{{ no_receipt.project }}</li>
-                {% endfor %}
-            </ul>
-        </div>
-    </div>
-    <div class="row">
-        <div class="col-md-12">
-            <h3>Unspent Money</h3>
-            <ul>
-                {% for unspent in unspent_money %}
-                    <li>{{ unspent.project }}</li>
-                {% endfor %}
-            </ul>
+            <table class="table table-striped table-hover table-responsive">
+                <thead>
+                    <tr>
+                        <th><b>Grant ID</b></th>
+                        <th><b>Organization</b></th>
+                        <th><b>Project</b></th>
+                        <th><b>Reason</b></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for grant in no_receipts %}
+                        <tr class="clickable-row" data-href="{{ url_for('grant', grant_id=grant.grant_id) }}">
+                            <td class="text-nowrap">{{ grant.grant_id }}</td>
+                            <td><b>{{ grant.organization }}</b></td>
+                            <td><b>{{ grant.project }}</b></td>
+                            <td>No Receipts</td>
+                        </tr>
+                    {% endfor %}
+                    {% for grant in unspent_money %}
+                        <tr class="clickable-row" data-href="{{ url_for('grant', grant_id=grant.grant_id) }}">
+                            <td class="text-nowrap">{{ grant.grant_id }}</td>
+                            <td><b>{{ grant.organization }}</b></td>
+                            <td><b>{{ grant.project }}</b></td>
+                            <td>Unspent Money</td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
     </div>
 
-    <div class="navbar navbar-fixed-bottom center" style="color:#b1b1b1;"><i>Brought to you by Nicholas Boucher '19</i></div>
+    <script>
+        $(document).ready(function() {
+            $(".clickable-row").click(function() {
+                window.document.location = $(this).data("href");
+            });
+        });
+    </script>
 
 {% endblock %}

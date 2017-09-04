@@ -157,7 +157,7 @@
                         html += "<td>" + (grants[i].is_paid ? '<i class="fa fa-check" aria-hidden="true"></i>' : "") + "</td>";
                         html += "<td>" + '<a href="/grant/' + grants[i].grant_id + '" class="btn btn-default">Status Page</a>' + "</td>";
                         {% if current_user.admin %}
-                            html += "<td>" + '<a href="/' + grants[i].grant_id + '/raw" class="btn btn-default">Raw</a>' + "</td>";
+                            html += "<td>" + '<a href="/grant/' + grants[i].grant_id + '/raw" class="btn btn-default">Raw</a>' + "</td>";
                         {% endif %}
                         html += "</tr>";
                     }

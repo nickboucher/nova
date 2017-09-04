@@ -180,6 +180,7 @@ def worker():
         func(grant)
         q.task_done()
 thr = Thread(target=worker)
+thr.daemon = True
 thr.start()
     
 def async_grant(func):

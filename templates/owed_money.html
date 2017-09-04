@@ -38,7 +38,7 @@
                             <td>No Receipts</td>
                             <td><a href="{{ url_for('process_owed_money', grant_id=grant.grant_id) }}" class="btn btn-default">Process</a></td>
                             <td><a href="{{ url_for('grant', grant_id=grant.grant_id) }}" class="btn btn-default">Status</a></td>
-                            <td><a href="#" class="btn btn-default">Raw</a></td>
+                            <td><a href="{{ url_for('raw_grant_edit', grant_id=grant.grant_id) }}" class="btn btn-default">Raw</a></td>
                         </tr>
                     {% endfor %}
                     {% for grant in unspent_money %}
@@ -50,7 +50,7 @@
                             <td>Unspent Money</td>
                             <td><a href="{{ url_for('process_owed_money', grant_id=grant.grant_id) }}" class="btn btn-default">Process</a></td>
                             <td><a href="{{ url_for('grant', grant_id=grant.grant_id) }}" class="btn btn-default">Status</a></td>
-                            <td><a href="#" class="btn btn-default">Raw</a></td>
+                            <td><a href="{{ url_for('raw_grant_edit', grant_id=grant.grant_id) }}" class="btn btn-default">Raw</a></td>
                         </tr>
                     {% endfor %}
                 </tbody>

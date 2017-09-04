@@ -6,25 +6,25 @@
 <div style="text-align:left;">
     <p>Dear {{ grant.contact_first_name }} {{ grant.contact_last_name }},</p>
     <p>The deadline has passed for submitting receipts for your grant <i>{{ grant.project }}</i>, and we did not receive your
-        receipts for the deadline.</p>
-    
+        receipts before the deadline.</p>
+
     {% if grant.is_upfront %}
-    
+
         <p>Since your grant was upfront, we ask that you refund us the full amount of the grant - <b>{{ grant.reimburse_uc_amount | usd }}</b>
-            If you choose not reimburse the UC this amount, then you will go into bad standing with the UC which will make you
-            ineligible for future grants. If you feel that our evalutaion of your spending is not right, you are welcome to
+            If you choose not reimburse the UC this amount, then your organization will go into bad standing with the UC which could make you
+            ineligible for future grants. If you feel that our evalutaion of your spending is not correct, you are welcome to
             appear before the UC Financial Hearing Committee.</p>
         <p>Please repspond to this email to coordinate your reimbursement with the UC Treasurer or to setup a time for a hearing.
             In order to avoid going into bad standing with the UC, your reimbursement will be due two weeks from today.</p>
-    
-    
+
+
     {% else %}
-    
+
         <p>Since your grant was retroactive, this means that you forfeit your grant. There is no penalty for not submitting receipts
             for retroactive grants other than losing the grant in question, so we highly encourage you to apply for other grants in
             the future.</p>
         <p>Please let me know if you have any questions by replying to this email.</p>
-    
+
     {% endif %}
     <p>Best,
     <br>Nicholas Boucher

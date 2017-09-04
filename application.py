@@ -443,7 +443,14 @@ def grant(grant_id):
     if grant.is_upfront:
         # Upfront small grant
         if grant.is_small_grant:
-            if grant.receipts_reviewed:
+            if grant.must_reimburse_uc:
+                if grant.reimbursed_uc:
+                    progress['percentage'] = 1.0
+                    progress['message'] = "Reimbursement Processed. Grant Complete."
+                else:
+                    progress['percentage'] = 0.9
+                    progress['message'] = "Some money unspent. Reimbursement required."
+            elif grant.receipts_reviewed:
                 progress['percentage'] = 1.0
                 progress['message'] = "Receipts Reviewed. Grant Complete."
             elif grant.receipts_submitted:
@@ -471,7 +478,14 @@ def grant(grant_id):
                 progress['message'] = "Application Being Reviewed"
         # Upfront non-small grant
         else:
-            if grant.receipts_reviewed:
+            if grant.must_reimburse_uc:
+                if grant.reimbursed_uc:
+                    progress['percentage'] = 1.0
+                    progress['message'] = "Reimbursement Processed. Grant Complete."
+                else:
+                    progress['percentage'] = 0.9
+                    progress['message'] = "Some money unspent. Reimbursement required."
+            elif grant.receipts_reviewed:
                 progress['percentage'] = 1.0
                 progress['message'] = "Receipts Reviewed. Grant Complete."
             elif grant.receipts_submitted:

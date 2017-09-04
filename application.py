@@ -17,9 +17,12 @@ from sys import argv
 from pytz import timezone, utc
 from database_models import *
 from helpers import *
+from flask_migrate import Migrate
 
 # create Flask server
 app = Flask(__name__)
+# Add support for database migrations
+migrate = Migrate(app, db)
 
 # ensure responses aren't cached
 if app.config["DEBUG"]:

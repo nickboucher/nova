@@ -11,3 +11,4 @@ requests
 pytz
 flask-login
 Flask-Mail
+Flask-Migrate

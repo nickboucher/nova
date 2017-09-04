@@ -1798,7 +1798,7 @@ def receipts_reminder():
 @admin_required
 def owed_money():
     # Query for relevant grants
-    no_receipts = Grant.query.filter(AND(AND(Grant.council_approved==True,Grant.amount_allocated>0),Grant.receipts_submitted==False)).all()
+    no_receipts = Grant.query.filter(AND(AND(AND(Grant.council_approved==True,Grant.amount_allocated>0),Grant.receipts_submitted==False),Grant.amount_dispensed>0)).all()
     unspent_money = Grant.query.filter(AND(AND(AND(Grant.council_approved==True,Grant.amount_allocated>0),Grant.must_reimburse_uc==True),Grant.reimbursed_uc==False)).all()
     # Render page to user
     return render_template('owed_money.html', no_receipts=no_receipts, unspent_money=unspent_money)

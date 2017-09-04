@@ -21,37 +21,41 @@
                         <th><b>Grant ID</b></th>
                         <th><b>Organization</b></th>
                         <th><b>Project</b></th>
+                        <th><b>Reimbursement Amount</b></th>
                         <th><b>Reason</b></th>
+                        <th><b>Process Reimbursement</b></th>
+                        <th><b>Status Page</b></th>
+                        <th><b>Raw Grant</b></th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for grant in no_receipts %}
-                        <tr class="clickable-row" data-href="{{ url_for('grant', grant_id=grant.grant_id) }}">
+                        <tr data-href="{{ url_for('grant', grant_id=grant.grant_id) }}">
                             <td class="text-nowrap">{{ grant.grant_id }}</td>
                             <td><b>{{ grant.organization }}</b></td>
                             <td><b>{{ grant.project }}</b></td>
+                            <td>{{ grant.amount_dispensed | usd }}</td>
                             <td>No Receipts</td>
+                            <td><a href="#" class="btn btn-default">Process</a></td>
+                            <td><a href="{{ url_for('grant', grant_id=grant.grant_id) }}" class="btn btn-default">Status</a></td>
+                            <td><a href="#" class="btn btn-default">Raw</a></td>
                         </tr>
                     {% endfor %}
                     {% for grant in unspent_money %}
-                        <tr class="clickable-row" data-href="{{ url_for('grant', grant_id=grant.grant_id) }}">
+                        <tr data-href="{{ url_for('grant', grant_id=grant.grant_id) }}">
                             <td class="text-nowrap">{{ grant.grant_id }}</td>
                             <td><b>{{ grant.organization }}</b></td>
                             <td><b>{{ grant.project }}</b></td>
+                            <td>{{ grant.reimburse_uc_amount | usd }}</td>
                             <td>Unspent Money</td>
+                            <td><a href="#" class="btn btn-default">Process</a></td>
+                            <td><a href="{{ url_for('grant', grant_id=grant.grant_id) }}" class="btn btn-default">Status</a></td>
+                            <td><a href="#" class="btn btn-default">Raw</a></td>
                         </tr>
                     {% endfor %}
                 </tbody>
             </table>
         </div>
     </div>
-
-    <script>
-        $(document).ready(function() {
-            $(".clickable-row").click(function() {
-                window.document.location = $(this).data("href");
-            });
-        });
-    </script>
 
 {% endblock %}

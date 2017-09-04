@@ -39,8 +39,6 @@ if app.config["DEBUG"]:
         return response
 # Send owed money emails every 2 days if not debug
 else:
-    # TODO: Automatically send bad standing emails
-    """
     scheduler = BackgroundScheduler()
     scheduler.start()
     scheduler.add_job(
@@ -51,7 +49,6 @@ else:
         replace_existing=True)
     # Shut down the scheduler when exiting the app
     atexit.register(lambda: scheduler.shutdown())
-    """
 
 # custom filters
 app.jinja_env.filters["usd"] = usd

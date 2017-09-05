@@ -7,8 +7,13 @@
     <p>Dear {{ grant.contact_first_name }} {{ grant.contact_last_name }},</p>
     <p>This is a reminder to submit receipts for your grant <i>{{ grant.project }}</i>. You can submit receipts and review the items for
         which you were granted funds on your <a href="{{ url_for('grant', grant_id=grant.grant_id, _external=True)}}">grant status page</a>.</p>
-    <p>Your receipts are due by the end of exam period, which is <b>May 13 at 11:59 pm</b>. Failure to submit receipts by that time
-        could make you ineligible for future grants.</p>
+    <p>
+        {% if grant.receipts_due %}
+            Receipts for this grant are due by <b>{{ grant.receipts_due.strftime("%A %B %-m, %Y") }}</b>.
+        {% else %}
+            Your receipts are due by the end of exam period.
+        {% endif %}
+        Failure to submit receipts by that time could make you ineligible for future grants.</p>
     <p>Best,
     <br>Nicholas Boucher
     <br><i>Treasurer, Undergraduate Council</i></p>

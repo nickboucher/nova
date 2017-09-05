@@ -447,9 +447,8 @@ def email_submit_receipts(grant):
 def email_receipts_not_submitted(grant):
     """ Sends an email to the grant applicant letting them know that they did not submit receipts
         before the deadline """
-    print("Not Submitted: " + grant.grant_id)
     # Create Message
-    msg = Message("Receipts Deadline Passed", recipients=[grant.contact_email])
+    msg = Message("Receipts Deadline Passed", recipients=[grant.contact_email], sender=("UC Treasurer", "harvarductreasurer@gmail.com"))
 
     # Define attached image
     if grant.is_upfront:
@@ -458,7 +457,7 @@ def email_receipts_not_submitted(grant):
         image = "denied.gif"
 
     # Attach HTML Body
-    html = render_template("email/submit_receipts.html", grant=grant, image=image)
+    html = render_template("email/receipts_not_submitted.html", grant=grant, image=image)
     msg.html = html
 
     # Attach Image
@@ -466,14 +465,12 @@ def email_receipts_not_submitted(grant):
         msg.attach(image, "image/gif", fp.read(), headers=[['Content-ID', '<%s>' % image],])
 
     # Send Email
-    application.mail.send(msg)
+    application.treasurer_mail.send(msg)
 
 @if_email
 @async_grant
 def email_owed_money(grant):
     """ Send an email to the grant applicant reminding them that they owe money """
-    print("Owed: " + grant.grant_id)
-    return
     # Create Message
     msg = Message("Owed Money Reminder", recipients=[grant.contact_email], sender=("UC Treasurer", "harvarductreasurer@gmail.com"))
 
@@ -516,7 +513,7 @@ def email_reimbursement_complete(grant):
 def send_owe_money_emails():
     """ Sends emails to all groups that owe money to the UC reminding them to pay """
     # Don't bug people if we bugged them within past 2 days
-    print("Sending Emails")
+    print("Sending Owed Money Emails")
     now = datetime.now()
     two_days_ago = now - timedelta(days=2)
     with application.app.app_context():

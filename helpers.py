@@ -84,7 +84,7 @@ def get_grant_args(query_string):
 
     # Escape all ampersands in query string that don't seem relevant
     # (Unfortunately, Qualtrisc doesn't do this for us)
-    raw_data = query_string.decode('utf8').split('&')
+    raw_data = query_string.decode('utf8').replace('%25','%').split('&')
     # tuple of valid query keys (adding 'k' for security key)
     grant_fields = list(vars(Grant).keys())
     grant_fields.append('k')

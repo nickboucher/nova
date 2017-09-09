@@ -334,7 +334,6 @@ def receipts(overwrite = False):
 
     # Get arguments from query string
     args = get_grant_args(request.query_string)
-    print("ARGS:", args)
 
     # Check for grant_id, which is necessary to update database record
     if not args.get('grant_id'):

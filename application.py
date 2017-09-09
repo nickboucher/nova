@@ -184,7 +184,7 @@ def new_grant():
 
     # get arguments from query string
     args = get_grant_args(request.query_string)
-
+    print("ARGS NEW GRANT:", args)
     # Verify security key
     sec_key = Config.query.filter_by(key='security_key').first().value
     if not args.get('k') or sec_key != args.get('k')[0]:

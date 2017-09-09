@@ -47,12 +47,6 @@ else:
         id='send_owed_money_emails_job',
         name='Sends Owed Money Emails',
         replace_existing=True)
-    scheduler.add_job(
-        func=print_test,
-        trigger=IntervalTrigger(minutes=1),
-        id='print_test_job',
-        name='Prints a Test Message',
-        replace_existing=True)
     # Shut down the scheduler when exiting the app
     atexit.register(lambda: scheduler.shutdown())
 
@@ -1919,3 +1913,21 @@ def send_owe():
     send_owe_money_emails()
     flash("Send Owed Money emails sent.", 'success')
     return redirect(url_for('index'))
+
+@app.route('/grant/<grant_id>/receipts')
+def view_receipts(grant_id):
+    """ Displays receipts for specified grant in read-only format """
+    # Ensure that grant_id was specified
+    if not grant_id:
+        return "Must specify grant id."
+    # Query for grant
+    grant = Grant.query.filter_by(grant_id=grant_id).first()
+    # Ensure that grant exists
+    if not grant:
+        return "Grant " + grant_id + " does not exist."
+    # Get the list of receipts
+    receipts = grant.receipt_images
+    if receipts:
+        receipts = receipts.split(", ")
+    # Render the page to the user
+    return render_template("grant_receipts.html", grant=grant, receipts=receipts)

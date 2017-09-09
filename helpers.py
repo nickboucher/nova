@@ -535,3 +535,6 @@ def send_owe_money_emails():
                 if not grant.owed_money_email_date:
                     grant.owed_money_email_date = now
         db.session.commit()
+
+def print_test():
+    print("One Minute has passed")

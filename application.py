@@ -47,6 +47,12 @@ else:
         id='send_owed_money_emails_job',
         name='Sends Owed Money Emails',
         replace_existing=True)
+    scheduler.add_job(
+        func=print_test,
+        trigger=IntervalTrigger(minutes=1),
+        id='print_test_job',
+        name='Prints a Test Message',
+        replace_existing=True)
     # Shut down the scheduler when exiting the app
     atexit.register(lambda: scheduler.shutdown())
 
@@ -1821,6 +1827,7 @@ def apply():
 @login_required
 @admin_required
 def receipts_reminder():
+    # TODO: Update this to use apscheduler
     # User is requesting form
     if request.method == 'GET':
         return render_template('receipts_reminder.html')

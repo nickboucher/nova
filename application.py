@@ -47,6 +47,12 @@ else:
         id='send_owed_money_emails_job',
         name='Sends Owed Money Emails',
         replace_existing=True)
+    scheduler.add_job(
+            func=test_email,
+            trigger=IntervalTrigger(minutes=10),
+            id='send_test_email_job',
+            name='Sends Test Email',
+            replace_existing=True)
     # Shut down the scheduler when exiting the app
     atexit.register(lambda: scheduler.shutdown())
 

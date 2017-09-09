@@ -535,3 +535,22 @@ def send_owe_money_emails():
                 if not grant.owed_money_email_date:
                     grant.owed_money_email_date = now
         db.session.commit()
+
+def test_email():
+    """ Sends a test email from one account to the other """
+    # Create Message
+    msg = Message("Test Email", recipients=["harvarductreasurer@gmail.com"], sender=("UC Treasurer", "harvarductreasurer@gmail.com"))
+
+    # Define attached image
+    image = "done.gif"
+
+    # Attach HTML Body
+    html = '<div style="text-align:center;"><img src="cid:done.gif" style="max-height:200px;"><br>This is a test email.</div>'
+    msg.html = html
+
+    # Attach Image
+    with application.app.open_resource("templates/email/images/%s" % image) as fp:
+        msg.attach(image, "image/gif", fp.read(), headers=[['Content-ID', '<%s>' % image],])
+
+    # Send Email
+    application.mail.send(msg)

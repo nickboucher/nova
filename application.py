@@ -168,8 +168,11 @@ def login():
         # User has successfully authenticated, log them in
         login_user(user, remember=remember)
 
-        # Redirect user to the homepage
-        return redirect(url_for('index'))
+        # Redirect user to the correct page
+        if user.force_pw_update:
+            return redirect(url_for('change_password'))
+        else:
+            return redirect(url_for('index'))
 
 @app.route("/logout")
 @login_required
@@ -1401,6 +1404,7 @@ def edit_user():
             # Reset user password if requested
             if reset_pw:
                 user.pw_hash = encrypt("password", user.salt)
+                user.force_pw_update = True
 
         # Commit changes to database
         db.session.commit()
@@ -1524,6 +1528,7 @@ def default_budget():
     # Send user to settings page
     return redirect(url_for('settings'))
 
+@login_required
 @app.route('/change-password', methods=['GET','POST'])
 def change_password():
     """ Allows any given user to change their password """
@@ -1555,6 +1560,7 @@ def change_password():
 
         # Update password
         user.pw_hash = encrypt(password, user.salt)
+        user.force_pw_update = False
 
         # Commit changes to database
         db.session.commit()

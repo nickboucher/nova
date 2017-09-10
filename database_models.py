@@ -268,6 +268,7 @@ class User(db.Model, FlaskLoginUser):
     admin = db.Column(db.Boolean, default=False)
     pw_hash = db.Column(db.Text)
     salt = db.Column(db.Text)
+    force_pw_update = db.Column(db.Boolean, default=False)
 
     def __init__(self, email, first_name, last_name, admin, pw_hash, salt):
         self.email = email
@@ -276,6 +277,7 @@ class User(db.Model, FlaskLoginUser):
         self.admin = admin
         self.pw_hash = pw_hash
         self.salt = salt
+        self.force_pw_update = True
 
     def get_id(self):
         return self.email

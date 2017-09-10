@@ -698,24 +698,29 @@ def grant_interview(grant_id):
         if request.form.get('other_allocated_notes'): grant.other_allocated_notes = request.form.get('other_allocated_notes')
         if request.form.get('is_collaboration_confirmed'): grant.is_collaboration_confirmed = request.form.get('is_collaboration_confirmed')
 
-        # Add Relevant Meta Data
-        grant.interview_occurred = True
-        grant.interview_date = datetime.now(utc)
+        if not review:
+            # Add Relevant Meta Data
+            grant.interview_occurred = True
+            grant.interview_date = datetime.now(utc)
 
-        # Add interviewer information for grant record
-        grant.interviewer = current_user.first_name + " " + current_user.last_name
+            # Add interviewer information for grant record
+            grant.interviewer = current_user.first_name + " " + current_user.last_name
+
+            # Send notification email to user
+            email_interview_completed(grant)
+
+            # Generate Flashed Success Message
+            flash('\'' + grant.organization + '\' Interview Submitted Successfully', 'success')
+
+        else:
+            # Generate Flashed Success Message
+            flash('\'' + grant.organization + '\' Interview Updated Successfully', 'success')
 
         # Commit Changes to Database
         db.session.commit()
 
-        # Send notification email to user
-        email_interview_completed(grant)
-
-        # Generate Flashed Success Message
-        flash('\'' + grant.organization + '\' Interview Submitted Successfully', 'success')
-
         if review:
-                return redirect(url_for('grants_pack_edit_pack', grants_pack=review))
+            return redirect(url_for('grants_pack_edit_pack', grants_pack=review))
         else:
             return redirect(url_for('interviews'))
 

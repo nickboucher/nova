@@ -233,7 +233,9 @@
                 </div>
 
                 <div class="float-right">
-                    Total Owed:<p id="total" class="bold" style="font-size:1.5em;">0</p>
+                    Total Granted:&nbsp;<span id="granted" style="font-size:1.5em;">{{ grant.amount_allocated | two_decimals }}</span>
+                    &nbsp;|&nbsp;
+                    Total Owed:&nbsp;<span id="owed" class="bold" style="font-size:1.5em;">0</span>
                 </div>
                 <form action="{{ url_for('upfront_review', grant_id=grant.grant_id) }}" method="post">
                     <div class="row">
@@ -274,7 +276,8 @@
             owed = paid - total;
 
             // Set the value
-            $("#total").text("$" + owed.toFixed(2));
+            $("#owed").text("$" + owed.toFixed(2));
+            $("#granted").text("$" + total.toFixed(2));
 
             // Update hidden form value
             $('input[name="amount_owed"]').val(owed.toFixed(2));

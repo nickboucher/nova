@@ -941,6 +941,7 @@ def grants_pack_cuts(grants_pack=None):
         # Update Weekly running total while calculating grants
         grant_week = Grants_Week.query.filter_by(grant_week=grants_pack).first()
         grant_week.allocated = 0.0
+        grant_week.requested = 0.0
         # Process each grant
         for grant_id,cut in values.items():
             # Get the percentage gut in the correct format
@@ -964,6 +965,7 @@ def grants_pack_cuts(grants_pack=None):
             grant.percentage_cut = cut
             grant.amount_allocated = round((100 - cut) / 100 * allocated, 2)
             grant_week.allocated += grant.amount_allocated
+            grant_week.requested += grant.amount_requested
 
         # Notify user of successful submit
         flash("Grants Pack " + grants_pack + " submitted successfully.", 'success')

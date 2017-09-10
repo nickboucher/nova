@@ -213,7 +213,7 @@ def email_application_submitted(grant):
     """ Sends an application submitted confirmation email to the grant applicant """
 
     # Create Message
-    msg = Message("Grant Application Submitted", recipients=[grant.contact_email])
+    msg = Message("Grant Application Submitted: " + grant.project, recipients=[grant.contact_email])
 
     # Define attached image
     image = "submitted.gif"
@@ -236,7 +236,7 @@ def email_application_passed(grant):
         and requesting receipts """
 
     # Create Message
-    msg = Message("Grant Application Passed", recipients=[grant.contact_email])
+    msg = Message("Grant Application Passed: " + grant.project, recipients=[grant.contact_email])
 
     # Define attached image
     image = "receipts.gif"
@@ -259,7 +259,7 @@ def email_application_denied(grant):
         by the council """
 
     # Create Message
-    msg = Message("Grant Application Denied", recipients=[grant.contact_email])
+    msg = Message("Grant Application Denied: " + grant.project, recipients=[grant.contact_email])
 
     # Define attached image
     image = "denied.gif"
@@ -282,7 +282,7 @@ def email_interview_scheduled(grant):
         has been scheduled """
 
     # Create Message
-    msg = Message("Grant Interview Scheduled", recipients=[grant.contact_email])
+    msg = Message("Grant Interview Scheduled: " + grant.project, recipients=[grant.contact_email])
 
     # Define attached image
     image = "scheduled.gif"
@@ -305,7 +305,7 @@ def email_interview_completed(grant):
         has been completed """
 
     # Create Message
-    msg = Message("Grant Interview Completed", recipients=[grant.contact_email])
+    msg = Message("Grant Interview Completed: " + grant.project, recipients=[grant.contact_email])
 
     # Define attached image
     image = "interviewed.gif"
@@ -328,7 +328,7 @@ def email_direct_deposit(grant):
         into their bank account """
 
     # Create Message
-    msg = Message("Grant Funds Deposited", recipients=[grant.contact_email], sender=("UC Treasurer", "harvarductreasurer@gmail.com"))
+    msg = Message("Grant Funds Deposited: " + grant.project, recipients=[grant.contact_email], sender=("UC Treasurer", "harvarductreasurer@gmail.com"))
 
     # Define attached image
     image = "deposited.gif"
@@ -351,7 +351,7 @@ def email_receipts_submitted(grant):
         submitted """
 
     # Create Message
-    msg = Message("Grant Receipts Submitted", recipients=[grant.contact_email])
+    msg = Message("Grant Receipts Submitted: " + grant.project, recipients=[grant.contact_email])
 
     # Define attached image
     image = "receipts_submitted.gif"
@@ -374,7 +374,7 @@ def email_check(grant):
         up for their grant """
 
     # Create Message
-    msg = Message("Grant Check Ready", recipients=[grant.contact_email], sender=("UC Treasurer", "harvarductreasurer@gmail.com"))
+    msg = Message("Grant Check Ready: " + grant.project, recipients=[grant.contact_email], sender=("UC Treasurer", "harvarductreasurer@gmail.com"))
 
     # Define attached image
     image = "check.gif"
@@ -407,7 +407,7 @@ def email_receipts_reviewed(grant):
         image = "done.gif"
 
     # Create Message
-    msg = Message(subject, recipients=[grant.contact_email], sender=("UC Treasurer", "harvarductreasurer@gmail.com"))
+    msg = Message(subject + ": " + grant.project, recipients=[grant.contact_email], sender=("UC Treasurer", "harvarductreasurer@gmail.com"))
 
     # Attach HTML Body
     html = render_template("email/receipts_reviewed.html", grant=grant, image=image)
@@ -426,7 +426,7 @@ def email_submit_receipts(grant):
     """ Sends a reminder email to the grant applicant to submit receipts """
 
     # Create Message
-    msg = Message("Submit Receipts", recipients=[grant.contact_email])
+    msg = Message("Submit Receipts: " + grant.project, recipients=[grant.contact_email])
 
     # Define attached image
     image = "receipts.gif"
@@ -448,7 +448,7 @@ def email_receipts_not_submitted(grant):
     """ Sends an email to the grant applicant letting them know that they did not submit receipts
         before the deadline """
     # Create Message
-    msg = Message("Receipts Deadline Passed", recipients=[grant.contact_email], sender=("UC Treasurer", "harvarductreasurer@gmail.com"))
+    msg = Message("Receipts Deadline Passed: " + grant.project, recipients=[grant.contact_email], sender=("UC Treasurer", "harvarductreasurer@gmail.com"))
 
     # Define attached image
     if grant.is_upfront:
@@ -472,7 +472,7 @@ def email_receipts_not_submitted(grant):
 def email_owed_money(grant):
     """ Send an email to the grant applicant reminding them that they owe money """
     # Create Message
-    msg = Message("Owed Money Reminder", recipients=[grant.contact_email], sender=("UC Treasurer", "harvarductreasurer@gmail.com"))
+    msg = Message("Owed Money Reminder: " + grant.project, recipients=[grant.contact_email], sender=("UC Treasurer", "harvarductreasurer@gmail.com"))
 
     # Define attached image
     image = "owe.gif"
@@ -494,7 +494,7 @@ def email_reimbursement_complete(grant):
     """ Send an email to the grant applicant notifying them that the grant UC reimbursement process is complete """
 
     # Create Message
-    msg = Message("Grant Process Complete", recipients=[grant.contact_email], sender=("UC Treasurer", "harvarductreasurer@gmail.com"))
+    msg = Message("Grant Process Complete: " + grant.project, recipients=[grant.contact_email], sender=("UC Treasurer", "harvarductreasurer@gmail.com"))
 
     # Define attached image
     image = "done.gif"

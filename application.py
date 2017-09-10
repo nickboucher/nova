@@ -190,7 +190,6 @@ def new_grant():
 
     # get arguments from query string
     args = get_grant_args(request.query_string)
-    print("ARGS NEW GRANT:", args)
     # Verify security key
     sec_key = Config.query.filter_by(key='security_key').first().value
     if not args.get('k') or sec_key != args.get('k')[0]:
@@ -1584,7 +1583,6 @@ def grants_pack_budget(grants_pack):
 
         # Verify budget in correct format
         if not isfloat(budget):
-            print(budget)
             flash("Budget format not valid", "error")
             return render_template('grants_pack_budget.html', grants_pack=grants_week)
 
@@ -1892,11 +1890,8 @@ def raw_grant_edit(grant_id):
     if request.method == 'POST':
         form = GrantForm(request.form)
         for field in form:
-            print(field.name, field.data)
             if field.type == "DateTimeField":
-                print(field.name)
                 if request.form.get(field.name) != '' and request.form.get(field.name) != None:
-                    print(datetime.strptime(request.form[field.name], "%Y-%m-%dT%H:%M"))
                     setattr(grant, field.name, datetime.strptime(request.form[field.name], "%Y-%m-%dT%H:%M"))
             elif field.data == "":
                 setattr(grant, field.name, None)

@@ -449,7 +449,10 @@ def grant(grant_id):
     if grant.is_upfront:
         # Upfront small grant
         if grant.is_small_grant:
-            if grant.must_reimburse_uc:
+            if grant.hearing_requested and not grant.hearing_occurred:
+                progress['percentage'] = 0.9
+                progress['message'] = "Hearing Requested."
+            elif grant.must_reimburse_uc:
                 if grant.reimbursed_uc:
                     progress['percentage'] = 1.0
                     progress['message'] = "Reimbursement Processed. Grant Complete."
@@ -487,7 +490,10 @@ def grant(grant_id):
                 progress['message'] = "Application Being Reviewed"
         # Upfront non-small grant
         else:
-            if grant.must_reimburse_uc:
+            if grant.hearing_requested and not grant.hearing_occurred:
+                progress['percentage'] = 0.9
+                progress['message'] = "Hearing Requested."
+            elif grant.must_reimburse_uc:
                 if grant.reimbursed_uc:
                     progress['percentage'] = 1.0
                     progress['message'] = "Reimbursement Processed. Grant Complete."
@@ -530,7 +536,10 @@ def grant(grant_id):
     else:
         # Retroactive small grant
         if grant.is_small_grant:
-            if grant.is_paid:
+            if grant.hearing_requested and not grant.hearing_occurred:
+                progress['percentage'] = 0.9
+                progress['message'] = "Hearing Requested."
+            elif grant.is_paid:
                 progress['percentage'] = 1.0
                 if grant.is_direct_deposit == None:
                     progress['message'] = "Grant Completed."
@@ -555,7 +564,10 @@ def grant(grant_id):
                 progress['message'] = "Application Being Reviewed"
         # Retroactive non-small grant
         else:
-            if grant.is_paid:
+            if grant.hearing_requested and not grant.hearing_occurred:
+                progress['percentage'] = 0.9
+                progress['message'] = "Hearing Requested."
+            elif grant.is_paid:
                 progress['percentage'] = 1.0
                 if grant.is_direct_deposit == None:
                     progress['message'] = "Grant Completed."
@@ -1952,3 +1964,32 @@ def view_receipts(grant_id):
         receipts = receipts.split(", ")
     # Render the page to the user
     return render_template("grant_receipts.html", grant=grant, receipts=receipts)
+
+@app.route('/hearings')
+@login_required
+@admin_required
+def hearings():
+    """ An interface to view and schedule all pending hearings """
+    grants = Grant.query.filter(AND(Grant.hearing_requested==True,OR(Grant.hearing_occurred==False,Grant.hearing_occurred==None))).all()
+    grant = Grant.query.filter_by(grant_id="35S-1-38").first()
+    return render_template("hearings.html", grants=grants)
+
+@app.route('/request-hearing', methods=['POST'])
+@login_required
+@admin_required
+def request_hearing():
+    """ Requests a hearing for a given grant """
+    grant_id = request.form.get("grant_id")
+    # Ensure that grant_id was specified
+    if not grant_id:
+        return "Must specify grant id."
+    # Query for grant
+    grant = Grant.query.filter_by(grant_id=grant_id).first()
+    # Ensure that grant exists
+    if not grant:
+        return "Grant " + grant_id + " does not exist."
+    # Update Grant
+    grant.hearing_requested = True
+    db.session.commit()
+    flash("Hearing successfully requested for \"" + grant.project + "\".", 'success')
+    return redirect(url_for('hearings'))

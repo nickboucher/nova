@@ -206,6 +206,10 @@ class Grant(db.Model):
     owed_money_email_date = db.Column(db.DateTime) # Date first email was sent saying money is owed
     # Edit key
     key = db.Column(db.Text) # The key that is required to view the grant in a way to submit receipts
+    # Hearings
+    hearing_requested = db.Column(db.Boolean, default=False) # Whether a hearing needs to occur
+    hearing_occurred = db.Column(db.Boolean, default=False)
+    hearing_date = db.Column(db.DateTime)
 
 
     def __init__(self, grant_id):

@@ -12,17 +12,21 @@
                 <h1>Process Owed Money</h1>
                 <h3>Are you sure that you would like to complete the reimbursement process for the following grant?</h3>
                 <div class="jumbotron">
-                    <form action="{{ url_for('process_owed_money', grant_id=grant.grant_id) }}" method="post">
-                        <input type="hidden" name="reimbursement_amount" value="{{ grant.reimburse_uc_amount if grant.reimburse_uc_amount else grant.amount_dispensed }}">
-                        <h3><b><i>{{ grant.project }}</i></b></h3>
-                        <h4>{{ grant.organization }}</h4>
-                        <p>Reimbursement Amount:</p>
-                        <h2>{{  (grant.reimburse_uc_amount if grant.reimburse_uc_amount else grant.amount_dispensed) | usd }}</h2>
-                        <div class="center">
-                            <a href="{{ url_for('owed_money') }}" class="btn btn-default">Cancel</a>
-                            <button type="submit" class="btn btn-danger">Reimbursement Received</button>
-                        </div>
-                    </form>
+                    <h3><b><i>{{ grant.project }}</i></b></h3>
+                    <h4>{{ grant.organization }}</h4>
+                    <p>Reimbursement Amount:</p>
+                    <h2>{{  (grant.reimburse_uc_amount if grant.reimburse_uc_amount else grant.amount_dispensed) | usd }}</h2>
+                    <div class="center">
+                        <a href="{{ url_for('owed_money') }}" class="btn btn-default">Cancel</a>
+                        <form action="{{ url_for('request_hearing') }}" class="inline-block" method="post">
+                            <input type="hidden" name="grant_id" value="{{ grant.grant_id }}">
+                          <input type="submit" value="Schedule Hearing" class="btn btn-warning">
+                        </form>
+                        <form action="{{ url_for('process_owed_money', grant_id=grant.grant_id) }}" class="inline-block" method="post">
+                            <input type="hidden" name="reimbursement_amount" value="{{ grant.reimburse_uc_amount if grant.reimburse_uc_amount else grant.amount_dispensed }}">
+                            <input type="submit" value="Reimbursement Received" class="btn btn-danger">
+                        </form>
+                    </div>
                 </div>
             </div>
         </div>

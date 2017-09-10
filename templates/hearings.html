@@ -1,0 +1,46 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Hearings
+{% endblock %}
+
+{% block main %}
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="center padding-bottom-20">
+                <h1>Hearings</h1>
+                <h3>All pending hearings</h3>
+            </div>
+            <table class="table table-striped table-hover table-responsive">
+                <thead>
+                    <tr>
+                        <th><b>Grant ID</b></th>
+                        <th><b>Organization</b></th>
+                        <th><b>Project</b></th>
+                        <th><b>Hearing Scheduled</b></th>
+                        <th><b>Hearing Date</b></th>
+                        <th><b>Status Page</b></th>
+                        <th><b>Raw</b></th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for grant in grants %}
+                        <tr>
+                            <td class="text-nowrap">{{ grant.grant_id }}</td>
+                            <td><b>{{ grant.organization }}</b></td>
+                            <td><b>{{ grant.project }}</b></td>
+                            <td><b>{{ ('<i class="fa fa-check" aria-hidden="true"></i>' | safe) if grant.hearing_date else "" }}
+                            <td>{{ grant.hearing_date | datetime }}</td>
+                            <td><a href="{{ url_for('grant', grant_id=grant.grant_id) }}" class="btn btn-default">Status</a></td>
+                            <td><a href="{{ url_for('raw_grant_edit', grant_id=grant.grant_id) }}" class="btn btn-default">Raw</a></td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <div class="navbar navbar-fixed-bottom center" style="color:#b1b1b1;"><i>Brought to you by Nicholas Boucher '19</i></div>
+
+{% endblock %}

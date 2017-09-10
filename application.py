@@ -1873,8 +1873,8 @@ def receipts_reminder():
 @admin_required
 def owed_money():
     # Query for relevant grants
-    no_receipts = Grant.query.filter(AND(AND(AND(AND(AND(Grant.council_approved==True,Grant.amount_allocated>0),Grant.receipts_submitted==False), Grant.receipts_due < datetime.now()), Grant.amount_dispensed>0), Grant.reimbursed_uc==False)).all()
-    unspent_money = Grant.query.filter(AND(AND(AND(Grant.council_approved==True,Grant.amount_allocated>0),Grant.must_reimburse_uc==True),Grant.reimbursed_uc==False)).all()
+    no_receipts = Grant.query.filter(AND(AND(AND(AND(AND(AND(Grant.council_approved==True,Grant.amount_allocated>0),Grant.receipts_submitted==False), Grant.receipts_due < datetime.now()), Grant.amount_dispensed>0), Grant.reimbursed_uc==False, OR(not Grant.hearing_requested==True,Grant.hearing_occurred==True)))).all()
+    unspent_money = Grant.query.filter(AND(AND(AND(AND(Grant.council_approved==True,Grant.amount_allocated>0),Grant.must_reimburse_uc==True),Grant.reimbursed_uc==False, OR(not Grant.hearing_requested==True,Grant.hearing_occurred==True)))).all()
     # Sum owed money
     total = 0
     for grant in no_receipts:

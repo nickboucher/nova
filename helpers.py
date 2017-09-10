@@ -538,9 +538,9 @@ def send_owe_money_emails():
 
 def test_email():
     """ Sends a test email from one account to the other """
-    email = Config.query.filter_by(key='enable_email').first()
-    if email.value == '1':
-        with application.app.app_context():
+    with application.app.app_context():
+        email = Config.query.filter_by(key='enable_email').first()
+        if email.value == '1':
             # Create Message
             msg = Message("Test Email", recipients=["harvarductreasurer@gmail.com"], sender=("UC Treasurer", "harvarductreasurer@gmail.com"))
 

@@ -526,7 +526,7 @@ def send_owe_money_emails():
             now = datetime.now()
             two_days_ago = now - timedelta(days=2)
             # Query for no receipts grants
-            no_receipts = Grant.query.filter(AND(AND(AND(AND(AND(Grant.council_approved==True,Grant.amount_allocated>0),Grant.receipts_submitted==False), Grant.receipts_due < now), Grant.amount_dispensed>0), Grant.reimbursed_uc==False)).all()
+            no_receipts = Grant.query.filter(AND(AND(AND(AND(AND(AND(Grant.council_approved==True,Grant.amount_allocated>0),Grant.receipts_submitted==False), Grant.receipts_due < datetime.now()), Grant.amount_dispensed>0), Grant.reimbursed_uc==False, OR(not Grant.hearing_requested==True,Grant.hearing_occurred==True)))).all()
             for grant in no_receipts:
                 print(grant.grant_id)
                 if grant.owed_money_email_date and grant.owed_money_email_date < two_days_ago:
@@ -535,7 +535,7 @@ def send_owe_money_emails():
                     email_receipts_not_submitted(grant)
                     grant.owed_money_email_date = now
             # Query for grants that didn't spend all money
-            unspent_money = Grant.query.filter(AND(AND(AND(Grant.council_approved==True,Grant.amount_allocated>0),Grant.must_reimburse_uc==True),Grant.reimbursed_uc==False)).all()
+            unspent_money = Grant.query.filter(AND(AND(AND(AND(Grant.council_approved==True,Grant.amount_allocated>0),Grant.must_reimburse_uc==True),Grant.reimbursed_uc==False, OR(not Grant.hearing_requested==True,Grant.hearing_occurred==True)))).all()
             for grant in unspent_money:
                 print(grant.grant_id)
                 if not grant.owed_money_email_date or grant.owed_money_email_date < two_days_ago:

@@ -6,7 +6,7 @@
 <div style="text-align:left;">
     <p>Dear {{ grant.contact_first_name }} {{ grant.contact_last_name }},</p>
     <p>Your receipts have successfully been submitted for <i>{{ grant.project }}</i>. If you need to resubmit receipts, please
-        do so through your <a href="{{ url_for('grant', grant_id=grant.grant_id, _external=True)}}">grant status portal</a>.</p>
+        do so through your <a href="{{ url_for('grant', grant_id=grant.grant_id, key=grant.key, _external=True)}}">grant status portal</a>.</p>
     <p>The treasurer will review your receipts within a week, after which your funds will be transferred.</p>
     <p>Best,
     <br>Nicholas Boucher

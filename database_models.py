@@ -9,6 +9,8 @@
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import UserMixin as FlaskLoginUser
 from datetime import datetime
+from random import choice
+from string import ascii_letters, digits
 
 # Initialize db variable to avoid namespace errors
 # ('db' must be imported by application later)
@@ -202,10 +204,14 @@ class Grant(db.Model):
     reimburse_uc_amount = db.Column(db.Float) # Amount club owes/owed UC
     reimbursed_uc = db.Column(db.Boolean, default=False) # If club paid us back
     owed_money_email_date = db.Column(db.DateTime) # Date first email was sent saying money is owed
+    # Edit key
+    key = db.Column(db.Text) # The key that is required to view the grant in a way to submit receipts
 
 
     def __init__(self, grant_id):
         self.grant_id = grant_id
+        # Generate a random 6-digit string as a key
+        self.key = ''.join(choice(ascii_letters + digits) for _ in range(6))
 
     def __repr__(self):
         return '<Grant %r>' % self.grant_id

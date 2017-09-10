@@ -47,12 +47,6 @@ else:
         id='send_owed_money_emails_job',
         name='Sends Owed Money Emails',
         replace_existing=True)
-    scheduler.add_job(
-            func=test_email,
-            trigger=IntervalTrigger(minutes=10),
-            id='send_test_email_job',
-            name='Sends Test Email',
-            replace_existing=True)
     # Shut down the scheduler when exiting the app
     atexit.register(lambda: scheduler.shutdown())
 
@@ -439,6 +433,13 @@ def grant(grant_id):
     if not grant:
         return "Error: Grant does not exist."
 
+    # See if the edit key was supplied
+    if grant.key:
+        editable = grant.key == request.args.get('key')
+    else:
+        # If this grant doesn't have an edit key, anyone can edit it
+        editable = True
+
     # Calculate Progress through grant process for template progress bar
     progress = {'percentage': 0, 'message': ""}
     # Upfront Grants
@@ -573,7 +574,7 @@ def grant(grant_id):
                 progress['message'] = "Interview being scheduled"
 
     # Render grant status page to user
-    return render_template("grant_status.html", grant=grant, progress=progress)
+    return render_template("grant_status.html", grant=grant, progress=progress, editable=editable)
 
 @app.route('/grant/<grant_id>/application')
 def grant_application(grant_id):

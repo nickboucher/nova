@@ -5,24 +5,24 @@
 
 <div style="text-align:left;">
     <p>Dear {{ grant.contact_first_name }} {{ grant.contact_last_name }},</p>
-    
+
     {% if grant.is_upfront %}
-    
+
     <p>The funds for your upfront grant <i>{{ grant.project }}</i> are now available. <b>{{ grant.amount_dispensed | usd }}</b> has been directly
             deposited into {{ grant.organization }}'s University Credit Union account.</p>
     <p>Please submit receipts within two weeks after your event occurs. Receipts will not be accepted after the end of the semester. You can submit
-        receipts through your <a href="{{ url_for('grant', grant_id=grant.grant_id, _external=True) }}">grant status portal</a>.</p>
-    
+        receipts through your <a href="{{ url_for('grant', grant_id=grant.grant_id, key=grant.key, _external=True) }}">grant status portal</a>.</p>
+
     {% else %}
-    
+
         <p>You have completed the grant process for <i>{{ grant.project }}</i>! <b>{{ grant.amount_dispensed | usd }}</b> has been directly
             deposited into {{ grant.organization }}'s University Credit Union account.</p>
         {% if grant.treasurer_notes %}
             <p>The following note was attached to your grant by the final reviewer of your application: <i>{{ grant.treasurer_notes }}</i></p>
         {% endif %}
-    
+
     {% endif %}
-    
+
     <p>Thanks for applying for a UC Grant; we hope to see you again in the future!</p>
     <p>Best,
     <br>Nicholas Boucher

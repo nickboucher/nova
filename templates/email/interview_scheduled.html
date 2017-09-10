@@ -11,7 +11,7 @@
         from your organization to attend the interview (it does not have to be you.)
         In order for your grant application to receive any funding, someone from {{ grant.organization }} must attend the interview.
         {%- if grant.is_collaboration %}
-            Since you indicated that your project is a collaboration between multiple student organizations on your application, 
+            Since you indicated that your project is a collaboration between multiple student organizations on your application,
             you are eligible for certain benefits which could result in additional funding for your grant. However, to secure these
             benefits you must have one representative from a majority of the organizations you are collaborating with
             (<i>{{ grant.collaborators }}</i>) attend the interview in addition
@@ -19,7 +19,7 @@
         {% endif -%}
         If you are more than 10 minutes late to your assigned interview, you may not be seen until the next interview week.
     </p>
-    <p>As always, you can <a href="{{ url_for('grant', grant_id=grant.grant_id, _external=True)}}">track the status of your grant on our portal</a>.</p>
+    <p>As always, you can <a href="{{ url_for('grant', grant_id=grant.grant_id, key=grant.key, _external=True)}}">track the status of your grant on our portal</a>.</p>
     <p>Best,
     <br>Nicholas Boucher
     <br><i>Treasurer, Undergraduate Council</i></p>

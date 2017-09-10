@@ -512,48 +512,29 @@ def email_reimbursement_complete(grant):
 
 def send_owe_money_emails():
     """ Sends emails to all groups that owe money to the UC reminding them to pay """
-    # Don't bug people if we bugged them within past 2 days
-    print("Sending Owed Money Emails")
-    now = datetime.now()
-    two_days_ago = now - timedelta(days=2)
-    with application.app.app_context():
-        # Query for no receipts grants
-        no_receipts = Grant.query.filter(AND(AND(AND(AND(AND(Grant.council_approved==True,Grant.amount_allocated>0),Grant.receipts_submitted==False), Grant.receipts_due < now), Grant.amount_dispensed>0), Grant.reimbursed_uc==False)).all()
-        for grant in no_receipts:
-            print(grant.grant_id)
-            if grant.owed_money_email_date and grant.owed_money_email_date < two_days_ago:
-                email_owed_money(grant)
-            elif not grant.owed_money_email_date:
-                email_receipts_not_submitted(grant)
-                grant.owed_money_email_date = now
-        # Query for grants that didn't spend all money
-        unspent_money = Grant.query.filter(AND(AND(AND(Grant.council_approved==True,Grant.amount_allocated>0),Grant.must_reimburse_uc==True),Grant.reimbursed_uc==False)).all()
-        for grant in unspent_money:
-            print(grant.grant_id)
-            if not grant.owed_money_email_date or grant.owed_money_email_date < two_days_ago:
-                email_owed_money(grant)
-                if not grant.owed_money_email_date:
-                    grant.owed_money_email_date = now
-        db.session.commit()
-
-def test_email():
-    """ Sends a test email from one account to the other """
     with application.app.app_context():
         email = Config.query.filter_by(key='enable_email').first()
         if email.value == '1':
-            # Create Message
-            msg = Message("Test Email", recipients=["harvarductreasurer@gmail.com"], sender=("UC Treasurer", "harvarductreasurer@gmail.com"))
-
-            # Define attached image
-            image = "done.gif"
-
-            # Attach HTML Body
-            html = '<div style="text-align:center;"><img src="cid:done.gif" style="max-height:200px;"><br>This is a test email.</div>'
-            msg.html = html
-
-            # Attach Image
-            with application.app.open_resource("templates/email/images/%s" % image) as fp:
-                msg.attach(image, "image/gif", fp.read(), headers=[['Content-ID', '<%s>' % image],])
-
-            # Send Email
-            application.mail.send(msg)
+            # Don't bug people if we bugged them within past 2 days
+            print("Sending Owed Money Emails")
+            now = datetime.now()
+            two_days_ago = now - timedelta(days=2)
+            with application.app.app_context():
+                # Query for no receipts grants
+                no_receipts = Grant.query.filter(AND(AND(AND(AND(AND(Grant.council_approved==True,Grant.amount_allocated>0),Grant.receipts_submitted==False), Grant.receipts_due < now), Grant.amount_dispensed>0), Grant.reimbursed_uc==False)).all()
+                for grant in no_receipts:
+                    print(grant.grant_id)
+                    if grant.owed_money_email_date and grant.owed_money_email_date < two_days_ago:
+                        email_owed_money(grant)
+                    elif not grant.owed_money_email_date:
+                        email_receipts_not_submitted(grant)
+                        grant.owed_money_email_date = now
+                # Query for grants that didn't spend all money
+                unspent_money = Grant.query.filter(AND(AND(AND(Grant.council_approved==True,Grant.amount_allocated>0),Grant.must_reimburse_uc==True),Grant.reimbursed_uc==False)).all()
+                for grant in unspent_money:
+                    print(grant.grant_id)
+                    if not grant.owed_money_email_date or grant.owed_money_email_date < two_days_ago:
+                        email_owed_money(grant)
+                        if not grant.owed_money_email_date:
+                            grant.owed_money_email_date = now
+                db.session.commit()

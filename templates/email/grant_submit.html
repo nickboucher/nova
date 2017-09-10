@@ -9,7 +9,7 @@
         {%- if not grant.is_small_grant %}
              and you will receive an email within the coming week about the interview time scheduled for this grant
         {% endif -%}.</p>
-    <p>You can track the status of your grant <a href="{{ url_for('grant', grant_id=grant.grant_id, _external=True) }}">here</a>.</p>
+    <p>You can track the status of your grant <a href="{{ url_for('grant', grant_id=grant.grant_id, key=grant.key, _external=True) }}">here</a>.</p>
     <p>Best,
     <br>Nicholas Boucher
     <br><i>Treasurer, Undergraduate Council</i></p>

@@ -23,7 +23,7 @@
             <div id="progress_container">{{ progress['message'] }}</div>
         </div>
     </div>
-    
+
     <div class="row flexbox">
         <div class="col-md-4 right-line col margin15">
             <div class="center padding-bottom-20">
@@ -34,6 +34,9 @@
                     Contact Name: {{ grant.contact_first_name }} {{ grant.contact_last_name }}<br>
                     Submitted: {{ grant.application_submit_time.strftime('%B %d, %Y') }}<br>
                     Amount Requested: {{ grant.amount_requested | usd }}<br>
+                    {% if grant.amount_allocated %}
+                        Amount Allocated: {{ grant.amount_allocated | usd }}<br>
+                    {% endif %}
                     Grant Type: {{ "Upfront" if grant.is_upfront else "Retroactive" }}
                 </div>
             </div>
@@ -73,20 +76,22 @@
                     <a href="{{ url_for('grant_application', grant_id=grant.grant_id) }}" role="button" class="btn btn-default" aria-label="Left Align">Review Application</a><br>
                     {% if grant.council_approved %}
                         <a href="{{ url_for('grant_allocations', grant_id=grant.grant_id) }}" role="button" class="btn btn-default margin15" aria-label="Left Align">What You Were Granted</a><br>
-                        <a href="https://harvard.az1.qualtrics.com/SE/?SID=SV_8zU7rFYRKZb9k5D&grant_id={{ grant.grant_id }}" role="button" class="btn btn-default margin15 {{ "disabled" if grant.receipts_reviewed }}" aria-label="Left Align">{{ "Resubmit" if grant.receipts_submitted else "Submit" }} Receipts</a>
+                        {% if editable %}
+                            <a href="https://harvard.az1.qualtrics.com/SE/?SID=SV_8zU7rFYRKZb9k5D&grant_id={{ grant.grant_id }}" role="button" class="btn btn-default margin15 {{ "disabled" if grant.receipts_reviewed }}" aria-label="Left Align">{{ "Resubmit" if grant.receipts_submitted else "Submit" }} Receipts</a>
+                        {% endif %}
                     {% endif %}
                 </div>
             </div>
         </div>
     </div>
-    
+
     <div class="navbar navbar-fixed-bottom center hidden-xs hidden-sm" style="color:#b1b1b1;"><i>Brought to you by Nicholas Boucher '19</i></div>
     <div class="center hidden-md hidden-lg" style="color:#b1b1b1;"><i>Brought to you by Nicholas Boucher '19</i></div>
-    
+
 {% endblock %}
 
 {% block scripts %}
-    
+
     <script src="/static/progressbar.min.js"></script>
     <script type="text/javascript">
         var bar = new ProgressBar.Line(progress_container, {
@@ -98,7 +103,7 @@
           trailWidth: 16,
           svgStyle: {width: '100%', height: '100%', 'border-radius': '20px'}
         });
-        
+
         bar.animate( {{ progress["percentage"] }} );  // Number from 0.0 to 1.0
     </script>
 

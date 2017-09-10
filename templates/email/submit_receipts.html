@@ -6,7 +6,7 @@
 <div style="text-align:left;">
     <p>Dear {{ grant.contact_first_name }} {{ grant.contact_last_name }},</p>
     <p>This is a reminder to submit receipts for your grant <i>{{ grant.project }}</i>. You can submit receipts and review the items for
-        which you were granted funds on your <a href="{{ url_for('grant', grant_id=grant.grant_id, _external=True)}}">grant status page</a>.</p>
+        which you were granted funds on your <a href="{{ url_for('grant', grant_id=grant.grant_id, key=grant.key, _external=True)}}">grant status page</a>.</p>
     <p>
         {% if grant.receipts_due %}
             Receipts for this grant are due by <b>{{ grant.receipts_due.strftime("%A %B %-m, %Y") }}</b>.

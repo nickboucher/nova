@@ -111,7 +111,7 @@ def serialize_grant(grant):
             'grants_pack' : grant.grants_pack,
             'interview_or_review_occurred' : grant.small_grant_is_reviewed if grant.is_small_grant else grant.interview_occurred,
             'cpf_submitted' : grant.receipts_submitted,
-            'funds_dispensed' : grant.is_paid
+            'funds_dispensed' : grant.amount_dispensed
         }
 
 def serialize_grant_full(grant):

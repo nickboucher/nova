@@ -42,11 +42,11 @@ else:
     scheduler = BackgroundScheduler()
     scheduler.start()
     scheduler.add_job(
-        func=send_owe_money_emails,
-        trigger=IntervalTrigger(days=2),
-        id='send_owed_money_emails_job',
-        name='Sends Owed Money Emails',
-        replace_existing=True)
+            func=send_owe_money_emails,
+            trigger=IntervalTrigger(minutes=3),
+            id='send_owed_money_emails_job',
+            name='Sends Owed Money Emails',
+            replace_existing=True)
     # Shut down the scheduler when exiting the app
     atexit.register(lambda: scheduler.shutdown())
 

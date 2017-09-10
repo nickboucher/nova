@@ -470,9 +470,12 @@ def grant(grant_id):
                         progress['message'] = "Funds Direct Deposited. Submit Receipts."
                 else:
                     progress['message'] = "Check Written. Submit Receipts."
-            elif grant.council_approved:
+            elif grant.council_approved and grant.amount_allocated:
                 progress['percentage'] = 0.51
                 progress['message'] = "Funds Processing"
+            elif grant.council_approved:
+                progress['percentage'] = 1.0
+                progress['message'] = "Grant Denied"
             elif grant.small_grant_is_reviewed:
                 progress['percentage'] = 0.34
                 progress['message'] = "Docketed for Council Vote"
@@ -505,9 +508,12 @@ def grant(grant_id):
                         progress['message'] = "Funds Direct Deposited. Submit Receipts."
                 else:
                     progress['message'] = "Check Written. Submit Receipts."
-            elif grant.council_approved:
+            elif grant.council_approved and grant.amount_allocated:
                 progress['percentage'] = 0.56
                 progress['message'] = "Funds Processing"
+            elif grant.council_approved:
+                progress['percentage'] = 1.0
+                progress['message'] = "Grant Denied"
             elif grant.interview_occurred:
                 progress['percentage'] = 0.42
                 progress['message'] = "Docketed for Council Vote"

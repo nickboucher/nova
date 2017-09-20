@@ -714,7 +714,7 @@ def grant_interview(grant_id):
         if request.form.get('personnel_allocated'): grant.personnel_allocated = request.form.get('personnel_allocated', type=float)
         if request.form.get('personnel_allocated_notes'): grant.personnel_allocated_notes = request.form.get('personnel_allocated_notes')
         if request.form.get('other_allocated'): grant.other_allocated = request.form.get('other_allocated', type=float)
-        if request.form.get('receipts_due'): grant.receipts_due = datetime.strptime(request.form.get('recepits_due'), '%Y-%m-%d')
+        if request.form.get('receipts_due'): grant.receipts_due = datetime.strptime(request.form.get('receipts_due'), '%Y-%m-%d')
         if request.form.get('other_allocated_notes'): grant.other_allocated_notes = request.form.get('other_allocated_notes')
         if request.form.get('is_collaboration_confirmed'): grant.is_collaboration_confirmed = request.form.get('is_collaboration_confirmed')
 

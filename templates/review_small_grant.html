@@ -56,6 +56,14 @@
                     <div class="row">
                         <div class="col-md-12">
                             <div class="form-group">
+                                <label for="receipts_due">Receipts Due Date:</label>
+                                <input type="date" class="form-control" name="receipts_due" value="{{ grant.receipts_due.strftime('%Y-%m-%d') if grant.receipts_due else "" }}">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <div class="form-group">
                                 <label for="interviewer_notes">Interviewer Notes:</label>
                                 <textarea class="form-control resize-vertical" rows="1" name="interviewer_notes">{{ grant.interviewer_notes | suppress_none }}</textarea>
                             </div>

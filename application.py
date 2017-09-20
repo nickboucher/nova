@@ -794,6 +794,7 @@ def small_grant_review(grant_id):
         if request.form.get('publicity_allocated'): grant.publicity_allocated = request.form.get('publicity_allocated', type=float)
         if request.form.get('publicity_allocated_notes'): grant.publicity_allocated_notes = request.form.get('publicity_allocated_notes')
         if request.form.get('is_collaboration_confirmed'): grant.is_collaboration_confirmed = request.form.get('is_collaboration_confirmed')
+        if request.form.get('receipts_due'): grant.receipts_due = datetime.strptime(request.form.get('receipts_due'), '%Y-%m-%d')
 
         # Add Relevant Meta Data
         grant.small_grant_is_reviewed = True

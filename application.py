@@ -425,6 +425,11 @@ def resubmit_receipts():
 def grant(grant_id):
     """ Retrieves grant info for applicants to track grant progress """
 
+    # Add temporary fix for emails sent referencing wrong grants week
+    # TODO: Remove this conditional redirect after December 2017
+    if grant_id.startswith("35S-12-"):
+        return redirect(url_for("grant", grant_id=grant_id.replace("35S-12-","36F-1-",1)))
+
     # Verify that a grant id was specified
     if not grant_id:
         return "Error: No Grant ID specified"

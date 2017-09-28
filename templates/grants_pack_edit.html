@@ -98,7 +98,7 @@
         </div>
         <a id="submit" href="{{ url_for('grants_pack_cuts_pack', grants_pack=grants_pack) }}" class="btn btn-default float-right" style="margin: 10px 15px">Submit</a>
     </div>
-    
+
     <div class="row">
         <div class="col-md-12">
             <div class="center grant_info">
@@ -114,7 +114,7 @@
 
 {% block scripts %}
     <script type="text/javascript">
-    
+
         /* Enable Dual Select-Multiple Boxes */
         $('.grants_dual_listbox').bootstrapDualListbox({
           nonSelectedListLabel: 'Adjudicated Grants',
@@ -123,7 +123,7 @@
           moveOnSelect: false,
           nonSelectedFilter: ''
         });
-        
+
         function updateDollarDisplay() {
             var allocated = 0;
             $("#bootstrap-duallistbox-selected-list_grants_list option").each(function(index,option) {
@@ -133,6 +133,7 @@
                 if (items.length > 1) {
                     items = items.substr(0, items.length - 2) + "]";
                     items = items.replace(/\r?\n|\r/g, ""); // remove troublesome newlines
+                    console.log(items); // for debugging
                     items = jQuery.parseJSON(items);
                 }
                 for (var i=0; i< items.length; i++) {
@@ -141,18 +142,18 @@
             });
             $("#dollars-allocated").text("$" + allocated.toFixed(2));
         }
-        
+
         /* Define the event handler function for listboxes that will update the selected
             grant information view at the bottom of the page */
         function infoDisplayHandler() {
-            
+
             // ensure that mutliple grants aren't selected
             if ($(this).is('select')) {
                 if ($(this).children('option').filter(':selected').length != 1) {
                     return;
                 }
             }
-            
+
             // Cleverly get relevant attributes from selected option
             var option = $('#' + $(this).val());
             var id = $(this).val()
@@ -160,7 +161,7 @@
             var organization = option.data('organization');
             var interviewer = option.data('interviewer');
             var notes = option.data('notes');
-            
+
             // parse funding data
             var items = option.data('funding');
             // remove final comma (fencepost problem)
@@ -177,22 +178,22 @@
                 funding += '</tr>';
             }
             funding += '</tbody></table>'
-            
+
             //  Update description view
             $('#grant_project').text(project);
             $('#grant_subtitle').text(organization + ", " + id);
             $('#grant_notes').text(notes);
             $('#grant_interviewer').html(interviewer + ' <a href="/interview/' + id + '?review={{ grants_pack }}">Edit</a>');
             $('#grant_funding').html(funding);
-            
+
         }
-        
+
         /* Define the event handler for the listboxes that will
             asynchronously send updates to the remote database on
             changes in listbox selections and update the dollar
             amount allocated shown to the user */
         function updateDBHandler() {
-            
+
             // Create an list of objects indicating whether each grant is in the pack
             var notSelected = $("#bootstrap-duallistbox-nonselected-list_grants_list option");
             var selected = $("#bootstrap-duallistbox-selected-list_grants_list option");
@@ -200,19 +201,19 @@
                 return { grant_id : option.value,
                             selected : false };
             });
-            
+
             values = values.concat($.map(selected, function(option) {
                 return { grant_id : option.value,
                             selected : true };
             }));
-            
+
             // Convert values to JSON
             var json = '{"grants_pack":"{{ grants_pack }}","grants":' + JSON.stringify(values) + '}';
-            
+
             // Set the status message to saving and temporarily disable submit button
             $("#status").text('Saving changes...');
             $('#submit').addClass('disabled');
-            
+
             // POST that data to the server
             $.ajax({
                 url: "{{ url_for('grants_pack_edit') }}",
@@ -227,23 +228,23 @@
                     $("#status").text('Error saving changes.');
                 }
             });
-            
+
             // Update the currently allocated dollar display
             updateDollarDisplay();
         }
-        
+
         // Add a span to display the currently allocated amount
         $('.box2 span.info-container').append('<span id="dollars-allocated" class="float-right bold"></span>');
         updateDollarDisplay();
-        
+
         /* Add handler for displaying grant info on-change
             on-click handler must also be added for jumping
             between the dual boxes */
         $('.listboxes select').change(infoDisplayHandler);
         $('.listboxes option').click(infoDisplayHandler);
         $('.listboxes button').click(updateDBHandler);
-        
-        
-        
+
+
+
     </script>
 {% endblock %}

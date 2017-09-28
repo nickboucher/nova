@@ -132,8 +132,7 @@
                 // remove final comma (fencepost problem)
                 if (items.length > 1) {
                     items = items.substr(0, items.length - 2) + "]";
-                    items = items.replace(/\r?\n|\r/g, ""); // remove troublesome newlines
-                    console.log(items); // for debugging
+                    items = items.replace(/\r?\n|\r|\t/g, ""); // remove troublesome newlines and tabs
                     items = jQuery.parseJSON(items);
                 }
                 for (var i=0; i< items.length; i++) {

@@ -1977,7 +1977,6 @@ def view_receipts(grant_id):
 def hearings():
     """ An interface to view and schedule all pending hearings """
     grants = Grant.query.filter(AND(Grant.hearing_requested==True,OR(Grant.hearing_occurred==False,Grant.hearing_occurred==None))).all()
-    grant = Grant.query.filter_by(grant_id="35S-1-38").first()
     return render_template("hearings.html", grants=grants)
 
 @app.route('/request-hearing', methods=['POST'])
@@ -1999,3 +1998,16 @@ def request_hearing():
     db.session.commit()
     flash("Hearing successfully requested for \"" + grant.project + "\".", 'success')
     return redirect(url_for('hearings'))
+
+@app.route('/expenses')
+@login_required
+def expenses():
+    """ Lists all expenses in the current council's budget """
+    council_semester = Config.query.filter_by(key="council_semester").first()
+    council = council_semester.value[:2] if council_semester else None
+    funds = Fund.query.filter_by(council=council).all()
+    return render_template("expenses.html", funds=funds)
+
+@app.route('/budget/<council>')
+    def uploaded_boxart(council):
+        return send_from_directory(app.config['UPLOAD_FOLDER'],filename)

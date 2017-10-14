@@ -288,3 +288,54 @@ class User(db.Model, FlaskLoginUser):
 
     def __repr__(self):
         return '<User %r>' % self.email
+
+class Fund(db.Model):
+    """ A Fund which tracks the budget of a given UC Budget Fund """
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.Text) # The name of the fund
+    council = db.Column(db.Integer, default=None) # The council number
+    budget = db.Column(db.Float) # The total amount in this fund
+
+    def allocated(self):
+        """ Returns the amount that has been allocated for all expenses within
+            this fund """
+        alloc = 0
+        for expense in self.expenses:
+            alloc += expense.budget
+        return alloc
+
+    def spent(self):
+        """ Returns the amount that has been spent for all expenses within
+            this fund """
+        spend = 0
+        for expense in self.expenses:
+            spend += expense.spent
+        return spend
+
+    def __init__(self, name, budget):
+        self.name = name
+        self.budget = budget
+
+    def __repr__(self):
+        return '<Fund %d: %s>' % (self.id, self.name)
+
+class Expense(db.Model):
+    """ A single Expense to be deducted from the UC budget """
+
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.Text)
+    budget = db.Column(db.Float)
+    spent = db.Column(db.Float, default=None)
+    fund_id = db.Column(db.Integer, db.ForeignKey('fund.id'), nullable=False)
+    fund = db.relationship('Fund', backref='expenses', lazy=True)
+
+    def __init__(self, name, fund, budget):
+        self.name = name
+        self.fund = fund
+        self.budget = budget
+
+    def __repr__(self):
+        return '<Expense %r>' % self.name
+
+class

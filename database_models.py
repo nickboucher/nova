@@ -337,5 +337,3 @@ class Expense(db.Model):
 
     def __repr__(self):
         return '<Expense %r>' % self.name
-
-class

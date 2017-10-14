@@ -95,6 +95,56 @@
 
     <script type="text/javascript">
 
+        function parseUri (str) {
+        	var	o   = parseUri.options,
+        		m   = o.parser[o.strictMode ? "strict" : "loose"].exec(str),
+        		uri = {},
+        		i   = 14;
+
+        	while (i--) uri[o.key[i]] = m[i] || "";
+
+        	uri[o.q.name] = {};
+        	uri[o.key[12]].replace(o.q.parser, function ($0, $1, $2) {
+        		if ($1) uri[o.q.name][$1] = decodeURI($2);
+        	});
+
+        	return uri;
+        };
+
+        parseUri.options = {
+        	strictMode: false,
+        	key: ["source","protocol","authority","userInfo","user","password","host","port","relative","path","directory","file","query","anchor"],
+        	q:   {
+        		name:   "queryKey",
+        		parser: /(?:^|&)([^&=]*)=?([^&]*)/g
+        	},
+        	parser: {
+        		strict: /^(?:([^:\/?#]+):)?(?:\/\/((?:(([^:@]*)(?::([^:@]*))?)?@)?([^:\/?#]*)(?::(\d*))?))?((((?:[^?#\/]*\/)*)([^?#]*))(?:\?([^#]*))?(?:#(.*))?)/,
+        		loose:  /^(?:(?![^:@]+:[^:@\/]*@)([^:\/?#.]+):)?(?:\/\/)?((?:(([^:@]*)(?::([^:@]*))?)?@)?([^:\/?#]*)(?::(\d*))?)(((\/(?:[^?#](?![^?#\/]*\.[^?#\/.]+(?:[?#]|$)))*\/?)?([^?#\/]*))(?:\?([^#]*))?(?:#(.*))?)/
+        	}
+        };
+
+        function mutateUri(values) {
+        	var query = parseUri(window.location.search).queryKey;
+        	for (var key in values) {
+        		query[key] = values[key];
+        	}
+        	var queryString = "?";
+        	for (var key in query) {
+        		if (query[key] != null && query[key].length > 0) {
+        			queryString += key + "=" + encodeURI(query[key]) + "&";
+        		}
+        	}
+        	return queryString.length > 1 ? queryString.slice(0,-1) : "/";
+        }
+
+        function navigateWithHistory(query) {
+            // Set the window location to query for easy bookmarking
+            if (query != window.location.search) {
+                window.history.pushState(null, "", query);
+            }
+        }
+
         /* Create Twitter Bloodhound Search object for organizations */
         var organizations = new Bloodhound({
           datumTokenizer: Bloodhound.tokenizers.whitespace,
@@ -135,9 +185,11 @@
                 }
             });
 
-            /* Handle clicking of typeahead suggestion */
-            $('.typeahead').bind('typeahead:select', function(event, suggestion) {
+            function doSearch(event, suggestion) {
                 $.get("{{ url_for('lookup_grants', k=k) }}", { query : suggestion }).done(function(grants) {
+                    navigateWithHistory(mutateUri({
+                        q: suggestion
+                    }));
                     var html = '<table class="table table-striped table-hover table-responsive"><thead><tr><th>Grant ID</th><th>Organization</th><th>Project</th><th>Grants Pack</th><th>Interview/Review Occured</th><th>CPF Submitted</th><th>Funds Dispensed</th><th>Status Page</th>';
                     {% if current_user.admin %}
                         html += '<th>Raw</th>'
@@ -163,7 +215,23 @@
                     html += '</table>';
                     $("#results").html(html);
                 });
-            });
+            }
+
+            function queryStringSearch() {
+                var uri = parseUri(window.location.href).queryKey;
+                if ("q" in uri) {
+                    doSearch(null, decodeURI(uri.q));
+                } else {
+                    $("#results").empty();
+                }
+            }
+
+
+            /* Handle clicking of typeahead suggestion */
+            $('.typeahead').bind('typeahead:select', doSearch);
+
+            window.onpopstate = queryStringSearch;
+            queryStringSearch();
 
     </script>
 

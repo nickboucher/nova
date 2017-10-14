@@ -23,9 +23,13 @@
                         <th><b>Project</b></th>
                         <th><b>Reimbursement Amount</b></th>
                         <th><b>Reason</b></th>
-                        <th><b>Process Reimbursement</b></th>
+                        {% if current_user.treasurer %}
+                            <th><b>Process Reimbursement</b></th>
+                        {% endif %}
                         <th><b>Status Page</b></th>
-                        <th><b>Raw Grant</b></th>
+                        {% if current_user.treasurer %}
+                            <th><b>Raw Grant</b></th>
+                        {% endif %}
                     </tr>
                 </thead>
                 <tbody>
@@ -36,9 +40,13 @@
                             <td><b>{{ grant.project }}</b></td>
                             <td>{{ grant.amount_dispensed | usd }}</td>
                             <td>No Receipts</td>
-                            <td><a href="{{ url_for('process_owed_money', grant_id=grant.grant_id) }}" class="btn btn-default">Process</a></td>
+                            {% if current_user.treasurer %}
+                                <td><a href="{{ url_for('process_owed_money', grant_id=grant.grant_id) }}" class="btn btn-default">Process</a></td>
+                            {% endif %}
                             <td><a href="{{ url_for('grant', grant_id=grant.grant_id) }}" class="btn btn-default">Status</a></td>
-                            <td><a href="{{ url_for('raw_grant_edit', grant_id=grant.grant_id) }}" class="btn btn-default">Raw</a></td>
+                            {% if current_user.treasurer %}
+                                <td><a href="{{ url_for('raw_grant_edit', grant_id=grant.grant_id) }}" class="btn btn-default">Raw</a></td>
+                            {% endif %}
                         </tr>
                     {% endfor %}
                     {% for grant in unspent_money %}
@@ -48,9 +56,13 @@
                             <td><b>{{ grant.project }}</b></td>
                             <td>{{ grant.reimburse_uc_amount | usd }}</td>
                             <td>Unspent Money</td>
-                            <td><a href="{{ url_for('process_owed_money', grant_id=grant.grant_id) }}" class="btn btn-default">Process</a></td>
+                            {% if current_user.treasurer %}
+                                <td><a href="{{ url_for('process_owed_money', grant_id=grant.grant_id) }}" class="btn btn-default">Process</a></td>
+                            {% endif %}
                             <td><a href="{{ url_for('grant', grant_id=grant.grant_id) }}" class="btn btn-default">Status</a></td>
-                            <td><a href="{{ url_for('raw_grant_edit', grant_id=grant.grant_id) }}" class="btn btn-default">Raw</a></td>
+                            {% if current_user.treasurer %}
+                                <td><a href="{{ url_for('raw_grant_edit', grant_id=grant.grant_id) }}" class="btn btn-default">Raw</a></td>
+                            {% endif %}
                         </tr>
                     {% endfor %}
                 </tbody>

@@ -14,7 +14,7 @@
             </div>
         </div>
     </div>
-    
+
     <div class="row margin40">
         {% if user != current_user %}
             <div id="warning" class="alert alert-danger">
@@ -45,6 +45,11 @@
                         </div>
                         <div class="col-md-6">
                             <div class="checkbox">
+                                <label><input type="checkbox" name="treasurer" value="True" {{ 'checked' if user.treasurer }} {{ 'disabled' if not current_user.treasurer }}> Treasurer</label>
+                            </div>
+                        </div>
+                        <div class="col-md-6">
+                            <div class="checkbox">
                                 <label><input type="checkbox" id="reset_pw" name="reset_pw" value="True"> Reset Password</label>
                             </div>
                         </div>
@@ -62,7 +67,7 @@
 
     {% if user != current_user %}
         <script type="text/javascript">
-            $('#reset_pw').change(function () {                
+            $('#reset_pw').change(function () {
                  $('#warning').toggle(this.checked);
               }).change(); //ensure visible state matches initially
         </script>

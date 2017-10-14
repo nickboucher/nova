@@ -54,6 +54,7 @@
                         <th>Name</th>
                         <th>Email</th>
                         <th>Admin</th>
+                        <th>Treasurer</th>
                         <th>Edit</th>
                         <th>Delete</th>
                     </tr>
@@ -68,8 +69,13 @@
                                     <i class="fa fa-check" aria-hidden="true"></i>
                                 {% endif %}
                             </td>
+                            <td>
+                                {% if user.treasurer %}
+                                    <i class="fa fa-check" aria-hidden="true"></i>
+                                {% endif %}
+                            </td>
                             <td><a href="{{ url_for('edit_user', user=user.email) }}" class="btn btn-default">Edit</a></td>
-                            <td><a href="{{ url_for('delete_user', user=user.email) }}" class="btn btn-default {{ 'disabled' if user == current_user }}">Delete</a></td>
+                            <td><a href="{{ url_for('delete_user', user=user.email) }}" class="btn btn-default {{ 'disabled' if user == current_user or (not current_user.treasurer and user.treasurer) }}">Delete</a></td>
                         </tr>
                     {% endfor %}
                 </tbody>

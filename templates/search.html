@@ -154,7 +154,7 @@
                         html += "<td>" + (grants[i].cpf_submitted ? '<i class="fa fa-check" aria-hidden="true"></i>' : "") + "</td>";
                         html += "<td>" + (grants[i].funds_dispensed ? "$" + grants[i].funds_dispensed.toFixed(2) : "") + "</td>";
                         html += "<td>" + '<a href="/grant/' + grants[i].grant_id + '" class="btn btn-default">Status Page</a>' + "</td>";
-                        {% if current_user.admin %}
+                        {% if current_user.treasurer %}
                             html += "<td>" + '<a href="/grant/' + grants[i].grant_id + '/raw" class="btn btn-default">Raw</a>' + "</td>";
                         {% endif %}
                         html += "</tr>";

@@ -1398,6 +1398,10 @@ def edit_user():
             admin = True
         else:
             admin = False
+        if current_user.treasurer and request.form.get('treasurer'):
+            treasurer = True
+        else:
+            treasurer = False
         if request.form.get('reset_pw'):
             reset_pw = True
         else:
@@ -1418,6 +1422,9 @@ def edit_user():
 
             # Update Admin value
             user.admin = admin
+
+            # Update Treasurer value
+            user.treasurer = treasurer
 
             # Reset user password if requested
             if reset_pw:
@@ -1454,6 +1461,10 @@ def add_user():
             admin = True
         else:
             admin = False
+        if current_user.treasurer and request.form.get('treasurer'):
+            treasurer = True
+        else:
+            treasurer = False
 
         # Verify that required fields have been completed
         if not first_name or not last_name or not email:
@@ -1462,6 +1473,9 @@ def add_user():
 
         # Create user
         user = create_user(email, first_name, last_name, "password", admin)
+
+        # Add treasurer permissions
+        user.treasurer = treasurer
 
         # Add new user to database
         db.session.add(user)
@@ -1495,6 +1509,10 @@ def delete_user():
     # Ensure that user is not deleting their own account
     if user == current_user:
         return "Cannot delete current user account"
+
+    # Ensure non-treasurers cannot delete treasurers
+    if user.treasurer and not current_user.treasurer:
+        return "A non-treasurer cannot delete a treasurer"
 
     # User is requesting form
     if request.method == 'GET':
@@ -1892,7 +1910,7 @@ def owed_money():
 
 @app.route('/owed-money/<grant_id>', methods=['GET','POST'])
 @login_required
-@admin_required
+@treasurer_required
 def process_owed_money(grant_id):
     # Query for grant
     grant = Grant.query.filter_by(grant_id=grant_id).first()
@@ -1917,7 +1935,7 @@ def process_owed_money(grant_id):
 
 @app.route('/grant/<grant_id>/raw', methods=['GET','POST'])
 @login_required
-@admin_required
+@treasurer_required
 def raw_grant_edit(grant_id):
     GrantForm = model_form(Grant, Form)
     grant = Grant.query.filter_by(grant_id=grant_id).first()
@@ -2009,5 +2027,5 @@ def expenses():
     return render_template("expenses.html", funds=funds)
 
 @app.route('/budget/<council>')
-    def uploaded_boxart(council):
-        return send_from_directory(app.config['UPLOAD_FOLDER'],filename)
+def budget(council):
+    pass

@@ -273,6 +273,7 @@ class User(db.Model, FlaskLoginUser):
     pw_hash = db.Column(db.Text)
     salt = db.Column(db.Text)
     force_pw_update = db.Column(db.Boolean, default=False)
+    treasurer = db.Column(db.Boolean, default=False)
 
     def __init__(self, email, first_name, last_name, admin, pw_hash, salt):
         self.email = email

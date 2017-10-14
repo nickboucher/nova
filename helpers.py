@@ -157,6 +157,17 @@ def admin_required(func):
         return func(*args, **kwargs)
     return decorated_view
 
+def treasurer_required(func):
+    """ Requires treasurer priveleges on page. Should wrap with
+        @login_required above this wrapper """
+    @wraps(func)
+    def decorated_view(*args, **kwargs):
+        if not current_user.treasurer:
+            flash("You must be a Treasurer to access this page.", "message")
+            return redirect(url_for('index'))
+        return func(*args, **kwargs)
+    return decorated_view
+
 def isfloat(value):
     """ Simple function that return a Boolean representing whether
         the input string was in valid float form """

@@ -30,6 +30,7 @@
                                     <thead>
                                         <tr>
                                             <th>Expense Name</th>
+                                            <th>Legislation Number</th>
                                             <th>Amount Budgeted</th>
                                             <th>Amount Spent</th>
                                             <th>Legislation</th>
@@ -39,6 +40,7 @@
                                         {% for expense in fund.expenses %}
                                             <tr>
                                                 <td>{{ expense.name }}</td>
+                                                <td>{{ expense.legislation_number | suppress_none }}</td>
                                                 <td>{{ expense.budget | usd }}</td>
                                                 <td>{{ expense.spent | usd }}</td>
                                                 <td>

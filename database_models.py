@@ -331,7 +331,8 @@ class Expense(db.Model):
     spent = db.Column(db.Float, default=0)
     fund_id = db.Column(db.Integer, db.ForeignKey('fund.id'), nullable=False)
     fund = db.relationship('Fund', backref='expenses', lazy=True)
-    legislation_file = db.Column(db.Text, default="None")
+    legislation_file = db.Column(db.Text, default=None)
+    legislation_number = db.Column(db.Text, default=None)
 
     def __init__(self, name, fund, budget):
         self.name = name

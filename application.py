@@ -2133,6 +2133,7 @@ def add_expense():
             flash("Fund does not exist", 'error')
         expense = Expense(request.form["name"], fund, request.form["amount"])
         expense.legislation_file = filename
+        expense.legislation_number = request.form.get("leg_num")
         db.session.add(expense)
         db.session.commit()
         flash("Expense " + request.form["name"] + " Added Successfully", 'success')

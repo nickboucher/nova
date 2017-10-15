@@ -1,0 +1,29 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Manage Expenses
+{% endblock %}
+
+{% block main %}
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="center">
+                <h1>Manage Expenses</h1>
+                <h3>Treasurer Management of Full-Council Expenses</h3>
+            </div>
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-12 center">
+            <div class="margin40">
+                <a href="{{ url_for('add_expense') }}" class="btn btn-success" style="font-size:1.5em;">Add Expense</a>
+            </div>
+            <div class="margin40">
+                <a href="{{ url_for('add_fund') }}" class="btn btn-warning">Add Fund</a>
+                <a href="{{ url_for('add_budget') }}" class="btn btn-danger">Add Budget</a>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}

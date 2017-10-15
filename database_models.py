@@ -311,7 +311,8 @@ class Fund(db.Model):
             this fund """
         spend = 0
         for expense in self.expenses:
-            spend += expense.spent
+            if expense.spent:
+                spend += expense.spent
         return spend
 
     def __init__(self, name, budget):
@@ -327,9 +328,10 @@ class Expense(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.Text)
     budget = db.Column(db.Float)
-    spent = db.Column(db.Float, default=None)
+    spent = db.Column(db.Float, default=0)
     fund_id = db.Column(db.Integer, db.ForeignKey('fund.id'), nullable=False)
     fund = db.relationship('Fund', backref='expenses', lazy=True)
+    legislation_file = db.Column(db.Text, default="None")
 
     def __init__(self, name, fund, budget):
         self.name = name
@@ -338,3 +340,16 @@ class Expense(db.Model):
 
     def __repr__(self):
         return '<Expense %r>' % self.name
+
+class Budget(db.Model):
+
+    id = db.Column(db.Integer, primary_key=True)
+    council = db.Column(db.Integer, unique=True, nullable=False)
+    amount = db.Column(db.Float, default=None)
+    file = db.Column(db.Text, default=None)
+
+    def __init__(self, council):
+        self.council = council
+
+    def __repr__(self):
+        return '<Budget %r>' % self.council

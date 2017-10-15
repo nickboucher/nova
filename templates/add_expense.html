@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Add Expense
+{% endblock %}
+
+{% block main %}
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="center">
+                <h1>Add Expense</h1>
+                <h3>Create a new expense from legislation</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="row margin40">
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+            <form method="post" enctype="multipart/form-data">
+                <div class="form-group">
+                    <label for="name">Expense Name:</label>
+                    <input type="text" class="form-control max400" id="name" name="name">
+                </div>
+                <div class="form-group">
+                    <label for="amount">Budget Amount:</label>
+                    <input type="number" min="0" step=".01" class="form-control max400" id="amount" name="amount">
+                </div>
+                <div class="form-group">
+                    <label for="fund">Fund:</label>
+                    <select class="form-control" id="fund" name="fund">
+                        {% for fund in funds %}
+                            <option value="{{ fund.id }}">{{ fund.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="legislation">Legislation PDF:</label>
+                    <input type="file" id="legislation" name="legislation">
+                </div>
+                <button type="submit" class="btn btn-default margin15">Submit</button>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}

@@ -7,7 +7,7 @@
 #
 
 import atexit
-from flask import Flask, flash, redirect, render_template, request, session, url_for, jsonify
+from flask import Flask, flash, redirect, render_template, request, session, url_for, jsonify, send_from_directory
 from sqlalchemy.exc import IntegrityError
 from datetime import datetime, timezone, timedelta
 from sqlalchemy.sql.expression import or_ as OR, and_ as AND
@@ -21,6 +21,10 @@ from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.interval import IntervalTrigger
 from flask_wtf import Form
 from wtforms_sqlalchemy.orm import model_form
+from os.path import join, exists
+from os import makedirs
+from werkzeug.utils import secure_filename
+from time import strftime
 from database_models import *
 from helpers import *
 
@@ -28,6 +32,10 @@ from helpers import *
 app = Flask(__name__)
 # Add support for database migrations
 migrate = Migrate(app, db)
+# Set uploaded file directory
+app.config['UPLOAD_FOLDER'] = join(app.instance_path, "uploads")
+if not exists(app.config['UPLOAD_FOLDER']):
+    makedirs(app.config['UPLOAD_FOLDER'])
 
 # ensure responses aren't cached
 if app.config["DEBUG"]:
@@ -2026,6 +2034,135 @@ def expenses():
     funds = Fund.query.filter_by(council=council).all()
     return render_template("expenses.html", funds=funds)
 
+@app.route('/expenses/manage/add-budget', methods=['GET','POST'])
+@login_required
+@treasurer_required
+def add_budget():
+    """ Adds a new budget to the system """
+    # User is requesting form
+    if request.method == 'GET':
+        return render_template("add_budget.html")
+    # User is submitting form
+    else:
+        if "council" not in request.form or not request.form["council"]:
+            flash("Council number not provided", 'error')
+            return render_template("add_budget.html")
+        if "amount" not in request.form or not request.form["amount"]:
+            flash("Budget amount not provided", 'error')
+            return render_template("add_budget.html")
+        # check if the post request has the file part
+        if 'budget' not in request.files:
+            flash('No file part', 'error')
+            return redirect(url_for("add_budget"))
+        file = request.files['budget']
+        # if user does not select file, browser also
+        # submit a empty part without filename
+        if file.filename == '':
+            flash('No selected file', 'error')
+            return redirect(url_for("add_budget"))
+        if file and '.' in file.filename and file.filename.rsplit('.', 1)[1].lower() == 'pdf':
+            filename = secure_filename(strftime("%m%d%Y-%H%M%S_") + file.filename)
+            file.save(join(app.config['UPLOAD_FOLDER'], filename))
+            # Create DB object for new budget
+            budget = Budget(request.form["council"])
+            budget.amount = request.form["amount"]
+            budget.file = filename
+            db.session.add(budget)
+            db.session.commit()
+            flash("Budget Successfully Added", 'success')
+            return render_template("add_budget.html")
+        else:
+            flash("Budget must be a PDF", 'error')
+            return redirect(url_for("add_budget"))
+
 @app.route('/budget/<council>')
-def budget(council):
-    pass
+def council_budget(council):
+    """ Supplies the budget PDF file for a given council """
+    budget = Budget.query.filter_by(council=council).first()
+    if not budget:
+        flash("Budget does not exist", 'error')
+        return redirect(url_for("index"))
+    return send_from_directory(app.config['UPLOAD_FOLDER'], budget.file)
+
+@app.route('/budget')
+def budget():
+    """ Supplies the budget PDF file for the current given council """
+    council = db.session.query(db.func.max(Budget.council)).scalar()
+    return council_budget(council)
+
+@app.route('/expenses/manage')
+@login_required
+@treasurer_required
+def manage_expenses():
+    """ A dashboard of links for managing full-council expenses """
+    return render_template("manage_expenses.html")
+
+@app.route('/expenses/manage/add-expense', methods=['GET','POST'])
+@login_required
+@treasurer_required
+def add_expense():
+    """ Adds an expense to the system """
+    # User is requesting form
+    if request.method == 'GET':
+        council = db.session.query(db.func.max(Budget.council)).scalar()
+        funds = Fund.query.filter_by(council=council).all()
+        return render_template('add_expense.html', funds=funds)
+    # User is submitting form
+    else:
+        if "name" not in request.form or not request.form["name"]:
+            flash("Expense name not provided", 'error')
+            return render_template("add_budget.html")
+        if "amount" not in request.form or not request.form["amount"]:
+            flash("Expense budgeted amount not provided", 'error')
+            return render_template("add_budget.html")
+        if "fund" not in request.form or not request.form["fund"]:
+            flash("Fund not selected", 'error')
+            return render_template("add_budget.html")
+        filename = None
+        if "legislation" in request.files:
+            file = request.files['legislation']
+            if file.filename:
+                if file and '.' in file.filename and file.filename.rsplit('.', 1)[1].lower() == 'pdf':
+                    filename = secure_filename(strftime("%m%d%Y-%H%M%S_") + file.filename)
+                    file.save(join(app.config['UPLOAD_FOLDER'], filename))
+                else:
+                    flash("Budget must be a PDF", 'error')
+                    return redirect(url_for("add_budget"))
+        fund = Fund.query.get(request.form["fund"])
+        if not fund:
+            flash("Fund does not exist", 'error')
+        expense = Expense(request.form["name"], fund, request.form["amount"])
+        expense.legislation_file = filename
+        db.session.add(expense)
+        db.session.commit()
+        flash("Expense " + request.form["name"] + " Added Successfully", 'success')
+        return redirect(url_for("manage_expenses"))
+
+@app.route('/expenses/manage/add-fund', methods=['GET','POST'])
+@login_required
+@treasurer_required
+def add_fund():
+    """ Adds a fund to the system """
+    # User is requesting form
+    if request.method == 'GET':
+        return render_template("add_fund.html")
+    # User is submitting form
+    else:
+        if not request.form.get("name"):
+            flash("Fund name not provided", 'error')
+            return render_template("add_fund.html")
+        if not request.form.get("amount"):
+            flash("Fund amount not provided", 'error')
+            return render_template("add_fund.html")
+        # Check that the fund doesn't already exist
+        council = db.session.query(db.func.max(Budget.council)).scalar()
+        dup = Fund.query.filter_by(council=council, name=request.form["name"]).first()
+        if dup:
+            flash("Fund already exists", 'error')
+            return render_template("add_fund.html")
+        fund = Fund(request.form["name"],request.form["amount"])
+        fund.council = council
+        db.session.add(fund)
+        db.session.commit()
+        flash("Fund " + request.form["name"] + " Added Successfully", 'success')
+        return redirect(url_for("manage_expenses"))

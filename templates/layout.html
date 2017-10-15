@@ -59,6 +59,9 @@
             				<li class="active"><a href="{{ url_for('search') }}">Search <span class="sr-only">(current)</span></a></li>
             				<li><a href="{{ url_for('interviews') }}">Interviews</a></li>
             				<li><a href="{{ url_for('small_grants') }}">Small Grants</a></li>
+                            {% if not current_user.treasurer %}
+                                <li><a href="{{ url_for('expenses') }}">Expenses</a></li>
+                            {% endif %}
             				{% if current_user.admin %}
                 				<li class="dropdown">
                 					<a href="#" class="dropdown-toggle" data-toggle="dropdown" role="button" aria-expanded="false">Admin <span class="caret"></span></a>
@@ -79,6 +82,8 @@
                                     <ul class="dropdown-menu" role="menu">
                                         <li><a href="{{ url_for('review_receipts') }}">Process Funds</a></li>
                                         <li><a href="{{ url_for('owed_money') }}">Owed Money</a></li>
+                                        <li><a href="{{ url_for('expenses') }}">Expenses</a></li>
+                                        <li><a href="{{ url_for('manage_expenses') }}">Manage Expenses</a></li>
                                     </ul>
                                 </li>
                             {% endif %}

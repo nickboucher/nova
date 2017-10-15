@@ -2166,3 +2166,15 @@ def add_fund():
         db.session.commit()
         flash("Fund " + request.form["name"] + " Added Successfully", 'success')
         return redirect(url_for("manage_expenses"))
+
+@app.route('/expenses/<id>')
+def expense_legislation(id):
+    """ Serves a requested legislation pdf for a given expense """
+    expense = Expense.query.get(id)
+    if not expense:
+        flash("Expense does not exist", 'error')
+        return redirect(url_for("index"))
+    if not expense.legislation_file:
+        flash("Expense does not have attached legislation", 'error')
+        return redirect(url_for("index"))
+    return send_from_directory(app.config['UPLOAD_FOLDER'], expense.legislation_file)

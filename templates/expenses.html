@@ -32,6 +32,7 @@
                                             <th>Expense Name</th>
                                             <th>Amount Budgeted</th>
                                             <th>Amount Spent</th>
+                                            <th>Legislation</th>
                                         </tr>
                                     </thead>
                                     <tbody>
@@ -40,6 +41,11 @@
                                                 <td>{{ expense.name }}</td>
                                                 <td>{{ expense.budget | usd }}</td>
                                                 <td>{{ expense.spent | usd }}</td>
+                                                <td>
+                                                    {% if expense.legislation_file %}
+                                                        <a href="{{ url_for('expense_legislation', id=expense.id) }}" class="btn btn-default">Legislation</a>
+                                                    {% endif %}
+                                                </td>
                                             </tr>
                                         {% endfor %}
                                     </tbody>

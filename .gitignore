@@ -101,4 +101,4 @@ ENV/
 .ropeproject
 
 # Ignore the local database
-database.db
+database.db*

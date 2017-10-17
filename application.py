@@ -1910,9 +1910,11 @@ def owed_money():
     # Sum owed money
     total = 0
     for grant in no_receipts:
-        total += grant.amount_dispensed
+        if grant.amount_dispensed:
+            total += grant.amount_dispensed
     for grant in unspent_money:
-        total += grant.reimburse_uc_amount
+        if grant.reimburse_uc_amount:
+            total += grant.reimburse_uc_amount
     # Render page to user
     return render_template('owed_money.html', no_receipts=no_receipts, unspent_money=unspent_money, total=total)
 

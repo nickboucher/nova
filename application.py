@@ -7,7 +7,7 @@
 #
 
 import atexit
-from flask import Flask, flash, redirect, render_template, request, session, url_for, jsonify, send_from_directory
+from flask import Flask, flash, redirect, render_template, request, session, url_for, jsonify, send_from_directory, Response, stream_with_context
 from sqlalchemy.exc import IntegrityError
 from datetime import datetime, timezone, timedelta
 from sqlalchemy.sql.expression import or_ as OR, and_ as AND
@@ -20,7 +20,7 @@ from flask_migrate import Migrate
 from apscheduler.schedulers.background import BackgroundScheduler
 from apscheduler.triggers.interval import IntervalTrigger
 from flask_wtf import Form
-from wtforms_sqlalchemy.orm import model_form
+from wtforms_sqlalchemy.orm import model_form, model_fields
 from os.path import join, exists
 from os import makedirs
 from werkzeug.utils import secure_filename
@@ -2181,3 +2181,18 @@ def expense_legislation(id):
         flash("Expense does not have attached legislation", 'error')
         return redirect(url_for("index"))
     return send_from_directory(app.config['UPLOAD_FOLDER'], expense.legislation_file)
+
+@app.route('/export', methods=['GET','POST'])
+@login_required
+def export():
+    """ Export all Grants data as CSV """
+    fields = sorted(list(model_fields(Grant).keys()))
+    def generate():
+        # Write header
+        yield ','.join(fields) + '\n'
+        for grant in Grant.query.all():
+            for field in fields:
+                val = '\"' + str(getattr(grant,field)).replace('\n', ' ').replace('\r', '').replace('\"', '\"\"') + '\"' if getattr(grant,field) is not None else ""
+                yield val + ','
+            yield '\n'
+    return Response(stream_with_context(generate()), mimetype='text/csv')

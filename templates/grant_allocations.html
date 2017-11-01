@@ -108,6 +108,9 @@
                 </tbody>
             </table>
             <div class="center">
+                {%- if current_user.is_authenticated and grant.interviewer_notes %}
+                    <p><b>Interview Comments:</b>&nbsp;{{ grant.interviewer_notes }}</p>
+                {% endif %}
                 <h2 class="margin40">Total Grant Amount: {{ grant.amount_allocated | usd }}</h2>
                 {% if grant.percentage_cut %}
                     <p style="margin-top:25px;">Sometimes, our budget requires that we make across the board cuts to all grants. If that is the case, then the total grant amount

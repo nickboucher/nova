@@ -207,7 +207,7 @@
             }));
 
             // Convert values to JSON
-            var json = '{"grants_pack":"{{ grants_pack }}","grants":' + JSON.stringify(values).replace('\"','\\\"') + '}';
+            var json = '{"grants_pack":"{{ grants_pack }}","grants":' + JSON.stringify(values) + '}';
 
             // Set the status message to saving and temporarily disable submit button
             $("#status").text('Saving changes...');

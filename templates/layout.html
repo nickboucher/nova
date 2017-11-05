@@ -100,6 +100,32 @@
             	</div>
             </nav>
 
+        {% else %}
+
+            <!-- Navbar -->
+            <style>body { padding-top: 70px; }</style>
+            <nav class="navbar navbar-findcond navbar-fixed-top">
+                <div class="container">
+                    <div class="navbar-header">
+                        <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar">
+                            <span class="sr-only">Toggle navigation</span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                            <span class="icon-bar"></span>
+                        </button>
+                        <a class="navbar-brand" href="{{ url_for('index') }}">nova</a>
+                    </div>
+                    <div class="collapse navbar-collapse" id="navbar">
+                        <ul class="nav navbar-nav navbar-right">
+                            <li><a href="{{ url_for('expenses') }}">Council Expenses</a></li>
+                            <li><a href="{{ url_for('search') }}">Grants Search</a></li>
+                            <li><a href="https://harvard.az1.qualtrics.com/jfe1/form/SV_bQlbCpGGFSulLVP">Grant Application</a></li>
+                            <li><a href="{{ url_for('login') }}">UC Login</a></li>
+                        </ul>
+                    </div>
+                </div>
+            </nav>
+
         {% endif %}
 
         <div class="container{{ '-fluid' if fullwidth }}">

@@ -135,7 +135,6 @@ def user_loader(email):
     return User.query.get(email)
 
 @app.route('/')
-@login_required
 def index():
     return render_template("index.html")
 
@@ -1138,7 +1137,6 @@ def grants_pack_council_approve(grants_pack):
         return redirect(url_for('grants_packs'))
 
 @app.route('/search', methods=['GET','POST'])
-@login_required
 def search():
     """ Allows the user to search for grants by Organization, Project, or Grant ID """
 
@@ -1154,7 +1152,6 @@ def search():
         return render_template('search.html', k=sec_key.value)
 
 @app.route('/search/organizations')
-@login_required
 def organizations():
     """ Provides an API endpoint which returns a list of all organizations in JSON """
 
@@ -1180,7 +1177,6 @@ def organizations():
     return jsonify(orgs)
 
 @app.route('/search/projects')
-@login_required
 def projects():
     """ Provides an API endpoint for which projects can be queried """
 
@@ -1206,7 +1202,6 @@ def projects():
     return jsonify(projects)
 
 @app.route('/search/lookup-grants')
-@login_required
 def lookup_grants():
     """ API endpoint that returns a list of all grants from an organization """
 
@@ -2028,7 +2023,6 @@ def request_hearing():
     return redirect(url_for('hearings'))
 
 @app.route('/expenses')
-@login_required
 def expenses():
     """ Lists all expenses in the current council's budget """
     council_semester = Config.query.filter_by(key="council_semester").first()

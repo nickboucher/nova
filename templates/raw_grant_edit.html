@@ -22,7 +22,7 @@
         {% elif field.type == "DateTimeField" %}
             <input type="datetime-local" id="{{ field.id }}" name="{{ field.name }}" class="form-control" value="{{ field.data.strftime('%Y-%m-%dT%H:%M') if field.data else "" }}">
         {% elif field.type == "DecimalField" %}
-        <input type="number" id="{{ field.id }}" name="{{ field.name }}" class="form-control" value="{{ field.data if field.data != None else '' }}">
+        <input type="number" id="{{ field.id }}" name="{{ field.name }}" step=".01" class="form-control" value="{{ field.data if field.data != None else '' }}">
         {% elif field.type == "IntegerField" %}
         <input type="number" id="{{ field.id }}" name="{{ field.name }}" step="1" class="form-control" value="{{ field.data if field.data != None else '' }}">
         {% elif field.type== "BooleanField" %}

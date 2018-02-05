@@ -36,6 +36,7 @@
                                             <th>Legislation</th>
                                             {% if current_user.treasurer %}
                                               <th>Edit</th>
+                                              <th>Delete</th>
                                             {% endif %}
                                         </tr>
                                     </thead>
@@ -52,7 +53,8 @@
                                                     {% endif %}
                                                 </td>
                                                 {% if current_user.treasurer %}
-                                                  <td><a href="{{ url_for('expense_edit', id=expense.id) }}" class="btn btn-default">Edit</a></td>
+                                                  <td><a href="{{ url_for('expense_edit', id=expense.id) }}" class="btn btn-primary">Edit</a></td>
+                                                  <td><a href="{{ url_for('expense_delete', id=expense.id) }}" class="btn btn-danger">Delete</a></td>
                                                 {% endif %}
                                             </tr>
                                         {% endfor %}

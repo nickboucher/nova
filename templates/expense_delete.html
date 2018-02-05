@@ -1,0 +1,31 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Delete Expense
+{% endblock %}
+
+{% block main %}
+
+    <div class="row">
+        <div class="col-md-12">
+            <div class="center">
+                <h1>Delete Expense</h1>
+                <h3>{{ expense.name }}</h3>
+            </div>
+        </div>
+    </div>
+
+    <div class="row margin40">
+        <div class="col-md-4"></div>
+        <div class="col-md-4">
+            <h4>Confirm Deletion of Expense</h4>
+            <hr>
+            <form method="post" action="{{ url_for('expense_delete', id=expense.id) }}">
+                <input type="hidden" name="delete" value="true">
+                <p><i>This action cannot be undone.</i></p>
+                <button type="submit" class="btn btn-danger margin15">Delete Expense</button>
+            </form>
+        </div>
+    </div>
+
+{% endblock %}

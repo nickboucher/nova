@@ -2211,8 +2211,30 @@ def expense_edit(id):
             db.session.commit()
             # Notify the user
             flash("Expense updated successfully.", 'success')
-            return redirect(url_for('expenses', id=expense.id))
+            return redirect(url_for('expenses'))
         else:
             # Form submission missing required data
             flash("Error: Request missing required form data.", 'error')
             return render_template('expenses_edit', expense=expense)
+
+@app.route('/expenses/<id>/delete', methods=['GET','POST'])
+@login_required
+@treasurer_required
+def expense_delete(id):
+    """ Deletes the supplied expense record """
+    # Query for the expense
+    expense = Expense.query.get(id)
+    if not expense:
+        flash("Expense does not exist", 'error')
+        return redirect(url_for("index"))
+    # Serve the form
+    if request.method == 'GET':
+        return render_template('expense_delete.html', expense=expense)
+    # Handle form submission
+    else:
+        # Remove the expense from the DB
+        db.session.delete(expense)
+        db.session.commit()
+        # Notify the user
+        flash("Expense deleted successfully.", 'success')
+        return redirect(url_for('expenses'))

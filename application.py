@@ -2190,3 +2190,29 @@ def export():
                 yield val + ','
             yield '\n'
     return Response(stream_with_context(generate()), mimetype='text/csv')
+
+@app.route('/expenses/<id>/edit', methods=['GET','POST'])
+@login_required
+@treasurer_required
+def expense_edit(id):
+    """ Allows editing spent amount of existing expenses """
+    expense = Expense.query.get(id)
+    if not expense:
+        flash("Expense does not exist", 'error')
+        return redirect(url_for("index"))
+    if request.method == 'GET':
+        # Serve the form
+        return render_template('expenses_edit.html', expense=expense)
+    else:
+        # Handle the form submitted data
+        if request.form['spent']:
+            # Update the DB
+            expense.spent = request.form['spent']
+            db.session.commit()
+            # Notify the user
+            flash("Expense updated successfully.", 'success')
+            return redirect(url_for('expenses', id=expense.id))
+        else:
+            # Form submission missing required data
+            flash("Error: Request missing required form data.", 'error')
+            return render_template('expenses_edit', expense=expense)

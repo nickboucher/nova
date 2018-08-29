@@ -15,6 +15,7 @@ from hashlib import pbkdf2_hmac
 from binascii import hexlify
 from functools import wraps
 from os import urandom
+from os.path import join, isdir, dirname
 from flask_mail import Message
 from sys import argv
 from threading import Thread

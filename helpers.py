@@ -78,6 +78,20 @@ def percentage(value):
     """ Returns a rounded, expanded percentage from a float in [0,1] """
     return round(value * 100, 2)
 
+def install_secret_key(app, filename='secret.key'):
+    """ Configure the SECRET_KEY from a file in the
+    instance directory. If the file does not exist,
+    generate a random key, and save it. """
+    filename = join(app.instance_path, filename)
+    try:
+        app.config['SECRET_KEY'] = open(filename, 'rb').read()
+    except IOError:
+        if not isdir(dirname(filename)):
+            makedirs(dirname(filename))
+        with open(filename, 'wb+') as f:
+            f.write(urandom(24))
+        print("Generated Random Secret Key")
+
 def get_grant_args(query_string):
     """ Gets arguments specific to application from query string,
         escaping some troublsesome characters """

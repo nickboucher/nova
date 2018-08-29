@@ -67,7 +67,7 @@ app.jinja_env.filters["datetime"] = utc_to_east_datetime
 app.jinja_env.filters["date"] = utc_to_east_date
 app.jinja_env.filters["percentage"] = percentage
 
-# set cryptographic key for Sessions
+# Set cryptographic key for Sessions
 install_secret_key(app)
 
 # setup database connection

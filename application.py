@@ -51,7 +51,7 @@ else:
     scheduler.start()
     scheduler.add_job(
             func=send_owe_money_emails,
-            trigger=IntervalTrigger(days=2),
+            trigger=IntervalTrigger(days=14),
             id='send_owed_money_emails_job',
             name='Sends Owed Money Emails',
             replace_existing=True)

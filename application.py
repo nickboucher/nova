@@ -1247,8 +1247,14 @@ def review_receipts():
     upfront_grants = Grant.query.filter(AND(AND(Grant.council_approved==True,Grant.is_upfront==True),AND(Grant.is_paid==False,Grant.amount_allocated!=0))).all()
     upfront_receipts = Grant.query.filter_by(council_approved=True,is_upfront=True,is_paid=True,receipts_submitted=True,receipts_reviewed=False).all()
 
+    # Query for orgs in bad standing
+    no_receipts = Grant.query.filter(AND(AND(AND(AND(AND(AND(Grant.council_approved==True,Grant.amount_allocated>0),Grant.receipts_submitted==False), Grant.receipts_due < datetime.now()), Grant.amount_dispensed>0), Grant.reimbursed_uc==False, OR(OR(Grant.hearing_requested==False,Grant.hearing_requested==None),Grant.hearing_occurred==True)))).all()
+    unspent_money = Grant.query.filter(AND(AND(AND(AND(Grant.council_approved==True,Grant.amount_allocated>0),Grant.must_reimburse_uc==True),Grant.reimbursed_uc==False, OR(OR(Grant.hearing_requested==False,Grant.hearing_requested==None),Grant.hearing_occurred==True)))).all()
+    hearings = Grant.query.filter(AND(Grant.hearing_requested==True,Grant.hearing_occurred==False))
+    bad_orgs = set([x.organization for x in no_receipts] + [x.organization for x in unspent_money] + [x.organization for x in hearings])
+
     # Render grants page to the user
-    return render_template('review_receipts.html', retroactive_grants=retroactive_grants,upfront_grants=upfront_grants,upfront_receipts=upfront_receipts)
+    return render_template('review_receipts.html', retroactive_grants=retroactive_grants,upfront_grants=upfront_grants,upfront_receipts=upfront_receipts, bad_orgs=bad_orgs)
 
 @app.route('/treasurer/<grant_id>', methods=['GET','POST'])
 @login_required

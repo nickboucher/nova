@@ -11,10 +11,11 @@
             <div class="center">
                 <h1>Treasurer</h1>
                 <h3>These grants are ready to be processed.</h3>
+                <h6>Organizations in bad standing are highlighted in red.</h6>
             </div>
         </div>
     </div>
-    
+
     <div class="row">
         <div class="col-md-12 margin40">
             <table class="table table-striped table-hover table-responsive">
@@ -30,7 +31,7 @@
                 </thead>
                 <tbody>
                     {% for grant in upfront_grants %}
-                        <tr class="clickable-row" data-href="{{ url_for('upfront_payment', grant_id=grant.grant_id) }}">
+                        <tr class="clickable-row {{ 'danger' if grant.organization in bad_orgs }}" data-href="{{ url_for('upfront_payment', grant_id=grant.grant_id) }}">
                             <td>{{ grant.grant_id }}</td>
                             <td>{{ grant.organization }}</td>
                             <td>{{ grant.project }}</td>
@@ -50,7 +51,7 @@
                         </tr>
                     {% endfor %}
                     {% for grant in upfront_receipts %}
-                        <tr class="clickable-row" data-href="{{ url_for('upfront_review', grant_id=grant.grant_id) }}">
+                        <tr class="clickable-row {{ 'danger' if grant.organization in bad_orgs }}" data-href="{{ url_for('upfront_review', grant_id=grant.grant_id) }}">
                             <td>{{ grant.grant_id }}</td>
                             <td>{{ grant.organization }}</td>
                             <td>{{ grant.project }}</td>
@@ -70,7 +71,7 @@
 
     <script type="text/javascript">
         $(".clickable-row").click(function() {
-           window.document.location = $(this).data("href"); 
+           window.document.location = $(this).data("href");
         });
     </script>
 

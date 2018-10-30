@@ -13,7 +13,7 @@ While this application was written specifically for the Harvard Undergraduate Co
 1. Application is submitted to nova via RESTful API
 2. Small grants are submitted for review by a staff member, while larger grants are invited in for an interview
 3. Grant recommendations are up for review by the Financial Committee
-4. Grant recommendatiosn are up for review by the General Council
+4. Grant recommendations are up for review by the General Council
 5. Funds are dispensed
 6. Receipts are submitted via RESTful API
 7. Receipts are reviewed by treasurer and grant is finalized
@@ -24,7 +24,7 @@ While this application was written specifically for the Harvard Undergraduate Co
 1. Application is submitted to nova via RESTful API
 2. Small grants are submitted for review by a staff member, while larger grants are invited in for an interview
 3. Grant recommendations are up for review by the Financial Committee
-4. Grant recommendatiosn are up for review by the General Council
+4. Grant recommendations are up for review by the General Council
 5. Receipts are submitted via RESTful API
 6. Receipts are reviewed by treasurer
 7. Funds are dispensed

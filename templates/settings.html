@@ -144,6 +144,17 @@
                   </form>
               </div>
             </div>
+            <div class="row">
+              <div class="col-md-6">
+                  <form action="{{ url_for('treasurer_name') }}" class="form-inline margin40" method="post">
+                      <div class="form-group">
+                          <label for="treasurer_name">Treasurer Name:&nbsp;&nbsp;&nbsp;</label>
+                          <input type="text" class="form-control" id="treasurer_name" name="treasurer_name" value="{{ treasurer_name }}">
+                      </div>
+                      <button type="submit" class="btn btn-default" style="margin-left:10px;">Update</button>
+                  </form>
+              </div>
+            </div>
         </div>
     </div>
 

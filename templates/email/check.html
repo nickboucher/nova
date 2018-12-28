@@ -5,15 +5,15 @@
 
 <div style="text-align:left;">
     <p>Dear {{ grant.contact_first_name }} {{ grant.contact_last_name }},</p>
-    
+
     {% if grant.is_upfront %}
-        <p>The funds for your upfront grant <i>{{ grant.project }}</i> are now available. A check has been written to 
+        <p>The funds for your upfront grant <i>{{ grant.project }}</i> are now available. A check has been written to
             {{ grant.organization }} for <b>{{ grant.amount_dispensed | usd }}</b>. Your check will be available for pickup
             during the weekly UC Financial Committee meetings, which occur on Wednesday nights from 7-8:30pm in the basement of Memorial Hall.
             You are welcome to have any member from your organization pickup your check on any Wednesday at your earliest convenience.
             If that time does not work, please respond to this email to coordinate a time to pick this up from the UC Treasurer.</p>
     {% else %}
-    
+
         <p>You have completed the grant process for <i>{{ grant.project }}</i>! A check has been written to {{ grant.organization }} for
             <b>{{ grant.amount_dispensed | usd }}</b>. Your check will be available for pickup
             during the weekly UC Financial Committee meetings, which occur on Wednesday nights from 7-8:30pm in the basement of Memorial Hall.
@@ -22,11 +22,11 @@
         {% if grant.treasurer_notes %}
             <p>The following note was attached to your grant by the final reviewer of your application: <i>{{ grant.treasurer_notes }}</i></p>
         {% endif %}
-        
+
     {% endif %}
-    
+
     <p>Thanks for applying for a UC Grant; we hope to see you again in the future!</p>
     <p>Best,
-    <br>Nadine Khoury
+    <br>{{ treasurer_name }}
     <br><i>Treasurer, Undergraduate Council</i></p>
 </div>

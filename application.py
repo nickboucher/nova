@@ -1379,6 +1379,11 @@ def settings():
     if not treasurer_email_username:
         return "Error: treasurer_email_username not specified in database"
 
+    # Query for treasurer name
+    treasurer_name = Config.query.filter_by(key="treasurer_name").first()
+    if not treasurer_name:
+        return "Error: treasurer_name not specified in database"
+
     # Query for current council semester
     council_semester = Config.query.filter_by(key="council_semester").first()
     if not council_semester:
@@ -1392,7 +1397,7 @@ def settings():
     grants_pack = council_semester.value + '-' + grant_week.value
 
     # Render page to user
-    return render_template('settings.html', users=users, default_budget=default_budget.value, council_semester=council_semester.value, grants_pack=grants_pack, enable_email=enable_email.value, grants_email_username=grants_email_username.value, treasurer_email_username=treasurer_email_username.value)
+    return render_template('settings.html', users=users, default_budget=default_budget.value, council_semester=council_semester.value, grants_pack=grants_pack, enable_email=enable_email.value, grants_email_username=grants_email_username.value, treasurer_email_username=treasurer_email_username.value, treasurer_name=treasurer_name.value)
 
 @app.route('/settings/edit-user', methods=['GET','POST'])
 @login_required
@@ -1732,6 +1737,34 @@ def treasurer_email_password():
 
     # Display success message
     flash("Successfully updated treasurer email password")
+
+    # Send user to settings page
+    return redirect(url_for('settings'))
+
+@app.route('/settings/treasurer-name', methods=['POST'])
+@login_required
+@admin_required
+def treasurer_name():
+    """ Allows an administrator to set the treasurer name """
+
+    # Get name value from form
+    name = request.form.get("treasurer_name")
+    if not name:
+        flash("No treasurer name specified.", 'error')
+        return redirect(url_for('settings'))
+
+    # Query for name key
+    name_key = Config.query.filter_by(key="treasurer_name").first()
+
+    if not name_key:
+        return "Error: treasurer_name not specified in database"
+
+    # Update value and commit changes
+    name_key.value = name
+    db.session.commit()
+
+    # Display success message
+    flash("Successfully updated treasurer name")
 
     # Send user to settings page
     return redirect(url_for('settings'))

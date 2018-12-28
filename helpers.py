@@ -238,6 +238,9 @@ def if_email(func):
 def email_application_submitted(grant):
     """ Sends an application submitted confirmation email to the grant applicant """
 
+    # Get treasurer name
+    treasurer_name = Config.query.filter_by(key='treasurer_name').first()
+
     # Create Message
     msg = Message("Grant Application Submitted: " + grant.project, recipients=[grant.contact_email])
 
@@ -245,8 +248,9 @@ def email_application_submitted(grant):
     image = "submitted.gif"
 
     # Attach HTML Body
-    html = render_template("email/grant_submit.html", grant=grant, image=image)
+    html = render_template("email/grant_submit.html", grant=grant, image=image, treasurer_name=treasurer_name.value)
     msg.html = html
+    print(html)
 
     # Attach Image
     with application.app.open_resource("templates/email/images/%s" % image) as fp:
@@ -261,6 +265,9 @@ def email_application_passed(grant):
     """ Sends an email to the grant applicant stating the grant has passed the council
         and requesting receipts """
 
+    # Get treasurer name
+    treasurer_name = Config.query.filter_by(key='treasurer_name').first()
+
     # Create Message
     msg = Message("Grant Application Passed: " + grant.project, recipients=[grant.contact_email])
 
@@ -268,7 +275,7 @@ def email_application_passed(grant):
     image = "receipts.gif"
 
     # Attach HTML Body
-    html = render_template("email/grant_passed.html", grant=grant, image=image)
+    html = render_template("email/grant_passed.html", grant=grant, image=image, treasurer_name=treasurer_name.value)
     msg.html = html
 
     # Attach Image
@@ -284,6 +291,9 @@ def email_application_denied(grant):
     """ Sends an email to the grant applicant stating the grant has been denied
         by the council """
 
+    # Get treasurer name
+    treasurer_name = Config.query.filter_by(key='treasurer_name').first()
+
     # Create Message
     msg = Message("Grant Application Denied: " + grant.project, recipients=[grant.contact_email])
 
@@ -291,7 +301,7 @@ def email_application_denied(grant):
     image = "denied.gif"
 
     # Attach HTML Body
-    html = render_template("email/grant_denied.html", grant=grant, image=image)
+    html = render_template("email/grant_denied.html", grant=grant, image=image, treasurer_name=treasurer_name.value)
     msg.html = html
 
     # Attach Image
@@ -307,6 +317,9 @@ def email_interview_scheduled(grant):
     """ Sends an email to the grant applicant stating the interview for the grant
         has been scheduled """
 
+    # Get treasurer name
+    treasurer_name = Config.query.filter_by(key='treasurer_name').first()
+
     # Create Message
     msg = Message("Grant Interview Scheduled: " + grant.project, recipients=[grant.contact_email])
 
@@ -314,7 +327,7 @@ def email_interview_scheduled(grant):
     image = "scheduled.gif"
 
     # Attach HTML Body
-    html = render_template("email/interview_scheduled.html", grant=grant, image=image)
+    html = render_template("email/interview_scheduled.html", grant=grant, image=image, treasurer_name=treasurer_name.value)
     msg.html = html
 
     # Attach Image
@@ -330,6 +343,9 @@ def email_interview_completed(grant):
     """ Sends an email to the grant applicant stating the interview for the grant
         has been completed """
 
+    # Get treasurer name
+    treasurer_name = Config.query.filter_by(key='treasurer_name').first()
+
     # Create Message
     msg = Message("Grant Interview Completed: " + grant.project, recipients=[grant.contact_email])
 
@@ -337,7 +353,7 @@ def email_interview_completed(grant):
     image = "interviewed.gif"
 
     # Attach HTML Body
-    html = render_template("email/interview_complete.html", grant=grant, image=image)
+    html = render_template("email/interview_complete.html", grant=grant, image=image, treasurer_name=treasurer_name.value)
     msg.html = html
 
     # Attach Image
@@ -353,6 +369,9 @@ def email_direct_deposit(grant):
     """ Sends an email to the grant applicant stating the funds have been direct deposited
         into their bank account """
 
+    # Get treasurer name
+    treasurer_name = Config.query.filter_by(key='treasurer_name').first()
+
     # Create Message
     msg = Message("Grant Funds Deposited: " + grant.project, recipients=[grant.contact_email], sender=("UC Treasurer", "harvarductreasurer@gmail.com"))
 
@@ -360,7 +379,7 @@ def email_direct_deposit(grant):
     image = "deposited.gif"
 
     # Attach HTML Body
-    html = render_template("email/direct_deposit.html", grant=grant, image=image)
+    html = render_template("email/direct_deposit.html", grant=grant, image=image, treasurer_name=treasurer_name.value)
     msg.html = html
 
     # Attach Image
@@ -376,6 +395,9 @@ def email_receipts_submitted(grant):
     """ Sends an email to the grant applicant stating the the receipts have been
         submitted """
 
+    # Get treasurer name
+    treasurer_name = Config.query.filter_by(key='treasurer_name').first()
+
     # Create Message
     msg = Message("Grant Receipts Submitted: " + grant.project, recipients=[grant.contact_email])
 
@@ -383,7 +405,7 @@ def email_receipts_submitted(grant):
     image = "receipts_submitted.gif"
 
     # Attach HTML Body
-    html = render_template("email/receipts_submitted.html", grant=grant, image=image)
+    html = render_template("email/receipts_submitted.html", grant=grant, image=image, treasurer_name=treasurer_name.value)
     msg.html = html
 
     # Attach Image
@@ -399,6 +421,9 @@ def email_check(grant):
     """ Sends an email to the grant applicant stating the a check is ready to be picked
         up for their grant """
 
+    # Get treasurer name
+    treasurer_name = Config.query.filter_by(key='treasurer_name').first()
+
     # Create Message
     msg = Message("Grant Check Ready: " + grant.project, recipients=[grant.contact_email], sender=("UC Treasurer", "harvarductreasurer@gmail.com"))
 
@@ -406,7 +431,7 @@ def email_check(grant):
     image = "check.gif"
 
     # Attach HTML Body
-    html = render_template("email/check.html", grant=grant, image=image)
+    html = render_template("email/check.html", grant=grant, image=image, treasurer_name=treasurer_name.value)
     msg.html = html
 
     # Attach Image
@@ -422,6 +447,9 @@ def email_receipts_reviewed(grant):
     """ Sends an email to the grant applicant stating the their receipts have been reviewed
         and approved/owe money """
 
+    # Get treasurer name
+    treasurer_name = Config.query.filter_by(key='treasurer_name').first()
+
     # Define subject and image
     if grant.must_reimburse_uc and not grant.reimbursed_uc:
         subject = "Owed Money on Grant"
@@ -436,7 +464,7 @@ def email_receipts_reviewed(grant):
     msg = Message(subject + ": " + grant.project, recipients=[grant.contact_email], sender=("UC Treasurer", "harvarductreasurer@gmail.com"))
 
     # Attach HTML Body
-    html = render_template("email/receipts_reviewed.html", grant=grant, image=image)
+    html = render_template("email/receipts_reviewed.html", grant=grant, image=image, treasurer_name=treasurer_name.value)
     msg.html = html
 
     # Attach Image
@@ -451,6 +479,9 @@ def email_receipts_reviewed(grant):
 def email_submit_receipts(grant):
     """ Sends a reminder email to the grant applicant to submit receipts """
 
+    # Get treasurer name
+    treasurer_name = Config.query.filter_by(key='treasurer_name').first()
+
     # Create Message
     msg = Message("Submit Receipts: " + grant.project, recipients=[grant.contact_email])
 
@@ -458,7 +489,7 @@ def email_submit_receipts(grant):
     image = "receipts.gif"
 
     # Attach HTML Body
-    html = render_template("email/submit_receipts.html", grant=grant, image=image)
+    html = render_template("email/submit_receipts.html", grant=grant, image=image, treasurer_name=treasurer_name.value)
     msg.html = html
 
     # Attach Image
@@ -476,6 +507,10 @@ def email_receipts_not_submitted(grant):
 def _email_receipts_not_submitted(grant):
     """ Sends an email to the grant applicant letting them know that they did not submit receipts
         before the deadline """
+
+    # Get treasurer name
+    treasurer_name = Config.query.filter_by(key='treasurer_name').first()
+
     # Create Message
     msg = Message("Receipts Deadline Passed: " + grant.project, recipients=[grant.contact_email], sender=("UC Treasurer", "harvarductreasurer@gmail.com"))
 
@@ -486,7 +521,7 @@ def _email_receipts_not_submitted(grant):
         image = "denied.gif"
 
     # Attach HTML Body
-    html = render_template("email/receipts_not_submitted.html", grant=grant, image=image)
+    html = render_template("email/receipts_not_submitted.html", grant=grant, image=image, treasurer_name=treasurer_name.value)
     msg.html = html
 
     # Attach Image
@@ -503,6 +538,10 @@ def email_owed_money(grant):
 
 def _email_owed_money(grant):
     """ Send an email to the grant applicant reminding them that they owe money """
+
+    # Get treasurer name
+    treasurer_name = Config.query.filter_by(key='treasurer_name').first()
+
     # Create Message
     msg = Message("Owed Money Reminder: " + grant.project, recipients=[grant.contact_email], sender=("UC Treasurer", "harvarductreasurer@gmail.com"))
 
@@ -510,7 +549,7 @@ def _email_owed_money(grant):
     image = "owe.gif"
 
     # Attach HTML Body
-    html = render_template("email/owed_money_notice.html", grant=grant, image=image)
+    html = render_template("email/owed_money_notice.html", grant=grant, image=image, treasurer_name=treasurer_name.value)
     msg.html = html
 
     # Attach Image
@@ -525,6 +564,9 @@ def _email_owed_money(grant):
 def email_reimbursement_complete(grant):
     """ Send an email to the grant applicant notifying them that the grant UC reimbursement process is complete """
 
+    # Get treasurer name
+    treasurer_name = Config.query.filter_by(key='treasurer_name').first()
+
     # Create Message
     msg = Message("Grant Process Complete: " + grant.project, recipients=[grant.contact_email], sender=("UC Treasurer", "harvarductreasurer@gmail.com"))
 
@@ -532,7 +574,7 @@ def email_reimbursement_complete(grant):
     image = "done.gif"
 
     # Attach HTML Body
-    html = render_template("email/reimbursement_complete.html", grant=grant, image=image)
+    html = render_template("email/reimbursement_complete.html", grant=grant, image=image, treasurer_name=treasurer_name.value)
     msg.html = html
 
     # Attach Image

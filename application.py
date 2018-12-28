@@ -45,7 +45,7 @@ if app.config["DEBUG"]:
         response.headers["Expires"] = 0
         response.headers["Pragma"] = "no-cache"
         return response
-# Send owed money emails every 2 days if not debug
+# Send owed money emails every 14 days if not debug
 else:
     scheduler = BackgroundScheduler()
     scheduler.start()
@@ -200,7 +200,7 @@ def new_grant():
 
     # This system only works for Upfront and Retroactive UC Grants, so filter others out
     if not args.get('is_upfront') or (args.get('is_upfront')[0] != '1' and args.get('is_upfront')[0] != '2'):
-        # TODO: Implement a nice confirmation page and send an email for someone to check qualtrics submissions
+        # TODO: Send an email for someone to check qualtrics submissions
         return redirect(url_for('non_nova_application_submit'))
 
     # Get Next Grant ID
@@ -438,11 +438,6 @@ def resubmit_receipts():
 @app.route('/grant/<grant_id>')
 def grant(grant_id):
     """ Retrieves grant info for applicants to track grant progress """
-
-    # Add temporary fix for emails sent referencing wrong grants week
-    # TODO: Remove this conditional redirect after December 2017
-    if grant_id.startswith("35S-12-"):
-        return redirect(url_for("grant", grant_id=grant_id.replace("35S-12-","36F-1-",1)))
 
     # Verify that a grant id was specified
     if not grant_id:

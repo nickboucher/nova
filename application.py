@@ -45,8 +45,8 @@ if app.config["DEBUG"]:
         response.headers["Expires"] = 0
         response.headers["Pragma"] = "no-cache"
         return response
-# Send owed money emails every 14 days if not debug
 else:
+    # Send owed money emails every 14 days if not debug
     scheduler = BackgroundScheduler()
     scheduler.start()
     scheduler.add_job(
@@ -54,6 +54,13 @@ else:
             trigger=IntervalTrigger(days=14),
             id='send_owed_money_emails_job',
             name='Sends Owed Money Emails',
+            replace_existing=True)
+    # Send receipts emails every 14 days if not debug
+    scheduler.add_job(
+            func=receipts_reminder,
+            trigger=IntervalTrigger(days=14),
+            id='send_eceipts_reminder_emails_job',
+            name='Sends Receipts Emails',
             replace_existing=True)
     # Shut down the scheduler when exiting the app
     atexit.register(lambda: scheduler.shutdown())
@@ -200,7 +207,7 @@ def new_grant():
 
     # This system only works for Upfront and Retroactive UC Grants, so filter others out
     if not args.get('is_upfront') or (args.get('is_upfront')[0] != '1' and args.get('is_upfront')[0] != '2'):
-        # TODO: Send an email for someone to check qualtrics submissions
+        # This could be updated to do something helpful with notifying on receipt of non-nova application (such as GOHC)
         return redirect(url_for('non_nova_application_submit'))
 
     # Get Next Grant ID
@@ -2046,7 +2053,6 @@ def apply():
 @login_required
 @admin_required
 def receipts_reminder():
-    # TODO: Update this to use apscheduler
     # User is requesting form
     if request.method == 'GET':
         return render_template('receipts_reminder.html')

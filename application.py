@@ -201,7 +201,7 @@ def new_grant():
     # This system only works for Upfront and Retroactive UC Grants, so filter others out
     if not args.get('is_upfront') or (args.get('is_upfront')[0] != '1' and args.get('is_upfront')[0] != '2'):
         # TODO: Implement a nice confirmation page and send an email for someone to check qualtrics submissions
-        return render_template("application_submitted.html")
+        return redirect(url_for('non_nova_application_submit'))
 
     # Get Next Grant ID
     council_semester = Config.query.filter_by(key='council_semester').first()
@@ -334,7 +334,15 @@ def new_grant():
     # Send Confirmation Email
     email_application_submitted(grant)
 
-    return "Your grant application has been received. You can track your grant application <a href=\"" + url_for("grant", grant_id=grant.grant_id) + "\">here</a>."
+    return redirect(url_for('application_submitted', grant_id=grant_id))
+
+@app.route('/application-submitted/<grant_id>')
+def application_submitted(grant_id):
+    return render_template("application_submitted.html", grant_id=grant_id)
+
+@app.route('/application-submit')
+def non_nova_application_submit():
+    return render_template("application_submitted.html", grant_id=None)
 
 @app.route('/receipts')
 def receipts(overwrite = False):

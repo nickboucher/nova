@@ -1,0 +1,22 @@
+{% extends "layout.html" %}
+
+{% block title %}
+    Application Submitted
+{% endblock %}
+
+{% block main %}
+
+  <div class="row">
+    <div class="col-md-12 text-center">
+      <img src="{{ url_for('static', filename='images/submitted.gif') }}" style="padding-top:2em;">
+      {% if grant_id %}
+        <h3>Your grant application has been received. You can track your grant application <a href="{{ url_for('grant', grant_id=grant_id) }}">here</a>.</h3>
+        <br>
+        <a href="{{ url_for('grant', grant_id=grant_id) }}" class="btn btn-primary btn-lg">Track Grant Application</a>
+      {% else %}
+        <h3>Thank you for submitting your grant! The UC will review your application and be in contact soon.</h3>
+      {% endif %}
+    </div>
+  </div>
+
+{% endblock %}

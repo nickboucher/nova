@@ -201,7 +201,7 @@ def new_grant():
     # This system only works for Upfront and Retroactive UC Grants, so filter others out
     if not args.get('is_upfront') or (args.get('is_upfront')[0] != '1' and args.get('is_upfront')[0] != '2'):
         # TODO: Implement a nice confirmation page and send an email for someone to check qualtrics submissions
-        return "Thank you for submitting your grant! The UC will review your application and be in contact soon."
+        return render_template("application_submitted.html")
 
     # Get Next Grant ID
     council_semester = Config.query.filter_by(key='council_semester').first()
@@ -1354,6 +1354,21 @@ def settings():
     if not default_budget:
         return "Error: Default budget not specified in database"
 
+    # Query for emails enabled
+    enable_email = Config.query.filter_by(key="enable_email").first()
+    if not enable_email:
+        return "Error: enable_email not specified in database"
+
+    # Query for grants email username
+    grants_email_username = Config.query.filter_by(key="grants_email_username").first()
+    if not grants_email_username:
+        return "Error: grants_email_username not specified in database"
+
+    # Query for treasurer email username
+    treasurer_email_username = Config.query.filter_by(key="treasurer_email_username").first()
+    if not treasurer_email_username:
+        return "Error: treasurer_email_username not specified in database"
+
     # Query for current council semester
     council_semester = Config.query.filter_by(key="council_semester").first()
     if not council_semester:
@@ -1367,7 +1382,7 @@ def settings():
     grants_pack = council_semester.value + '-' + grant_week.value
 
     # Render page to user
-    return render_template('settings.html', users=users, default_budget=default_budget.value, council_semester=council_semester.value, grants_pack=grants_pack)
+    return render_template('settings.html', users=users, default_budget=default_budget.value, council_semester=council_semester.value, grants_pack=grants_pack, enable_email=enable_email.value, grants_email_username=grants_email_username.value, treasurer_email_username=treasurer_email_username.value)
 
 @app.route('/settings/edit-user', methods=['GET','POST'])
 @login_required
@@ -1568,6 +1583,145 @@ def default_budget():
 
     # Display success message
     flash("Successfully updated default budget")
+
+    # Send user to settings page
+    return redirect(url_for('settings'))
+
+@app.route('/settings/enable-emails', methods=['POST'])
+@login_required
+@admin_required
+def enable_email():
+    """ Allows an administrator to set whether emails are sent """
+
+    # Get email value from form
+    if request.form.get('enable_email'):
+        enable = 1
+    else:
+        enable = 0
+    # Query for enable_email key
+    email_key = Config.query.filter_by(key="enable_email").first()
+
+    if not email_key:
+        return "Error: enable_email not specified in database"
+
+    # Update value and commit changes
+    email_key.value = enable
+    db.session.commit()
+
+    # Display success message
+    flash("Successfully updated email enabled value")
+
+    # Send user to settings page
+    return redirect(url_for('settings'))
+
+@app.route('/settings/grants-email-username', methods=['POST'])
+@login_required
+@admin_required
+def grants_email_username():
+    """ Allows an administrator to set the username for the grants email """
+
+    # Get email value from form
+    email = request.form.get("grants_email_username")
+    if not email:
+        flash("No grants email username specified.", 'error')
+        return redirect(url_for('settings'))
+
+    # Query for email key
+    email_key = Config.query.filter_by(key="grants_email_username").first()
+
+    if not email_key:
+        return "Error: grants_email_username not specified in database"
+
+    # Update value and commit changes
+    email_key.value = email
+    db.session.commit()
+
+    # Display success message
+    flash("Successfully updated grants email address")
+
+    # Send user to settings page
+    return redirect(url_for('settings'))
+
+@app.route('/settings/grants-email-password', methods=['POST'])
+@login_required
+@admin_required
+def grants_email_password():
+    """ Allows an administrator to set the password for the grants email """
+
+    # Get password value from form
+    password = request.form.get("grants_email_password")
+    if not password:
+        flash("No grants email password specified.", 'error')
+        return redirect(url_for('settings'))
+
+    # Query for password key
+    password_key = Config.query.filter_by(key="grants_email_password").first()
+
+    if not password_key:
+        return "Error: grants_email_password not specified in database"
+
+    # Update value and commit changes
+    password_key.value = password
+    db.session.commit()
+
+    # Display success message
+    flash("Successfully updated grants email password")
+
+    # Send user to settings page
+    return redirect(url_for('settings'))
+
+@app.route('/settings/treasurer-email-username', methods=['POST'])
+@login_required
+@admin_required
+def treasurer_email_username():
+    """ Allows an administrator to set the username for the treasurer email """
+
+    # Get email value from form
+    email = request.form.get("treasurer_email_username")
+    if not email:
+        flash("No treasurer email username specified.", 'error')
+        return redirect(url_for('settings'))
+
+    # Query for email key
+    email_key = Config.query.filter_by(key="treasurer_email_username").first()
+
+    if not email_key:
+        return "Error: treasurer_email_username not specified in database"
+
+    # Update value and commit changes
+    email_key.value = email
+    db.session.commit()
+
+    # Display success message
+    flash("Successfully updated treasurer email address")
+
+    # Send user to settings page
+    return redirect(url_for('settings'))
+
+@app.route('/settings/treasurer-email-password', methods=['POST'])
+@login_required
+@admin_required
+def treasurer_email_password():
+    """ Allows an administrator to set the password for the treasurer email """
+
+    # Get password value from form
+    password = request.form.get("treasurer_email_password")
+    if not password:
+        flash("No treasurer email password specified.", 'error')
+        return redirect(url_for('settings'))
+
+    # Query for password key
+    password_key = Config.query.filter_by(key="treasurer_email_password").first()
+
+    if not password_key:
+        return "Error: treasurer_email_password not specified in database"
+
+    # Update value and commit changes
+    password_key.value = password
+    db.session.commit()
+
+    # Display success message
+    flash("Successfully updated treasurer email password")
 
     # Send user to settings page
     return redirect(url_for('settings'))

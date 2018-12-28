@@ -83,5 +83,68 @@
             <div class="float-right" style="margin-right:25px;"><a href="{{ url_for('add_user') }}" class="btn btn-default">Add User</a></div>
         </div>
     </div>
+    <hr class="margin40" />
+    <div class="row" style="margin-bottom:40px;">
+        <div class="col-md-12">
+            <h2>Email Settings</h2>
+            <div class="row">
+                <div class="col-md-6">
+                    <form action="{{ url_for('enable_email') }}" class="form-inline margin40" method="post">
+                        <div class="form-group">
+                            <label for="enable_email">Enable Emails:&nbsp;&nbsp;&nbsp;</label>
+                            <input type="checkbox" class="form-control" id="enable_email" name="enable_email" {{ 'checked' if enable_email=="1" }}>
+                        </div>
+                        <button type="submit" class="btn btn-default" style="margin-left:10px;">Update</button>
+                        <br>
+                        <i>Emails currently {{ "enabled" if enable_email=="1" else "disabled" }}.</i>
+                    </form>
+                </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                  <form action="{{ url_for('grants_email_username') }}" class="form-inline margin40" method="post">
+                      <div class="form-group">
+                          <label for="grants_email_username">Grants Email Username:&nbsp;&nbsp;&nbsp;</label>
+                          <input type="text" class="form-control" id="grants_email_username" name="grants_email_username" value="{{ grants_email_username }}">
+                      </div>
+                      <button type="submit" class="btn btn-default" style="margin-left:10px;">Update</button>
+                      <br>
+                      <i>Must be a gmail account.</i>
+                  </form>
+              </div>
+              <div class="col-md-6">
+                  <form action="{{ url_for('grants_email_password') }}" class="form-inline margin40" method="post">
+                      <div class="form-group">
+                          <label for="grants_email_password">Grants Email Password:&nbsp;&nbsp;&nbsp;</label>
+                          <input type="password" class="form-control" id="grants_email_password" name="grants_email_password">
+                      </div>
+                      <button type="submit" class="btn btn-default" style="margin-left:10px;">Update</button>
+                  </form>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col-md-6">
+                  <form action="{{ url_for('treasurer_email_username') }}" class="form-inline margin40" method="post">
+                      <div class="form-group">
+                          <label for="treasurer_email_username">Treasurer Email Username:&nbsp;&nbsp;&nbsp;</label>
+                          <input type="text" class="form-control" id="treasurer_email_username" name="treasurer_email_username" value="{{ treasurer_email_username }}">
+                      </div>
+                      <button type="submit" class="btn btn-default" style="margin-left:10px;">Update</button>
+                      <br>
+                      <i>Must be a gmail account.</i>
+                  </form>
+              </div>
+              <div class="col-md-6">
+                  <form action="{{ url_for('treasurer_email_password') }}" class="form-inline margin40" method="post">
+                      <div class="form-group">
+                          <label for="treasurer_email_password">Treasurer Email Password:&nbsp;&nbsp;&nbsp;</label>
+                          <input type="password" class="form-control" id="treasurer_email_password" name="treasurer_email_password">
+                      </div>
+                      <button type="submit" class="btn btn-default" style="margin-left:10px;">Update</button>
+                  </form>
+              </div>
+            </div>
+        </div>
+    </div>
 
 {% endblock %}

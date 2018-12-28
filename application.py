@@ -57,9 +57,9 @@ else:
             replace_existing=True)
     # Send receipts emails every 14 days if not debug
     scheduler.add_job(
-            func=receipts_reminder,
+            func=send_receipt_reminder_emails,
             trigger=IntervalTrigger(days=14),
-            id='send_eceipts_reminder_emails_job',
+            id='send_receipts_reminder_emails_job',
             name='Sends Receipts Emails',
             replace_existing=True)
     # Shut down the scheduler when exiting the app

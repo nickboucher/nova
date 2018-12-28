@@ -569,3 +569,15 @@ def send_owe_money_emails():
                     if not grant.owed_money_email_date:
                         grant.owed_money_email_date = now
             db.session.commit()
+
+def send_receipt_reminder_emails():
+    """ Sends emails to all groups that need to submit receipts reminding them to do so """
+    with application.app.app_context():
+        email = Config.query.filter_by(key='enable_email').first()
+        if email.value == '1':
+            print("Sending Receipt Reminder Emails")
+            # Query for no receipts grants
+            grants = Grant.query.filter(AND(AND(Grant.receipts_submitted==False,Grant.council_approved==True), Grant.amount_allocated>0)).all()
+            for grant in grants:
+                print(grant.grant_id)
+                email_submit_receipts(grant)

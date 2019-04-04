@@ -1313,7 +1313,7 @@ def review_grant_receipts(grant_id):
         if grant.personnel_allocated: grant.personnel_allocated *= cut_multiplier
         if grant.other_allocated: grant.other_allocated *= cut_multiplier
 
-        receipts = grant.receipt_images.split(", ")
+        receipts = grant.receipt_images.split(", ") if receipt_images else None
 
         # Render the template to the user
         return render_template('review_grant_receipts.html', grant=grant, receipts=receipts, organization=organization)

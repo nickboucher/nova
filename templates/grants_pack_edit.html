@@ -25,73 +25,73 @@
         <div class="col-md-12 margin40 listboxes">
             <select multiple="multiple" size="10" name="grants_list" class="grants_dual_listbox">
                 {% for grant in orphan_grants %}
-                    <option id="{{ grant.grant_id }}" value="{{ grant.grant_id }}" data-project="{{ grant.project }}" data-organization="{{ grant.organization }}" data-interviewer="{{ grant.small_grant_reviewer if grant.is_small_grant else grant.interviewer }}" data-notes="{{ grant.interviewer_notes | suppress_none }}" data-funding="[{%- if grant.food_allocated -%}
-                            {&quot;category&quot;:&quot;Food&quot;,&quot;amount&quot;:{{ grant.food_allocated }},&quot;description&quot;:&quot;{{ grant.food_allocated_notes | suppress_none }}&quot;},
+                    <option id="{{ grant.grant_id }}" value="{{ grant.grant_id }}" data-project="{{ grant.project }}" data-organization="{{ grant.organization }}" data-interviewer="{{ grant.small_grant_reviewer if grant.is_small_grant else grant.interviewer }}" data-notes="{{ grant.interviewer_notes | suppress_none | swap_quotes }}" data-funding="[{%- if grant.food_allocated -%}
+                            {&quot;category&quot;:&quot;Food&quot;,&quot;amount&quot;:{{ grant.food_allocated }},&quot;description&quot;:&quot;{{ grant.food_allocated_notes | suppress_none | swap_quotes }}&quot;},
                         {%- endif -%}
                         {%- if grant.travel_allocated -%}
-                            {&quot;category&quot;:&quot;Travel&quot;,&quot;amount&quot;:{{ grant.travel_allocated }},&quot;description&quot;:&quot;{{ grant.travel_allocated_notes | suppress_none }}&quot;},
+                            {&quot;category&quot;:&quot;Travel&quot;,&quot;amount&quot;:{{ grant.travel_allocated }},&quot;description&quot;:&quot;{{ grant.travel_allocated_notes | suppress_none | swap_quotes }}&quot;},
                         {%- endif -%}
                         {%- if grant.publicity_allocated -%}
-                            {&quot;category&quot;:&quot;Publicity&quot;,&quot;amount&quot;:{{ grant.publicity_allocated }},&quot;description&quot;:&quot;{{ grant.publicity_allocated_notes | suppress_none }}&quot;},
+                            {&quot;category&quot;:&quot;Publicity&quot;,&quot;amount&quot;:{{ grant.publicity_allocated }},&quot;description&quot;:&quot;{{ grant.publicity_allocated_notes | suppress_none | swap_quotes }}&quot;},
                         {%- endif -%}
                         {%- if grant.materials_allocated -%}
-                            {&quot;category&quot;:&quot;Materials & Supplies&quot;,&quot;amount&quot;:{{ grant.materials_allocated }},&quot;description&quot;:&quot;{{ grant.materials_allocated_notes | suppress_none }}&quot;},
+                            {&quot;category&quot;:&quot;Materials & Supplies&quot;,&quot;amount&quot;:{{ grant.materials_allocated }},&quot;description&quot;:&quot;{{ grant.materials_allocated_notes | suppress_none | swap_quotes }}&quot;},
                         {%- endif -%}
                         {%- if grant.venue_allocated -%}
-                            {&quot;category&quot;:&quot;Venue&quot;,&quot;amount&quot;:{{ grant.venue_allocated }},&quot;description&quot;:&quot;{{ grant.venue_allocated_notes | suppress_none }}&quot;},
+                            {&quot;category&quot;:&quot;Venue&quot;,&quot;amount&quot;:{{ grant.venue_allocated }},&quot;description&quot;:&quot;{{ grant.venue_allocated_notes | suppress_none | swap_quotes }}&quot;},
                         {%- endif -%}
                         {%- if grant.decorations_allocated -%}
-                            {&quot;category&quot;:&quot;Decorations&quot;,&quot;amount&quot;:{{ grant.decorations_allocated }},&quot;description&quot;:&quot;{{ grant.decorations_allocated_notes | suppress_none }}&quot;},
+                            {&quot;category&quot;:&quot;Decorations&quot;,&quot;amount&quot;:{{ grant.decorations_allocated }},&quot;description&quot;:&quot;{{ grant.decorations_allocated_notes | suppress_none | swap_quotes }}&quot;},
                         {%- endif -%}
                         {%- if grant.media_allocated -%}
-                            {&quot;category&quot;:&quot;AV/Media&quot;,&quot;amount&quot;:{{ grant.media_allocated }},&quot;description&quot;:&quot;{{ grant.media_allocated_notes | suppress_none }}&quot;},
+                            {&quot;category&quot;:&quot;AV/Media&quot;,&quot;amount&quot;:{{ grant.media_allocated }},&quot;description&quot;:&quot;{{ grant.media_allocated_notes | suppress_none | swap_quotes }}&quot;},
                         {%- endif -%}
                         {%- if grant.admissions_allocated -%}
-                            {&quot;category&quot;:&quot;Admissions&quot;,&quot;amount&quot;:{{ grant.admissions_allocated }},&quot;description&quot;:&quot;{{ grant.admissions_allocated_notes | suppress_none }}&quot;},
+                            {&quot;category&quot;:&quot;Admissions&quot;,&quot;amount&quot;:{{ grant.admissions_allocated }},&quot;description&quot;:&quot;{{ grant.admissions_allocated_notes | suppress_none | swap_quotes }}&quot;},
                         {%- endif -%}
                         {%- if grant.hupd_allocated -%}
-                            {&quot;category&quot;:&quot;HUPD/BAT/DJ&quot;,&quot;amount&quot;:{{ grant.hupd_allocated }},&quot;description&quot;:&quot;{{ grant.hupd_allocated_notes | suppress_none }}&quot;},
+                            {&quot;category&quot;:&quot;HUPD/BAT/DJ&quot;,&quot;amount&quot;:{{ grant.hupd_allocated }},&quot;description&quot;:&quot;{{ grant.hupd_allocated_notes | suppress_none | swap_quotes }}&quot;},
                         {%- endif -%}
                         {%- if grant.personnel_allocated -%}
-                            {&quot;category&quot;:&quot;Personnel&quot;,&quot;amount&quot;:{{ grant.personnel_allocated }},&quot;description&quot;:&quot;{{ grant.personnel_allocated_notes | suppress_none }}&quot;},
+                            {&quot;category&quot;:&quot;Personnel&quot;,&quot;amount&quot;:{{ grant.personnel_allocated }},&quot;description&quot;:&quot;{{ grant.personnel_allocated_notes | suppress_none | swap_quotes }}&quot;},
                         {%- endif -%}
                         {%- if grant.other_allocated -%}
-                            {&quot;category&quot;:&quot;Other&quot;,&quot;amount&quot;:{{ grant.other_allocated }},&quot;description&quot;:&quot;{{ grant.other_allocated_notes | suppress_none }}&quot;},
+                            {&quot;category&quot;:&quot;Other&quot;,&quot;amount&quot;:{{ grant.other_allocated }},&quot;description&quot;:&quot;{{ grant.other_allocated_notes | suppress_none | swap_quotes }}&quot;},
                         {%- endif -%}]">{{ grant.organization }}&nbsp;"{{ grant.project }}"</option>
                 {% endfor %}
                 {% for grant in child_grants %}
-                    <option selected="selected" id="{{ grant.grant_id }}" value="{{ grant.grant_id }}" data-project="{{ grant.project }}" data-organization="{{ grant.organization }}" data-interviewer="{{ grant.small_grant_reviewer if grant.is_small_grant else grant.interviewer }}" data-notes="{{ grant.interviewer_notes | suppress_none }}" data-funding="[{%- if grant.food_allocated -%}
-                            {&quot;category&quot;:&quot;Food&quot;,&quot;amount&quot;:{{ grant.food_allocated }},&quot;description&quot;:&quot;{{ grant.food_allocated_notes | suppress_none }}&quot;},
+                    <option selected="selected" id="{{ grant.grant_id }}" value="{{ grant.grant_id }}" data-project="{{ grant.project }}" data-organization="{{ grant.organization }}" data-interviewer="{{ grant.small_grant_reviewer if grant.is_small_grant else grant.interviewer }}" data-notes="{{ grant.interviewer_notes | suppress_none | swap_quotes }}" data-funding="[{%- if grant.food_allocated -%}
+                            {&quot;category&quot;:&quot;Food&quot;,&quot;amount&quot;:{{ grant.food_allocated }},&quot;description&quot;:&quot;{{ grant.food_allocated_notes | suppress_none | swap_quotes }}&quot;},
                         {%- endif -%}
                         {%- if grant.travel_allocated -%}
-                            {&quot;category&quot;:&quot;Travel&quot;,&quot;amount&quot;:{{ grant.travel_allocated }},&quot;description&quot;:&quot;{{ grant.travel_allocated_notes | suppress_none }}&quot;},
+                            {&quot;category&quot;:&quot;Travel&quot;,&quot;amount&quot;:{{ grant.travel_allocated }},&quot;description&quot;:&quot;{{ grant.travel_allocated_notes | suppress_none | swap_quotes }}&quot;},
                         {%- endif -%}
                         {%- if grant.publicity_allocated -%}
-                            {&quot;category&quot;:&quot;Publicity&quot;,&quot;amount&quot;:{{ grant.publicity_allocated }},&quot;description&quot;:&quot;{{ grant.publicity_allocated_notes | suppress_none }}&quot;},
+                            {&quot;category&quot;:&quot;Publicity&quot;,&quot;amount&quot;:{{ grant.publicity_allocated }},&quot;description&quot;:&quot;{{ grant.publicity_allocated_notes | suppress_none | swap_quotes }}&quot;},
                         {%- endif -%}
                         {%- if grant.materials_allocated -%}
-                            {&quot;category&quot;:&quot;Materials & Supplies&quot;,&quot;amount&quot;:{{ grant.materials_allocated }},&quot;description&quot;:&quot;{{ grant.materials_allocated_notes | suppress_none }}&quot;},
+                            {&quot;category&quot;:&quot;Materials & Supplies&quot;,&quot;amount&quot;:{{ grant.materials_allocated }},&quot;description&quot;:&quot;{{ grant.materials_allocated_notes | suppress_none | swap_quotes }}&quot;},
                         {%- endif -%}
                         {%- if grant.venue_allocated -%}
-                            {&quot;category&quot;:&quot;Venue&quot;,&quot;amount&quot;:{{ grant.venue_allocated }},&quot;description&quot;:&quot;{{ grant.venue_allocated_notes | suppress_none }}&quot;},
+                            {&quot;category&quot;:&quot;Venue&quot;,&quot;amount&quot;:{{ grant.venue_allocated }},&quot;description&quot;:&quot;{{ grant.venue_allocated_notes | suppress_none | swap_quotes }}&quot;},
                         {%- endif -%}
                         {%- if grant.decorations_allocated -%}
-                            {&quot;category&quot;:&quot;Decorations&quot;,&quot;amount&quot;:{{ grant.decorations_allocated }},&quot;description&quot;:&quot;{{ grant.decorations_allocated_notes | suppress_none }}&quot;},
+                            {&quot;category&quot;:&quot;Decorations&quot;,&quot;amount&quot;:{{ grant.decorations_allocated }},&quot;description&quot;:&quot;{{ grant.decorations_allocated_notes | suppress_none | swap_quotes }}&quot;},
                         {%- endif -%}
                         {%- if grant.media_allocated -%}
-                            {&quot;category&quot;:&quot;AV/Media&quot;,&quot;amount&quot;:{{ grant.media_allocated }},&quot;description&quot;:&quot;{{ grant.media_allocated_notes | suppress_none }}&quot;},
+                            {&quot;category&quot;:&quot;AV/Media&quot;,&quot;amount&quot;:{{ grant.media_allocated }},&quot;description&quot;:&quot;{{ grant.media_allocated_notes | suppress_none | swap_quotes }}&quot;},
                         {%- endif -%}
                         {%- if grant.admissions_allocated -%}
-                            {&quot;category&quot;:&quot;Admissions&quot;,&quot;amount&quot;:{{ grant.admissions_allocated }},&quot;description&quot;:&quot;{{ grant.admissions_allocated_notes | suppress_none }}&quot;},
+                            {&quot;category&quot;:&quot;Admissions&quot;,&quot;amount&quot;:{{ grant.admissions_allocated }},&quot;description&quot;:&quot;{{ grant.admissions_allocated_notes | suppress_none | swap_quotes }}&quot;},
                         {%- endif -%}
                         {%- if grant.hupd_allocated -%}
-                            {&quot;category&quot;:&quot;HUPD/BAT/DJ&quot;,&quot;amount&quot;:{{ grant.hupd_allocated }},&quot;description&quot;:&quot;{{ grant.hupd_allocated_notes | suppress_none }}&quot;},
+                            {&quot;category&quot;:&quot;HUPD/BAT/DJ&quot;,&quot;amount&quot;:{{ grant.hupd_allocated }},&quot;description&quot;:&quot;{{ grant.hupd_allocated_notes | suppress_none | swap_quotes }}&quot;},
                         {%- endif -%}
                         {%- if grant.personnel_allocated -%}
-                            {&quot;category&quot;:&quot;Personnel&quot;,&quot;amount&quot;:{{ grant.personnel_allocated }},&quot;description&quot;:&quot;{{ grant.personnel_allocated_notes | suppress_none }}&quot;},
+                            {&quot;category&quot;:&quot;Personnel&quot;,&quot;amount&quot;:{{ grant.personnel_allocated }},&quot;description&quot;:&quot;{{ grant.personnel_allocated_notes | suppress_none | swap_quotes }}&quot;},
                         {%- endif -%}
                         {%- if grant.other_allocated -%}
-                            {&quot;category&quot;:&quot;Other&quot;,&quot;amount&quot;:{{ grant.other_allocated }},&quot;description&quot;:&quot;{{ grant.other_allocated_notes | suppress_none }}&quot;},
+                            {&quot;category&quot;:&quot;Other&quot;,&quot;amount&quot;:{{ grant.other_allocated }},&quot;description&quot;:&quot;{{ grant.other_allocated_notes | suppress_none | swap_quotes }}&quot;},
                         {%- endif -%}]">{{ grant.organization }}&nbsp;"{{ grant.project }}"</option>
                 {% endfor %}
               </select>

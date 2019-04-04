@@ -73,6 +73,7 @@ app.jinja_env.filters["suppress_none"] = suppress_none
 app.jinja_env.filters["datetime"] = utc_to_east_datetime
 app.jinja_env.filters["date"] = utc_to_east_date
 app.jinja_env.filters["percentage"] = percentage
+app.jinja_env.filters["swap_quotes"] = swap_quotes
 
 # Set cryptographic key for Sessions
 install_secret_key(app)

@@ -49,10 +49,13 @@ def number(value):
 
 def suppress_none(value):
     """ Returns value or empty string if None """
-
     if value == None:
         return ""
     return value
+
+def swap_quotes(value):
+    """ Replaces double quotes (") with single quotes (') """
+    return value.replace("\"", "\'")
 
 def utc_to_east_datetime(utc_dt):
     """ Formats datetime as US Eastern timezone """
